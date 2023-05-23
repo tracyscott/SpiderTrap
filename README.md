@@ -15,7 +15,7 @@ lost in the moment.
 
 # Installation Guide
 Windows 10 / Mac OS X / Linux
-1. Get latest Maven: https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip
+1. Get latest Maven: https://maven.apache.org/download.cgi
 2. Extract Maven Binary directory to User/Documents folder, add the path to Bin folder to the PATH environmental variable In System Properties
 3. Get latest IntelliJ Community Edition:https://www.jetbrains.com/idea/download/download-thanks.html?platform=windows&code=IIC 
 4. Get JDK 17: https://adoptium.net/

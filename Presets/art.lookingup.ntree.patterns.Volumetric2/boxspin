@@ -1,0 +1,44 @@
+{
+  "version": "0.4.1-SNAPSHOT",
+  "timestamp": 1666999121748,
+  "id": 3182,
+  "class": "art.lookingup.spidertrap.patterns.Volumetric2",
+  "internal": {
+    "modulationColor": 0,
+    "expanded": true,
+    "modulationExpanded": true,
+    "presetFile": "boxspin",
+    "autoCycleEligible": true
+  },
+  "parameters": {
+    "label": "Volumetric2",
+    "recall": false,
+    "scriptName": "cube",
+    "speed": 8.475862038135528,
+    "b": 0.22413792088627815,
+    "e": 0.20689654722809792,
+    "fScale": 1.0,
+    "xOffset": 0.051724137738347054,
+    "yOffset": -0.051724137738347054,
+    "zOffset": 0.0,
+    "h": 1.0,
+    "r": 0.0
+  },
+  "children": {
+    "modulation": {
+      "id": 3183,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

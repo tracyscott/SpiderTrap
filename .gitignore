@@ -1,0 +1,16 @@
+/.cache
+/.DS_Store
+/.env
+/public/.DS_Store
+*.log
+*.log.lk
+/.idea
+/build
+/natives
+hdpi
+pixliteconfig.json
+outputmap.json
+.lxpreferences
+/target
+
+
