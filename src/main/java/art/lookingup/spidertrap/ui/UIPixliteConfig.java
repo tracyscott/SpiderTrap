@@ -1,6 +1,7 @@
-package art.lookingup.ui;
+package art.lookingup.spidertrap.ui;
 
 import art.lookingup.spidertrap.Output;
+import art.lookingup.ui.UIConfig;
 import heronarts.lx.LX;
 import heronarts.lx.parameter.LXParameter;
 import heronarts.lx.studio.LXStudio;

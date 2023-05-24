@@ -1,6 +1,7 @@
 package art.lookingup.spidertrap.patterns;
 
 import art.lookingup.spidertrap.SpiderTrapModel;
+import art.lookingup.spidertrap.ui.ModelParams;
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.audio.GraphicMeter;
@@ -15,7 +16,7 @@ public class EQPattern extends LXPattern {
   CompoundParameter scale = new CompoundParameter("scale", 1, .1, 10);
   BooleanParameter inverse = new BooleanParameter("inverse", false);
 
-  public int[] audioVals = new int [SpiderTrapModel.NUM_RADIALS];
+  public int[] audioVals = new int [SpiderTrapModel.MAX_RADIALS];
 
   public EQPattern(LX lx) {
     super(lx);
@@ -34,8 +35,9 @@ public class EQPattern extends LXPattern {
     GraphicMeter eq = lx.engine.audio.meter;
     byte[] fftAudioTex = new byte[1024];
     float[] audioSamples = eq.getSamples();
-    for (int i = 0; i < SpiderTrapModel.NUM_RADIALS; i++) {
-      int audioValue = (int) (8192 * audioSamples[(int)((float)i * (float)(512f/ SpiderTrapModel.NUM_RADIALS))]);
+    int numRadials = ModelParams.getRadials();
+    for (int i = 0; i < numRadials; i++) {
+      int audioValue = (int) (8192 * audioSamples[(int)((float)i * (float)(512f/ numRadials))]);
       audioVals[i] = audioValue;
     }
   }
@@ -46,10 +48,10 @@ public class EQPattern extends LXPattern {
 
     mapAudio();
 
-    for (int radialNum = 0; radialNum < SpiderTrapModel.NUM_RADIALS; ++radialNum) {
+    for (int radialNum = 0; radialNum < ModelParams.getRadials(); ++radialNum) {
       // Retrieve the 0 ... 256 audio value and scale to the number of leds in this radial.
       float numLedsInRadial = SpiderTrapModel.allRadials.get(radialNum).points.size();
-      int audioValIndex = (SpiderTrapModel.NUM_RADIALS-1) - radialNum;
+      int audioValIndex = (ModelParams.getRadials()-1) - radialNum;
       int maxLed = (int) ((((float)audioVals[audioValIndex] * scale.getValuef()) / 256f) * numLedsInRadial);
       for (int ledNum = 0; ledNum < numLedsInRadial; ledNum++) {
         LXPoint p = SpiderTrapModel.allRadials.get(radialNum).points.get(ledNum);

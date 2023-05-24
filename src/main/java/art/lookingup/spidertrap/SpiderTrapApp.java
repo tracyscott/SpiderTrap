@@ -24,6 +24,9 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.logging.*;
 
+import art.lookingup.spidertrap.ui.ModelParams;
+import art.lookingup.spidertrap.ui.UIPixliteConfig;
+import art.lookingup.spidertrap.ui.UIPreviewComponents;
 import art.lookingup.ui.*;
 import art.lookingup.util.SpeedOverride;
 import com.google.common.reflect.ClassPath;

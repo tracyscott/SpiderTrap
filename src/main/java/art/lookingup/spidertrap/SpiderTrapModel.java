@@ -2,6 +2,7 @@ package art.lookingup.spidertrap;
 
 import art.lookingup.linear.Edge;
 import art.lookingup.linear.Point3D;
+import art.lookingup.spidertrap.ui.ModelParams;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.model.LXPoint;
 
@@ -16,11 +17,8 @@ import java.util.logging.Logger;
  *
  */
 public class SpiderTrapModel extends LXModel {
-  public static final int NUM_RADIALS = 8;
+  public static final int MAX_RADIALS = 16;
   public static final int NUM_WEBS = 1;
-  // The spiral strand intersects each additional radial strand at a distance
-  // INCREMENTAL_INTERSECTION further along the radial.
-  public static final float INCREMENTAL_INTERSECTION = .03f;
 
   private static final Logger logger = Logger.getLogger(SpiderTrapModel.class.getName());
 
@@ -37,12 +35,7 @@ public class SpiderTrapModel extends LXModel {
   }
 
   static public final float DISTANCE_FROM_CENTER = 4f;
-  static public final float DEFAULT_INNER_RADIUS = 0.8f;
-  static public final float DEFAULT_OUTER_RADIUS = 1.8f;
-
   static public final float METERS_TO_FEET = 3.28084f;
-  static public final float LEDS_PER_METER = 30f;
-  static public final float LEDS_PER_FOOT = LEDS_PER_METER / METERS_TO_FEET;
 
   static public List<Edge> edges = new ArrayList<Edge>();
 
@@ -73,9 +66,12 @@ public class SpiderTrapModel extends LXModel {
       float angleIncr = 360f / (numRadials);
       float curAngle = radialOffset * angleIncr;
       points = new ArrayList<LXPoint>();
+      float innerRadius = ModelParams.getInnerRadius();
+      float outerRadius = ModelParams.getOuterRadius();
+
       for (int i = 0; i < numRadials; i++) {
         logger.info("Creating Radial");
-        Radial radial = new Radial(i, curAngle, DEFAULT_INNER_RADIUS, DEFAULT_OUTER_RADIUS, mx, my, mz);
+        Radial radial = new Radial(i, curAngle, innerRadius, outerRadius, mx, my, mz);
         radials.add(radial);
         allRadials.add(radial);
         allPoints.addAll(radial.points);
@@ -87,15 +83,17 @@ public class SpiderTrapModel extends LXModel {
 
     public List<Segment> createSpiralSegments(float webx, float weby, float webz) {
       // Iterate while current radial distance is less than outer radius.
-      float curRadialDist = DEFAULT_INNER_RADIUS;
+      float curRadialDist = ModelParams.getInnerRadius();
       int segmentId = 0;
       int startRadialId = 0;
       int endRadialId;
       segments = new ArrayList<Segment>();
       // Segment (int id, int startRadialId, int endRadialId, float radialDist, float webx, float weby, float webz) {
-      while (curRadialDist < DEFAULT_OUTER_RADIUS) {
+      float outerRadius = ModelParams.getOuterRadius();
+      int numRadials = ModelParams.getRadials();
+      while (curRadialDist < outerRadius) {
         endRadialId = startRadialId + 1;
-        if (endRadialId >= NUM_RADIALS)
+        if (endRadialId >= numRadials)
           endRadialId = 0;
         Segment segment = new Segment(segmentId, startRadialId, endRadialId, curRadialDist, webx, weby, webz);
         segments.add(segment);
@@ -104,11 +102,11 @@ public class SpiderTrapModel extends LXModel {
         points.addAll(segment.points);
         startRadialId++;
 
-        if (startRadialId >= NUM_RADIALS)
+        if (startRadialId >= numRadials)
           startRadialId = 0;
 
         segmentId++;
-        curRadialDist += INCREMENTAL_INTERSECTION;
+        curRadialDist += ModelParams.getRadialIncr();
       }
       logger.info("Created " + segments.size() + " segments");
       return segments;
@@ -154,7 +152,7 @@ public class SpiderTrapModel extends LXModel {
       Point3D edgeB = new Point3D(x + polarX(outerRadius, angle),
                                   y,
                                      z + polarZ(outerRadius, angle));
-      return new Edge(edgeA, edgeB, LEDS_PER_FOOT);
+      return new Edge(edgeA, edgeB, ModelParams.getLedsPerFoot());
     }
 
     List<LXPoint> getPointsWireOrder() {
@@ -170,7 +168,7 @@ public class SpiderTrapModel extends LXModel {
       this.startRadialId = startRadialId;
       this.endRadialId = endRadialId;
       this.radialDist = radialDist;
-      this.endRadialDist = radialDist + INCREMENTAL_INTERSECTION;
+      this.endRadialDist = radialDist + ModelParams.getRadialIncr();
 
       this.webx = webx;
       this.weby = weby;
@@ -207,7 +205,7 @@ public class SpiderTrapModel extends LXModel {
                                      y + endRadial.edge.unitVector.y * endRadialDist,
                                      z + endRadial.edge.unitVector.z * endRadialDist);
 
-      return new Edge(startPoint, endPoint, LEDS_PER_FOOT);
+      return new Edge(startPoint, endPoint, ModelParams.getLedsPerFoot());
     }
 
     List<LXPoint> getPointsWireOrder() {
@@ -229,7 +227,7 @@ public class SpiderTrapModel extends LXModel {
 
     for (int webNum = 0; webNum < 1; webNum++) {
       float mx = (webNum == 0)?-DISTANCE_FROM_CENTER:DISTANCE_FROM_CENTER;
-      Web web = new Web(0, 10, 0, NUM_RADIALS, 0);
+      Web web = new Web(0, 10, 0, ModelParams.getRadials(), 0);
       allWebs.add(web);
     }
 

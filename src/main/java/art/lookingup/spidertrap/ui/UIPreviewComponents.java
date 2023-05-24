@@ -1,4 +1,4 @@
-package art.lookingup.ui;
+package art.lookingup.spidertrap.ui;
 
 import art.lookingup.spidertrap.SpiderTrapApp;
 import heronarts.lx.parameter.CompoundParameter;

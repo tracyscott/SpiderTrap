@@ -1,6 +1,6 @@
 package art.lookingup.spidertrap;
 
-import art.lookingup.ui.UIPixliteConfig;
+import art.lookingup.spidertrap.ui.UIPixliteConfig;
 import heronarts.lx.LX;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.output.ArtNetDatagram;

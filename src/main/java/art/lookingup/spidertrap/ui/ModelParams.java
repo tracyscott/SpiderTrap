@@ -1,5 +1,6 @@
-package art.lookingup.ui;
+package art.lookingup.spidertrap.ui;
 
+import art.lookingup.ui.UIConfig;
 import art.lookingup.util.ParameterFile;
 import heronarts.lx.LX;
 import heronarts.lx.parameter.LXParameter;
@@ -10,7 +11,7 @@ public class ModelParams extends UIConfig {
   public static final String RADIAL_INCR = "rad_incr";
   public static final String INNER_RADIUS = "inner_radius";
   public static final String OUTER_RADIUS = "outer_radius";
-  public static final String LED_SPACING = "led_spacing";  // LEDs per foot
+  public static final String LEDS_PER_FOOT = "leds_per_foot";  // LEDs per foot
 
 
   public static final String title = "Model Params";
@@ -24,11 +25,11 @@ public class ModelParams extends UIConfig {
     super(ui, title, filename, paramFile);
     this.lx = lx;
 
-    registerStringParameter(RADIALS, "8");
-    registerStringParameter(RADIAL_INCR, "0.05");
-    registerStringParameter(INNER_RADIUS, "1");
-    registerStringParameter(OUTER_RADIUS, "4");
-    registerStringParameter(LED_SPACING, "9.6");
+    registerStringParameter(RADIALS, "");
+    registerStringParameter(RADIAL_INCR, "");
+    registerStringParameter(INNER_RADIUS, "");
+    registerStringParameter(OUTER_RADIUS, "");
+    registerStringParameter(LEDS_PER_FOOT, "");
 
     save();
 
@@ -39,31 +40,31 @@ public class ModelParams extends UIConfig {
     if (modelParamFile == null) {
       modelParamFile = ParameterFile.instantiateAndLoad(filename);
     }
-    modelParamFile.getStringParameter(RADIALS, "8");
-    modelParamFile.getStringParameter(RADIAL_INCR, "0.05");
-    modelParamFile.getStringParameter(INNER_RADIUS, "1");
-    modelParamFile.getStringParameter(OUTER_RADIUS, "4");
-    modelParamFile.getStringParameter(LED_SPACING, "9.6");
+    modelParamFile.getStringParameter(RADIALS, "6");
+    modelParamFile.getStringParameter(RADIAL_INCR, "0.03");
+    modelParamFile.getStringParameter(INNER_RADIUS, "0.8");
+    modelParamFile.getStringParameter(OUTER_RADIUS, "1.8");
+    modelParamFile.getStringParameter(LEDS_PER_FOOT, "9.144");
   }
 
   static public int getRadials() {
-    return Integer.parseInt(modelParamFile.getStringParameter(RADIALS, "8").getString());
+    return Integer.parseInt(modelParamFile.getStringParameter(RADIALS, "6").getString());
   }
 
   static public float getRadialIncr() {
-    return modelParamFile.getStringParameterF(RADIAL_INCR, "0.05");
+    return modelParamFile.getStringParameterF(RADIAL_INCR, "0.03");
   }
 
   static public float getInnerRadius() {
-    return modelParamFile.getStringParameterF(INNER_RADIUS, "1");
+    return modelParamFile.getStringParameterF(INNER_RADIUS, "0.8");
   }
 
   static public float getOuterRadius() {
-    return modelParamFile.getStringParameterF(OUTER_RADIUS, "4");
+    return modelParamFile.getStringParameterF(OUTER_RADIUS, "1.8");
   }
 
-  static public float getLedSpacing() {
-    return modelParamFile.getStringParameterF(LED_SPACING, "9.6");
+  static public float getLedsPerFoot() {
+    return modelParamFile.getStringParameterF(LEDS_PER_FOOT, "9.144");
   }
 
   @Override
