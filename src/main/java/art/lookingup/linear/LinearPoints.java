@@ -84,9 +84,11 @@ public class LinearPoints {
     float ux = b.x - a.x;
     float uy = b.y - a.y;
     float uz = b.z - a.z;
-    float mx = marginDist * ux;
-    float my = marginDist * uy;
-    float mz = marginDist * uz;
+    Point3D unitVector = Point3D.unitVectorTo(b, a);
+
+    float mx = marginDist * unitVector.x;
+    float my = marginDist * unitVector.y;
+    float mz = marginDist * unitVector.z;
 
     float dx = ((b.x - a.x) - 2f * mx) / stretches;
     float dy = ((b.y - a.y) - 2f * my) / stretches;

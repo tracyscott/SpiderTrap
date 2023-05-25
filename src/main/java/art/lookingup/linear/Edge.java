@@ -35,7 +35,7 @@ public class Edge {
 
   static public float margins = 0f;
 
-  public Edge(Point3D p1, Point3D p2, float pointSpacing) {
+  public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins) {
     this.p1 = new Point3D(p1);
     this.p2 = new Point3D(p2);
     deltaVector = Point3D.delta(p2, p1);
@@ -43,6 +43,7 @@ public class Edge {
     unitVector = Point3D.unitVectorTo(p2, p1);
     id = edgeCounter;
     edgeCounter++;
+    this.margins = margins;
 
     linearPoints = new LinearPoints(id, deltaLength, pointSpacing, this, this.p1, this.p2, margins);
 

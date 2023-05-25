@@ -20,6 +20,8 @@ public class SpiderTrapModel extends LXModel {
   public static final int MAX_RADIALS = 16;
   public static final int NUM_WEBS = 1;
 
+  public static final float SEGMENT_MARGINS = 0.2f;
+
   private static final Logger logger = Logger.getLogger(SpiderTrapModel.class.getName());
 
   static public float polarAngle(int i, int total) {
@@ -36,12 +38,14 @@ public class SpiderTrapModel extends LXModel {
 
   static public final float DISTANCE_FROM_CENTER = 4f;
   static public final float METERS_TO_FEET = 3.28084f;
+  static public int allSegmentsCount = 0;
 
   static public List<Edge> edges = new ArrayList<Edge>();
 
   static public class Web {
     public List<Radial> radials;
     public List<Segment> segments;
+    public List<List<Segment>> rings;
 
     public float webx;
     public float weby;
@@ -57,8 +61,11 @@ public class SpiderTrapModel extends LXModel {
 
       // Create the radial strands
       radials = createRadials(webx, weby, webz, numRadials);
+      rings = new ArrayList<List<Segment>>();
       // Create the spiral strand segments
-      segments = createSpiralSegments(webx, weby, webz);
+      if (ModelParams.getNumRings() == 0)
+        segments = createSpiralSegments(webx, weby, webz);
+      else segments = createRingSegments(webx, weby, webz, SEGMENT_MARGINS);
     }
 
     public List<Radial> createRadials(float mx, float my, float mz, int numRadials) {
@@ -81,10 +88,44 @@ public class SpiderTrapModel extends LXModel {
       return radials;
     }
 
+    public List<Segment> createRingSegments(float webx, float weby, float webz, float margins) {
+      float curRadialDist = ModelParams.getInnerRadius();
+      int startRadialId = 0;
+      int endRadialId;
+      segments = new ArrayList<Segment>();
+      int numRadials = ModelParams.getRadials();
+      int curRing = 0;
+      float radialIncrement = (ModelParams.getOuterRadius() - ModelParams.getInnerRadius()) / (ModelParams.getNumRings() - 1);
+      List<Segment> ringSegments = new ArrayList<Segment>();
+      while (curRing < ModelParams.getNumRings()) {
+        endRadialId = startRadialId + 1;
+        if (endRadialId >= numRadials)
+          endRadialId = 0;
+        Segment segment = new Segment(allSegmentsCount, startRadialId, endRadialId, curRadialDist, true, margins, webx, weby, webz);
+        segments.add(segment);
+        ringSegments.add(segment);
+        allSegments.add(segment);
+        allPoints.addAll(segment.points);
+        points.addAll(segment.points);
+        startRadialId++;
+
+        if (startRadialId >= numRadials) {
+          startRadialId = 0;
+          curRing++;
+          curRadialDist += radialIncrement;
+          rings.add(ringSegments);
+          allRings.add(ringSegments);
+          ringSegments = new ArrayList<Segment>();
+        }
+        allSegmentsCount++;
+      }
+      logger.info("Created " + segments.size() + " segments");
+      return segments;
+    }
+
     public List<Segment> createSpiralSegments(float webx, float weby, float webz) {
       // Iterate while current radial distance is less than outer radius.
       float curRadialDist = ModelParams.getInnerRadius();
-      int segmentId = 0;
       int startRadialId = 0;
       int endRadialId;
       segments = new ArrayList<Segment>();
@@ -95,7 +136,7 @@ public class SpiderTrapModel extends LXModel {
         endRadialId = startRadialId + 1;
         if (endRadialId >= numRadials)
           endRadialId = 0;
-        Segment segment = new Segment(segmentId, startRadialId, endRadialId, curRadialDist, webx, weby, webz);
+        Segment segment = new Segment(allSegmentsCount, startRadialId, endRadialId, curRadialDist, false, 0f, webx, weby, webz);
         segments.add(segment);
         allSegments.add(segment);
         allPoints.addAll(segment.points);
@@ -105,7 +146,7 @@ public class SpiderTrapModel extends LXModel {
         if (startRadialId >= numRadials)
           startRadialId = 0;
 
-        segmentId++;
+        allSegmentsCount++;
         curRadialDist += ModelParams.getRadialIncr();
       }
       logger.info("Created " + segments.size() + " segments");
@@ -152,7 +193,7 @@ public class SpiderTrapModel extends LXModel {
       Point3D edgeB = new Point3D(x + polarX(outerRadius, angle),
                                   y,
                                      z + polarZ(outerRadius, angle));
-      return new Edge(edgeA, edgeB, ModelParams.getLedsPerFoot());
+      return new Edge(edgeA, edgeB, ModelParams.getLedsPerFoot(), 0f);
     }
 
     List<LXPoint> getPointsWireOrder() {
@@ -163,12 +204,13 @@ public class SpiderTrapModel extends LXModel {
 
   static public class Segment {
 
-    public Segment (int id, int startRadialId, int endRadialId, float radialDist, float webx, float weby, float webz) {
+    public Segment (int id, int startRadialId, int endRadialId, float radialDist, boolean ring, float margins, float webx, float weby, float webz) {
       this.id = id;
       this.startRadialId = startRadialId;
       this.endRadialId = endRadialId;
       this.radialDist = radialDist;
-      this.endRadialDist = radialDist + ModelParams.getRadialIncr();
+      this.endRadialDist = radialDist + (ring?0f : ModelParams.getRadialIncr());
+      this.margins = margins;
 
       this.webx = webx;
       this.weby = weby;
@@ -189,6 +231,8 @@ public class SpiderTrapModel extends LXModel {
     public float weby;
     public float webz;
 
+    public float margins;
+
 
     public Edge edge;
 
@@ -205,7 +249,7 @@ public class SpiderTrapModel extends LXModel {
                                      y + endRadial.edge.unitVector.y * endRadialDist,
                                      z + endRadial.edge.unitVector.z * endRadialDist);
 
-      return new Edge(startPoint, endPoint, ModelParams.getLedsPerFoot());
+      return new Edge(startPoint, endPoint, ModelParams.getLedsPerFoot(), margins);
     }
 
     List<LXPoint> getPointsWireOrder() {
@@ -216,6 +260,8 @@ public class SpiderTrapModel extends LXModel {
   static public List<Web> allWebs = new ArrayList<Web>();
   static public List<Radial> allRadials = new ArrayList<Radial>();
   static public List<Segment> allSegments = new ArrayList<Segment>();
+  static public List<List<Segment>> allRings = new ArrayList<List<Segment>>();
+
   static public List<LXPoint> allPoints = new ArrayList<LXPoint>();
 
 

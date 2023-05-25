@@ -13,6 +13,8 @@ public class ModelParams extends UIConfig {
   public static final String OUTER_RADIUS = "outer_radius";
   public static final String LEDS_PER_FOOT = "leds_per_foot";  // LEDs per foot
 
+  public static final String NUM_RINGS = "num_rings";
+
 
   public static final String title = "Model Params";
   public static final String filename = "modelparams.json";
@@ -30,6 +32,7 @@ public class ModelParams extends UIConfig {
     registerStringParameter(INNER_RADIUS, "");
     registerStringParameter(OUTER_RADIUS, "");
     registerStringParameter(LEDS_PER_FOOT, "");
+    registerStringParameter(NUM_RINGS, "");
 
     save();
 
@@ -43,8 +46,9 @@ public class ModelParams extends UIConfig {
     modelParamFile.getStringParameter(RADIALS, "6");
     modelParamFile.getStringParameter(RADIAL_INCR, "0.03");
     modelParamFile.getStringParameter(INNER_RADIUS, "0.8");
-    modelParamFile.getStringParameter(OUTER_RADIUS, "1.8");
+    modelParamFile.getStringParameter(OUTER_RADIUS, "4.8");
     modelParamFile.getStringParameter(LEDS_PER_FOOT, "9.144");
+    modelParamFile.getStringParameter(NUM_RINGS, "10");
   }
 
   static public int getRadials() {
@@ -60,12 +64,14 @@ public class ModelParams extends UIConfig {
   }
 
   static public float getOuterRadius() {
-    return modelParamFile.getStringParameterF(OUTER_RADIUS, "1.8");
+    return modelParamFile.getStringParameterF(OUTER_RADIUS, "4.8");
   }
 
   static public float getLedsPerFoot() {
     return modelParamFile.getStringParameterF(LEDS_PER_FOOT, "9.144");
   }
+
+  static public int getNumRings() { return Integer.parseInt(modelParamFile.getStringParameter(NUM_RINGS, "10").getString()); }
 
   @Override
   public void onParameterChanged(LXParameter p) {
