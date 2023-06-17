@@ -4,6 +4,7 @@
 /public/.DS_Store
 *.log
 *.log.lk
+*.log.lck
 /.idea
 /build
 /natives

@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DirectionalLP {
   public DirectionalLP(int lpNum, boolean forward) {
     int edgeNum = lpNum;
-    Edge edge = SpiderTrapModel.edges.get(edgeNum);
+    Edge edge = SpiderTrapModel.allEdges.get(edgeNum);
     lp = edge.linearPoints;
     this.forward = forward;
     disableRender = false;

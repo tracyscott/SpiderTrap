@@ -20,6 +20,12 @@ public class LinearPoints {
   public boolean doubleSided = false;
   List<List<LPPoint>> pointSets = new ArrayList<List<LPPoint>>();
 
+  /**
+   * Obsolete constructor that was used for double-sided LinearPoints.  Probably not going to be used on this
+   * project.  Won't take out until sure about it though.  In that case, we have multiple linear points per Edge
+   * and we just use an offset hack to deal with the issue.
+   * @param side1
+   */
   public LinearPoints(LinearPoints side1) {
     this.side1 = side1;
     this.lpNum = (side1.lpNum + 1) * 100;
@@ -38,12 +44,13 @@ public class LinearPoints {
    * Construct a lightbqr from a list of points.  This will compute the end points based on first and last
    * LXPoint and also construct the necessary LBPoints.
    *
-   * @param lpNum
+   * @param lpNum Inherited from associated Edge when created by the Edge.
    * @param length
    * @param lxpoints
    * @param edge
    */
   public LinearPoints(int lpNum, float length, List<Point3D> lxpoints, Edge edge) {
+    // The LinearPoints object's ID is inherited from the associated Edge.
     this.lpNum = lpNum;
     this.length = length;
     this.edge = edge;
@@ -66,12 +73,13 @@ public class LinearPoints {
 
   /**
    * Create based on a given number of points.
-   * @param lpNum
+   * @param lpNum  Inherited from associated Edge when created by the Edge.
    * @param length
    * @param numPoints
    * @param edge
    * @param a
    * @param b
+   * @param marginDist Margin space on each end of the linear points.
    */
   public LinearPoints(int lpNum, float length, int numPoints, Edge edge, Point3D a, Point3D b,
                       float marginDist) {

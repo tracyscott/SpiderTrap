@@ -92,7 +92,7 @@ public class TravelN extends LXPattern {
       initialPos = initialPos + (rowNum * offsetEachBlob);
       if (rndOff.isOn())
         initialPos = initialPos - (float)Math.random();
-      int lbNum = (i % SpiderTrapModel.edges.size());
+      int lbNum = (i % SpiderTrapModel.allEdges.size());
       initialPos = 0;
       blobs[i].reset(lbNum, initialPos, randSpeed.getValuef(), true);
       logger.info("Adding to lightBar: " + lbNum + " initialPos: " + initialPos);

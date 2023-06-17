@@ -12,11 +12,13 @@ import heronarts.lx.pattern.LXPattern;
 public class RadialSel extends LXPattern {
 
   CompoundParameter radialNum = new CompoundParameter("radial", -1, -1, SpiderTrapModel.MAX_RADIALS - 0.75).setDescription("radial");
+  DiscreteParameter edgeSel = new DiscreteParameter("edge", -1, -1, 20);
   DiscreteParameter webNum = new DiscreteParameter("web", -1, -1, SpiderTrapModel.NUM_WEBS).setDescription("web");
 
   public RadialSel(LX lx) {
     super(lx);
     addParameter("radial", radialNum);
+    addParameter("edge", edgeSel);
     addParameter("web", webNum);
   }
 
@@ -30,13 +32,17 @@ public class RadialSel extends LXPattern {
       colors[p.index] = LXColor.BLACK;
 
     int numRadials = ModelParams.getRadials();
-    for (int mNum = 0; mNum < SpiderTrapModel.NUM_WEBS; mNum++) {
-      if (mNum == webNum.getValuei() || webNum.getValuei() == -1) {
-        for (int gNum = 0; gNum < numRadials; gNum++) {
-          SpiderTrapModel.Radial radial = SpiderTrapModel.allWebs.get(mNum).radials.get(gNum);
-          if (gNum == (int)Math.round(whichRadial) || (int)Math.round(whichRadial) == -1) {
-            for (LXPoint p : radial.points) {
-              colors[p.index] = LXColor.WHITE;
+    for (int webN = 0; webN < SpiderTrapModel.NUM_WEBS; webN++) {
+      if (webN == webNum.getValuei() || webNum.getValuei() == -1) {
+        for (int radN = 0; radN < numRadials; radN++) {
+          SpiderTrapModel.Radial radial = SpiderTrapModel.allWebs.get(webN).radials.get(radN);
+          int numRadEdges = radial.edges.size();
+          for (int edgeN = 0; edgeN < numRadEdges; edgeN++) {
+            if (radN == (int) Math.round(whichRadial) || (int) Math.round(whichRadial) == -1) {
+              if (edgeN == edgeSel.getValuei() || edgeSel.getValuei() == -1)
+                for (LXPoint p : radial.edges.get(edgeN).points) {
+                  colors[p.index] = LXColor.WHITE;
+                }
             }
           }
         }

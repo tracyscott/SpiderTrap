@@ -11,6 +11,11 @@ public class Edge {
 
   static public int edgeCounter = 0;
 
+  static public int virtualEdgeCounter = 10000;
+
+
+  // Edge id's are globally unique identifiers.  We use them in various places when dealing with the
+  // topology.
   public int id;
 
   public Point3D p1;
@@ -30,32 +35,43 @@ public class Edge {
 
   public LinearPoints linearPoints;
 
-  public Joint[] myStartPointJoints = new Joint[2];
-  public Joint[] myEndPointJoints = new Joint[2];
+  // Each edge can be connected up to 3 adjacent edges.  Edges on the outer or inner boundaries can have fewer
+  // connections.
+  public Joint[] myStartPointJoints = new Joint[3];
+  public Joint[] myEndPointJoints = new Joint[3];
 
   static public float margins = 0f;
 
   public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins) {
+    this(p1, p2, pointSpacing, margins, false);
+  }
+
+  public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins,  boolean virtual) {
     this.p1 = new Point3D(p1);
     this.p2 = new Point3D(p2);
     deltaVector = Point3D.delta(p2, p1);
     deltaLength = deltaVector.length();
     unitVector = Point3D.unitVectorTo(p2, p1);
-    id = edgeCounter;
-    edgeCounter++;
     this.margins = margins;
+    points = new ArrayList<LPPoint>();
 
-    linearPoints = new LinearPoints(id, deltaLength, pointSpacing, this, this.p1, this.p2, margins);
+    // Virtual edges are edges without actual points.
+    if (!virtual) {
+      this.id = edgeCounter;
+      edgeCounter++;
+      // The LinearPoints object's ID is inherited from the associated Edge.
+      linearPoints = new LinearPoints(this.id, deltaLength, pointSpacing, this, this.p1, this.p2, margins);
+      strip1 = linearPoints.points;
+      points.addAll(strip1);
+    } else {
+      // Virtual edges have a separate global ID space.
+      this.id = virtualEdgeCounter;
+      virtualEdgeCounter++;
+    }
 
     midp = new Point3D((p1.x + p2.x) / 2f, (p1.y + p2.y) / 2f, (p1.z + p2.z) / 2f);
-
-    strip1 = linearPoints.points;
-
     pb1 = new Point3D(p1.x , p1.y , p1.z);
     pb2 = new Point3D(p2.x , p2.y , p2.z);
-
-    points = new ArrayList<LPPoint>();
-    points.addAll(strip1);
   }
 
   public List<LXPoint> getPointsWireOrder() {
@@ -148,7 +164,7 @@ public class Edge {
     }
   }
 
-  static public final float adjacencyDistance = -1f;
+  static public final float adjacencyDistance = 12f/12f;
 
   public int isEdgeAdjacentStart(Edge otherEdge) {
     if (p1.distanceTo(otherEdge.p1) < adjacencyDistance)

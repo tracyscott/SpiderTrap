@@ -89,7 +89,7 @@ public class Blob {
     float resolvedWidth = defaultWidth;
     if (blobWidth >= 0f)
       resolvedWidth = blobWidth;
-    for (Edge edge : SpiderTrapModel.edges) {
+    for (Edge edge : SpiderTrapModel.allEdges) {
       // NOTE(tracy): This was used for iterating both lightbars in a double sided lightbar.
       for (int elbNum = 0; elbNum < 1; elbNum++) {
         LinearPoints lb = edge.linearPoints;
@@ -215,7 +215,7 @@ public class Blob {
     if (!enabled) return;
     float resolvedWidth = defaultWidth;
     if (blobWidth >= 0f) resolvedWidth = blobWidth;
-    for (Edge edge: SpiderTrapModel.edges) {
+    for (Edge edge: SpiderTrapModel.allEdges) {
       LinearPoints lb = edge.linearPoints;
       int dlbNum = 0;
       for (DirectionalLP currentDlb : pathLPs) {
