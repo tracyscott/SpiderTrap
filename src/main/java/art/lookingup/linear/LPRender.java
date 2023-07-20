@@ -2,6 +2,8 @@ package art.lookingup.linear;
 
 import art.lookingup.colors.ColorPalette;
 import art.lookingup.colors.Colors;
+import art.lookingup.spidertrap.SpiderTrapApp;
+import art.lookingup.util.EaseUtil;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
 
@@ -90,11 +92,11 @@ public class LPRender {
 
   static public float[] renderTriangle(int colors[], LinearPoints linearPoints, float t, float slope, float maxValue, LXColor.Blend blend,
                                        int color) {
-    return renderTriangle(colors, linearPoints, t, slope, maxValue, blend, color, null, -1);
+    return renderTriangle(colors, linearPoints, t, slope, maxValue, blend, color, -1, null, -1);
   }
 
   static public float[] renderTriangle(int colors[], LinearPoints linearPoints, float t, float slope, float maxValue, LXColor.Blend blend,
-                                       int color, ColorPalette pal, float palTVal) {
+                                       int color, int pal, EaseUtil easeUtil, float palTVal) {
     float[] minMax = new float[2];
 
     // NOTE(tracy): Does the slope matter here?  the slope will be the width, so I think it does.
@@ -110,11 +112,11 @@ public class LPRender {
         float val = (float) triangleWave(t, slope, pt.lpx / linearPoints.length) * maxValue;
         //colors[pt.index] = LXColor.blend(colors[pt.index], LXColor.rgba(gray, gray, gray, 255), blend);
         int theColor = color;
-        if (pal != null) {
+        if (pal != -1) {
           if (palTVal == -1f)
-            theColor = pal.getColor(val);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, val, easeUtil);
           else
-            theColor = pal.getColor(palTVal);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, palTVal, easeUtil);
         }
         colors[pt.index] = LXColor.blend(colors[pt.index], LXColor.rgba(
                 (int) (Colors.red(theColor) * val), (int) (Colors.green(theColor) * val), (int) (Colors.blue(theColor) * val), 255),
@@ -132,7 +134,7 @@ public class LPRender {
 
   static public float[] renderSquare(int colors[], LinearPoints linearPoints, float t, float width, float maxValue, LXColor.Blend blend,
                                      int color) {
-    return renderSquare(colors, linearPoints, t, width, maxValue, blend, color, null, -1f);
+    return renderSquare(colors, linearPoints, t, width, maxValue, blend, color, -1, null, -1f);
   }
 
   /**
@@ -175,7 +177,7 @@ public class LPRender {
   }
 
   static public float[] renderSquare(int colors[], LinearPoints linearPoints, float t, float width, float maxValue, LXColor.Blend blend,
-                                     int color, ColorPalette pal, float palTVal) {
+                                     int color, int pal, EaseUtil easeUtil, float palTVal) {
     double barPos = t * linearPoints.ledLength;
     float[] minMax = new float[2];
     // Denormalize minMax to be in physical coordinates.
@@ -190,11 +192,11 @@ public class LPRender {
         //int gray = (int) ((((pt.lbx > minMax[0]*linearPoints.length) && (pt.lbx < minMax[1]*linearPoints.length))?maxValue:0f)*255.0f);
         float val = (((ptXPos > minMax[0]) && (ptXPos < minMax[1])) ? maxValue : 0f);
         int theColor = color;
-        if (pal != null) {
+        if (pal != -1) {
           if (palTVal == -1f)
-            theColor = pal.getColor(val);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, val, easeUtil);
           else
-            theColor = pal.getColor(palTVal);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, palTVal, easeUtil);
         }
         int newColor = LXColor.blend(colors[pt.index], LXColor.rgba(
                 (int) (Colors.red(theColor) * val), (int) (Colors.green(theColor) * val), (int) (Colors.blue(theColor) * val), 255),
@@ -227,12 +229,12 @@ public class LPRender {
 
   static public float[] renderStepDecay(int colors[], LinearPoints linearPoints, float t, float width, float slope,
                                         float maxValue, boolean forward, LXColor.Blend blend, int color) {
-    return renderStepDecay(colors, linearPoints, t, width, slope, maxValue, forward, blend, color, null, -1f);
+    return renderStepDecay(colors, linearPoints, t, width, slope, maxValue, forward, blend, color, -1, null, -1f);
   }
 
   static public float[] renderStepDecay(int colors[], LinearPoints linearPoints, float t, float width, float slope,
                                         float maxValue, boolean forward, LXColor.Blend blend, int color,
-                                        ColorPalette pal, float palTVal) {
+                                        int pal, EaseUtil easeUtil, float palTVal) {
 
     slope = slope * linearPoints.length;
     width = width/linearPoints.length;
@@ -247,11 +249,11 @@ public class LPRender {
         float val = stepDecayWave(t, width, slope, pt.lpx / linearPoints.length, forward)*maxValue;
         //colors[pt.index] = LXColor.blend(colors[pt.index], LXColor.rgba(gray, gray, gray, 255), blend);
         int theColor = color;
-        if (pal != null) {
+        if (pal != -1) {
           if (palTVal == -1f)
-            theColor = pal.getColor(val);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, val, easeUtil);
           else
-            theColor = pal.getColor(palTVal);
+            theColor = Colors.getParameterizedPaletteColor(SpiderTrapApp.lx, pal, palTVal, easeUtil);
         }
         colors[pt.index] = LXColor.blend(colors[pt.index], LXColor.rgba(
                 (int)(Colors.red(theColor) * val), (int)(Colors.green(theColor) * val), (int)(Colors.blue(theColor) * val), 255),

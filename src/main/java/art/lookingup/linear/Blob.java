@@ -2,6 +2,7 @@ package art.lookingup.linear;
 
 import art.lookingup.colors.ColorPalette;
 import art.lookingup.spidertrap.SpiderTrapModel;
+import art.lookingup.util.EaseUtil;
 import heronarts.lx.color.LXColor;
 
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class Blob {
   public boolean enabled = true;
   public float intensity = 1.0f;
   public float blobWidth = -1.0f;
-  public ColorPalette pal = null;
+  public int pal = -1;
+  public EaseUtil easeUtil;
   public float palTVal = -1f;
 
   // When rendering position parametrically from 0 to 1, we need a pre-computed set of LinearPoints
@@ -260,11 +262,11 @@ public class Blob {
   public float[] renderWaveform(int[] colors, DirectionalLP targetDlb, float position, float width, float slope,
                                 float maxValue, int waveform, LXColor.Blend blend) {
     if (waveform == WAVEFORM_TRIANGLE)
-      return LPRender.renderTriangle(colors, targetDlb.lp, position, slope, maxValue, blend, color, pal, palTVal);
+      return LPRender.renderTriangle(colors, targetDlb.lp, position, slope, maxValue, blend, color, pal, easeUtil, palTVal);
     else if (waveform == WAVEFORM_SQUARE)
-      return LPRender.renderSquare(colors, targetDlb.lp, position, width, maxValue, blend, color, pal, palTVal);
+      return LPRender.renderSquare(colors, targetDlb.lp, position, width, maxValue, blend, color, pal, easeUtil, palTVal);
     else
       return LPRender.renderStepDecay(colors, targetDlb.lp, position, width, slope,
-          maxValue, targetDlb.forward, LXColor.Blend.ADD, color, pal, palTVal);
+          maxValue, targetDlb.forward, LXColor.Blend.ADD, color, pal, easeUtil, palTVal);
   }
 }

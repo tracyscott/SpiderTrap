@@ -1,7 +1,9 @@
 package art.lookingup.spidertrap.patterns;
 
+import art.lookingup.colors.Colors;
 import art.lookingup.linear.Blob;
 import art.lookingup.spidertrap.SpiderTrapModel;
+import art.lookingup.util.EaseUtil;
 import heronarts.lx.LX;
 import heronarts.lx.color.ColorParameter;
 import heronarts.lx.color.LXColor;
@@ -36,20 +38,13 @@ public class TravelN extends FPSPattern {
   public CompoundParameter widthKnob = new CompoundParameter("width", 0.1f, 0.0f, 10.0f).setDescription("Square wave width");
   public CompoundParameter cosineFreq = new CompoundParameter("cfreq", 1.0, 1.0, 400.0);
 
-  /*
-  DiscreteParameter gradpal = new DiscreteParameter("gradpal", paletteLibrary.getNames());
-  // selected colour palette
-  CompoundParameter palStart = new CompoundParameter("palStart", 0, 0, 1);  // palette start point (fraction 0 - 1)
-  CompoundParameter palStop = new CompoundParameter("palStop", 1, 0, 1);  // palette stop point (fraction 0 - 1)
-  CompoundParameter palBias = new CompoundParameter("palBias", 0, -6, 6);  // bias colour palette toward zero (dB)
-  CompoundParameter palShift = new CompoundParameter("palShift", 0, -1, 1);  // shift in colour palette (fraction 0 - 1)
-  CompoundParameter palCutoff = new CompoundParameter("palCutoff", 0, 0, 1);  // palette value cutoff (fraction 0 - 1)
-  */
+  DiscreteParameter ease = new DiscreteParameter("ease", 0, EaseUtil.MAX_EASE+1);
+  DiscreteParameter pal = new DiscreteParameter("pal", 0, 21);
+
   ColorParameter color = new ColorParameter("clr");
 
-  //ZigzagPalette pal = new ZigzagPalette();
-
   public Blob[] blobs = new Blob[MAX_BLOBS];
+  EaseUtil easeUtil = new EaseUtil(0);
 
   public TravelN(LX lx) {
     super(lx);
@@ -57,26 +52,21 @@ public class TravelN extends FPSPattern {
     addParameter("rndOff", rndOff);
     addParameter("usePal", usePal);
     addParameter("perBlC", perBlobColor);
-    addParameter(slope);
-    addParameter(maxValue);
-    addParameter(speed);
-    addParameter(numBlobs);
-    addParameter(randSpeed);
-    addParameter(nextBarKnob);
-    addParameter(fxKnob);
-    addParameter(fxDepth);
-    addParameter(waveKnob);
-    addParameter(widthKnob);
-    addParameter(cosineFreq);
+    addParameter("slope", slope);
+    addParameter("maxv", maxValue);
+    addParameter("speed", speed);
+    addParameter("blobs", numBlobs);
+    addParameter("randspd", randSpeed);
+    addParameter("nxtBar", nextBarKnob);
+    addParameter("fx", fxKnob);
+    addParameter("fxDepth", fxDepth);
 
-    /*
-    addParameter(gradpal);
-    addParameter(palStart);
-    addParameter(palStop);
-    addParameter(palBias);
-    addParameter(palShift);
-    addParameter(palCutoff);
-     */
+    addParameter("wave", waveKnob);
+    addParameter("width", widthKnob);
+    addParameter("cfreq", cosineFreq);
+    addParameter("pal", pal);
+    addParameter("ease", ease);
+
     addParameter("clr", color);
 
     resetBlobs();
@@ -98,15 +88,32 @@ public class TravelN extends FPSPattern {
       blobs[i].reset(lbNum, initialPos, randSpeed.getValuef(), true);
       //logger.info("Adding to lightBar: " + lbNum + " initialPos: " + initialPos);
       blobs[i].color = color.getColor();
-      /*
+
       if (usePal.isOn()) {
-        if (perBlobColor.isOn())
-          blobs[i].color = pal.getColor(Math.random());
-        else
-          blobs[i].pal = pal;
+        if (perBlobColor.isOn()) {
+          blobs[i].color = Colors.getParameterizedPaletteColor(lx, pal.getValuei(), (float) Math.random(), easeUtil);
+          blobs[i].pal = -1;
+        }
+        else {
+          blobs[i].pal = pal.getValuei();
+          blobs[i].easeUtil = easeUtil;
+        }
+      } else {
+        blobs[i].pal = -1;
       }
-       */
     }
+  }
+
+  /**
+   * Used to bind a palette index to a blob.  When we do that, we will effectively paint the blob gradient with the
+   * palette.  Only applies when blob.pal != -1.
+   * @return
+   */
+  int getPaletteIndex() {
+    if (usePal.isOn() && !perBlobColor.isOn())
+      return pal.getValuei();
+    else
+      return -1;
   }
 
   /**
@@ -120,14 +127,7 @@ public class TravelN extends FPSPattern {
 
   @Override
   public void renderFrame(double deltaMs) {
-    /*
-    pal.setPalette(paletteLibrary.get(gradpal.getOption()));
-    pal.setBottom(palStart.getValue());
-    pal.setTop(palStop.getValue());
-    pal.setBias(palBias.getValue());
-    pal.setShift(palShift.getValue());
-    pal.setCutoff(palCutoff.getValue());
-     */
+
 
     for (LXPoint pt : lx.getModel().points) {
       colors[pt.index] = LXColor.rgba(0,0,0, 255);
@@ -136,6 +136,8 @@ public class TravelN extends FPSPattern {
     float fadeLevel = maxValue.getValuef();
 
     for (int i = 0; i < numBlobs.getValuei(); i++) {
+      blobs[i].easeUtil.easeNum = ease.getValuei();
+      blobs[i].pal = getPaletteIndex();
       blobs[i].renderBlob(colors, speed.getValuef(), widthKnob.getValuef(), slope.getValuef(), fadeLevel,
           waveKnob.getValuei(), nextBarKnob.getValuei(), false, fxKnob.getValuei(), fxDepth.getValuef(),
           cosineFreq.getValuef());
