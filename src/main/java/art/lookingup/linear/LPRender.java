@@ -96,8 +96,14 @@ public class LPRender {
   static public float[] renderTriangle(int colors[], LinearPoints linearPoints, float t, float slope, float maxValue, LXColor.Blend blend,
                                        int color, ColorPalette pal, float palTVal) {
     float[] minMax = new float[2];
+
+    // NOTE(tracy): Does the slope matter here?  the slope will be the width, so I think it does.
+    slope = slope * linearPoints.length;
     minMax[0] = (float) zeroCrossingTriangleWave(t, slope);
     minMax[1] = (float) zeroCrossingTriangleWave(t, -slope);
+    minMax[0] = minMax[0] * linearPoints.length;
+    minMax[1] = minMax[1] * linearPoints.length;
+
     List<List<LPPoint>> pointSets = linearPoints.getPointSets();
     for (List<LPPoint> nextPointSet : pointSets) {
       for (LPPoint pt : nextPointSet) {
@@ -115,6 +121,8 @@ public class LPRender {
             blend);
       }
     }
+    minMax[0] = minMax[0] / linearPoints.length;
+    minMax[1] = minMax[1] / linearPoints.length;
     return minMax;
   }
 
@@ -127,9 +135,21 @@ public class LPRender {
     return renderSquare(colors, linearPoints, t, width, maxValue, blend, color, null, -1f);
   }
 
-  static public float[] renderSquare(int colors[], LinearPoints linearPoints, float t, float width, float maxValue, LXColor.Blend blend,
+  /**
+   * Render with 0 to 1 normalized coordinates.  This is mostly useful when all LinearPoints are the same length.
+   * @param colors
+   * @param linearPoints
+   * @param t
+   * @param width
+   * @param maxValue
+   * @param blend
+   * @param color
+   * @param pal
+   * @param palTVal
+   * @return
+   */
+  static public float[] renderSquareT(int colors[], LinearPoints linearPoints, float t, float width, float maxValue, LXColor.Blend blend,
                                      int color, ColorPalette pal, float palTVal) {
-    double barPos = t * linearPoints.length;
     float[] minMax = new float[2];
     minMax[0] = t - width/2.0f;
     minMax[1] = t + width/2.0f;
@@ -137,7 +157,7 @@ public class LPRender {
     for (List<LPPoint> nextPointSet : pointSets) {
       for (LPPoint pt : nextPointSet) {
         //int gray = (int) ((((pt.lbx > minMax[0]*linearPoints.length) && (pt.lbx < minMax[1]*linearPoints.length))?maxValue:0f)*255.0f);
-        float val = (((pt.lpx > minMax[0] * linearPoints.length) && (pt.lpx < minMax[1] * linearPoints.length)) ? maxValue : 0f);
+        float val = (((pt.lpx > minMax[0] * linearPoints.ledLength) && (pt.lpx < minMax[1] * linearPoints.ledLength)) ? maxValue : 0f);
         int theColor = color;
         if (pal != null) {
           if (palTVal == -1f)
@@ -151,6 +171,42 @@ public class LPRender {
         colors[pt.index] = newColor;
       }
     }
+    return minMax;
+  }
+
+  static public float[] renderSquare(int colors[], LinearPoints linearPoints, float t, float width, float maxValue, LXColor.Blend blend,
+                                     int color, ColorPalette pal, float palTVal) {
+    double barPos = t * linearPoints.ledLength;
+    float[] minMax = new float[2];
+    // Denormalize minMax to be in physical coordinates.
+    minMax[0] = (t * linearPoints.length) - width/2.0f;
+    minMax[1] = (t * linearPoints.length) + width/2.0f;
+
+    List<List<LPPoint>> pointSets = linearPoints.getPointSets();
+    for (List<LPPoint> nextPointSet : pointSets) {
+      for (LPPoint pt : nextPointSet) {
+        float ptXPos = pt.lpx * linearPoints.ledLength;
+        ptXPos = pt.lpxM;
+        //int gray = (int) ((((pt.lbx > minMax[0]*linearPoints.length) && (pt.lbx < minMax[1]*linearPoints.length))?maxValue:0f)*255.0f);
+        float val = (((ptXPos > minMax[0]) && (ptXPos < minMax[1])) ? maxValue : 0f);
+        int theColor = color;
+        if (pal != null) {
+          if (palTVal == -1f)
+            theColor = pal.getColor(val);
+          else
+            theColor = pal.getColor(palTVal);
+        }
+        int newColor = LXColor.blend(colors[pt.index], LXColor.rgba(
+                (int) (Colors.red(theColor) * val), (int) (Colors.green(theColor) * val), (int) (Colors.blue(theColor) * val), 255),
+            blend);
+        colors[pt.index] = newColor;
+      }
+    }
+    // return minMax values as normalized between 0 and 1.
+    minMax[0] = minMax[0] / linearPoints.ledLength;
+    minMax[0] = minMax[0] / linearPoints.length;
+    minMax[1] = minMax[1] / linearPoints.ledLength;
+    minMax[1] = minMax[1] / linearPoints.length;
     return minMax;
   }
 
@@ -177,7 +233,13 @@ public class LPRender {
   static public float[] renderStepDecay(int colors[], LinearPoints linearPoints, float t, float width, float slope,
                                         float maxValue, boolean forward, LXColor.Blend blend, int color,
                                         ColorPalette pal, float palTVal) {
+
+    slope = slope * linearPoints.length;
+    width = width/linearPoints.length;
     float[] minMax = stepDecayZeroCrossing(t, width, slope, forward);
+    minMax[0] = minMax[0] * linearPoints.length;
+    minMax[1] = minMax[1] * linearPoints.length;
+
     List<List<LPPoint>> pointSets = linearPoints.getPointSets();
     for (List<LPPoint> nextPointSet : pointSets) {
       for (LPPoint pt : nextPointSet) {
@@ -196,6 +258,8 @@ public class LPRender {
             blend);
       }
     }
+    minMax[0] = minMax[0] / linearPoints.length;
+    minMax[1] = minMax[1] / linearPoints.length;
 
     return minMax;
   }
@@ -231,15 +295,6 @@ public class LPRender {
       minMax[1] = tail;
       minMax[0] = head;
     }
-    /*
-    if (forward) {
-      minMax[0] = min;
-      minMax[1] = max;
-    } else {
-      minMax[0] = max;
-      minMax[1] = min;
-    }
-    */
     return minMax;
   }
 

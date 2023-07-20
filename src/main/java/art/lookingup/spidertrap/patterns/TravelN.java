@@ -13,7 +13,7 @@ import heronarts.lx.pattern.LXPattern;
 
 import java.util.logging.Logger;
 
-public class TravelN extends LXPattern {
+public class TravelN extends FPSPattern {
 
   private static final Logger logger = Logger.getLogger(TravelN.class.getName());
 
@@ -24,12 +24,12 @@ public class TravelN extends LXPattern {
   public BooleanParameter usePal = new BooleanParameter("usePal", true);
   public BooleanParameter perBlobColor = new BooleanParameter("perBlC", false).setDescription("Use 1 pal color per blob");
 
-  public CompoundParameter slope = new CompoundParameter("slope", 1.0, 0.001, 200.0);
+  public CompoundParameter slope = new CompoundParameter("slope", 1.0, 0.001, 3.0);
   public CompoundParameter maxValue = new CompoundParameter("maxv", 1.0, 0.0, 1.0);
   public CompoundParameter speed = new CompoundParameter("speed", 1.0, 0.0, 60.0);
   public CompoundParameter randSpeed = new CompoundParameter("randspd", 1.0, 0.0, 5.0);
   public DiscreteParameter numBlobs = new DiscreteParameter("blobs", 10, 1, MAX_BLOBS + 1);
-  public DiscreteParameter nextBarKnob = new DiscreteParameter("nxtBar", 0, -1, 2);
+  public DiscreteParameter nextBarKnob = new DiscreteParameter("nxtBar", 0, -1, 3);
   public DiscreteParameter fxKnob = new DiscreteParameter("fx", 0, 0, 3).setDescription("0=none 1=sparkle 2=cosine");
   public CompoundParameter fxDepth = new CompoundParameter("fxDepth", 1.0f, 0.1f, 1.0f);
   public DiscreteParameter waveKnob = new DiscreteParameter("wave", 0, 0, 3).setDescription("Waveform type");
@@ -53,6 +53,7 @@ public class TravelN extends LXPattern {
 
   public TravelN(LX lx) {
     super(lx);
+    addParameter("fps", fpsKnob);
     addParameter("rndOff", rndOff);
     addParameter("usePal", usePal);
     addParameter("perBlC", perBlobColor);
@@ -95,7 +96,7 @@ public class TravelN extends LXPattern {
       int lbNum = (i % SpiderTrapModel.allEdges.size());
       initialPos = 0;
       blobs[i].reset(lbNum, initialPos, randSpeed.getValuef(), true);
-      logger.info("Adding to lightBar: " + lbNum + " initialPos: " + initialPos);
+      //logger.info("Adding to lightBar: " + lbNum + " initialPos: " + initialPos);
       blobs[i].color = color.getColor();
       /*
       if (usePal.isOn()) {
@@ -118,7 +119,7 @@ public class TravelN extends LXPattern {
   }
 
   @Override
-  public void run(double deltaMs) {
+  public void renderFrame(double deltaMs) {
     /*
     pal.setPalette(paletteLibrary.get(gradpal.getOption()));
     pal.setBottom(palStart.getValue());

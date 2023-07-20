@@ -10,6 +10,7 @@ public class LinearPoints {
   private static final Logger logger = Logger.getLogger(LinearPoints.class.getName());
 
   public float length;
+  public float ledLength; // not including margins.
   public int numPoints;
   public int lpNum;
   public float spacing;
@@ -41,8 +42,8 @@ public class LinearPoints {
   }
 
   /**
-   * Construct a lightbqr from a list of points.  This will compute the end points based on first and last
-   * LXPoint and also construct the necessary LBPoints.
+   * Construct a LinearPoints from a list of points.  This will compute the end points based on first and last
+   * LXPoint and also construct the necessary LPPoints.  This does not support specifying a margin.
    *
    * @param lpNum Inherited from associated Edge when created by the Edge.
    * @param length
@@ -58,10 +59,10 @@ public class LinearPoints {
 
     this.points = new ArrayList<LPPoint>();
     for (int i = 0; i < lxpoints.size(); i++) {
-
+      float lpt = (float)i/(float)(numPoints - 1);
       LPPoint p = new LPPoint(this,lxpoints.get(i).x,
           lxpoints.get(i).y,
-          lxpoints.get(i).z, (float)i/(float)(numPoints-1));
+          lxpoints.get(i).z, lpt * length, lpt * length, lpt, lpt);
       points.add(p);
     }
   }
@@ -85,6 +86,7 @@ public class LinearPoints {
                       float marginDist) {
     this.lpNum = lpNum;
     this.length = length;
+    this.ledLength = length - 2f * marginDist;
     this.edge = edge;
     this.numPoints = numPoints;
 
@@ -103,10 +105,11 @@ public class LinearPoints {
     float dz = ((b.z - a.z) - 2f * mz) / stretches;
     points = new ArrayList<LPPoint>();
     for (int i = 0; i < numPoints; i++) {
-
+      float lpt = (float)i/(float)(numPoints - 1);
+      float lptM = (lpt * ledLength + marginDist) / length;
       LPPoint p = new LPPoint(this,a.x + dx * i + mx,
           a.y + dy * i + my,
-          a.z + dz * i + mz, (float)i/(float)(numPoints-1));
+          a.z + dz * i + mz, lpt*length, lptM * length, lpt, lptM);
       points.add(p);
     }
 

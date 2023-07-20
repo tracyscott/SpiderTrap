@@ -36,7 +36,11 @@ import heronarts.lx.effect.LXEffect;
 import heronarts.lx.model.LXModel;
 import heronarts.lx.pattern.LXPattern;
 import heronarts.lx.studio.LXStudio;
+import heronarts.p4lx.ui.UI3dContext;
+import heronarts.p4lx.ui.UIEventHandler;
+import heronarts.p4lx.ui.component.UIGLPointCloud;
 import processing.core.PApplet;
+import processing.event.KeyEvent;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
@@ -78,6 +82,11 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
   public static SpeedOverride speedOverride;
 
   public static LX lx;
+
+  public static LXStudio lxstudio;
+
+  public static boolean fullscreenMode = false;
+  public static UI3dContext fullscreenContext;
 
   static {
     System.setProperty(
@@ -185,7 +194,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     model = SpiderTrapModel.createModel();
 
     logger.info("Starting LXStudio UI");
-    new LXStudio(this, flags, model);
+    lxstudio = new LXStudio(this, flags, model);
     this.surface.setTitle(WINDOW_TITLE);
   }
 
@@ -240,6 +249,39 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
     // Start up the NTreeOSC OSC listener for accepting mapping updates from a tablet.
     spiderTrapOSC = new SpiderTrapOSC(lx);
+
+    // Set up some stuff for fullscreen mode.
+    // Support Fullscreen Mode.  We create a second UIGLPointCloud and
+    // add it to a LXStudio.UI layer.  When entering fullscreen mode,
+    // toggleFullscreen() will set the
+    // standard UI components visibility to false and the larger
+    // fullscreenContext visibility to true.
+    UIGLPointCloud fullScreenPointCloud = new UIGLPointCloud(lx);
+    fullscreenContext = new UI3dContext(lx.ui, 0, 0, WIDTH, HEIGHT);
+    fullscreenContext.addComponent(fullScreenPointCloud);
+    lx.ui.addLayer(fullscreenContext);
+    fullscreenContext.setVisible(false);
+    fullscreenContext.setBackgroundColor(0);
+
+    lx.ui.setTopLevelKeyEventHandler(new TopLevelKeyEventHandler());
+  }
+
+
+  public class TopLevelKeyEventHandler extends UIEventHandler {
+    int originalStripWidth = 72;
+    int collapsedStripWidth = 20;
+
+    TopLevelKeyEventHandler() {
+      super();
+    }
+
+    @Override
+    protected void onKeyPressed(KeyEvent keyEvent, char keyChar, int keyCode) {
+      super.onKeyPressed(keyEvent, keyChar, keyCode);
+      if (keyChar == 'f') {
+        toggleFullscreen();
+      }
+    }
   }
 
   @Override
@@ -348,5 +390,40 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
       logger.log(Level.WARNING, "Error finding pattern and effect classes", ex);
     }
 
+  }
+
+ static private void toggleFullscreen() {
+    if (!fullscreenMode) {
+      lxstudio.ui.preview.setBackgroundColor(0);
+      /*
+      lxstudio.ui.leftPane.setVisible(false);
+      lxstudio.ui.leftPane.setSize(1,1);
+      lxstudio.ui.rightPane.setVisible(false);
+      lxstudio.ui.rightPane.setSize(1,1);
+      lxstudio.ui.helpBar.setVisible(false);
+      lxstudio.ui.helpBar.setSize(1, 1);
+      lxstudio.ui.bottomTray.setVisible(false);
+      lxstudio.ui.bottomTray.setSize(1, 1);
+      lxstudio.ui.preview.setVisible(false);
+      lxstudio.ui.preview.setSize(1, 1);
+      lxstudio.ui.preview.setBackgroundColor(0);
+
+      fullscreenContext.setVisible(true);
+      fullscreenMode = true;
+
+       */
+    } else {
+      /*
+      fullscreenContext.setVisible(false);
+
+      lxstudio.ui.leftPane.setVisible(true);
+      lxstudio.ui.rightPane.setVisible(true);
+      lxstudio.ui.helpBar.setVisible(true);
+      lxstudio.ui.bottomTray.setVisible(true);
+      lxstudio.ui.preview.setVisible(true);
+      fullscreenMode = false;
+
+       */
+    }
   }
 }

@@ -45,7 +45,7 @@ public class DirectionalLP {
     if (jointNum == -1)
       jointNum = ThreadLocalRandom.current().nextInt(joints.length);
     Edge nextEdge;
-    if (jointSelector < 2 && joints[jointNum] != null) nextEdge = joints[jointNum].edge;
+    if (jointSelector < 3 && joints[jointNum] != null) nextEdge = joints[jointNum].edge;
     else nextEdge = thisEdge;
     DirectionalLP dlb;
     if (joints[jointNum] != null)

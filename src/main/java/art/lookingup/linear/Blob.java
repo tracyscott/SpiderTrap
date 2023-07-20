@@ -6,13 +6,15 @@ import heronarts.lx.color.LXColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Blob {
+  private static final Logger logger = Logger.getLogger(Blob.class.getName());
   public static final int WAVEFORM_TRIANGLE = 0;
   public static final int WAVEFORM_SQUARE = 1;
   public static final int WAVEFORM_STEPDECAY = 2;
 
-  public DirectionalLP dlb;
+  public DirectionalLP dlp;
   public float pos = 0f;
   public float speed = 1f;
   public List<DirectionalLP> prevLPs = new ArrayList<DirectionalLP>();
@@ -25,28 +27,30 @@ public class Blob {
   public float palTVal = -1f;
 
   // When rendering position parametrically from 0 to 1, we need a pre-computed set of LinearPoints
-  // that we intend to render on.  See TopBottomT for an example of setting this up.
+  // that we intend to render on.
   public List<DirectionalLP> pathLPs;
 
   public void updateCurrentLP(int barSelector) {
     // First, lets transfer the current LinearPoints into our
-    // previous LinearPoints list.  The list will be trimmed in our draw loop.
-    prevLPs.add(0, dlb);
+    // previous LinearPoints list.  The list of older linearpoints will be trimmed in our draw loop.
+    prevLPs.add(0, dlp);
     // Next the current LinearPoints should come from the beginning of the nextLPs
-    // The nextLPs list will be filled out in the draw loop if necessary.
-    //System.out.println("current lp: " + dlp.lp.lpNum + " " + ((dlp.forward)?"forward":"reverse"));
+    // The nextLPs list will be filled out in the draw loop if necessary.  For example, if the slope of a
+    // triangle wave is shallow enough the current position might be on one LinearPoints segment but the
+    // leading edge of the triangle might be on the 'next' LinearPoints, so we need to look ahead and compute
+    // them as we need them.
+
+    //logger.info("current lp: " + dlb.lp.lpNum + " " + ((dlb.forward)?"forward":"reverse"));
     if (nextLPs.size() > 0) {
-      //System.out.println("from nextBars");
-      dlb = nextLPs.remove(0);
+      dlp = nextLPs.remove(0);
     } else {
-      //System.out.println("from dlb.chooseNextBar");
-      dlb = dlb.chooseNextBar(barSelector);
+      dlp = dlp.chooseNextBar(barSelector);
     }
 
-    // System.out.println("new bar: " + dlb.lb.barNum + " " + ((dlb.forward)?"forward":"reverse"));
+    //logger.info("new lp: " + dlb.lp.lpNum + " " + ((dlb.forward)?"forward":"reverse"));
 
-    // Set or position based on the directionality of the current lightbar.
-    if (dlb.forward) {
+    // Set our position based on the directionality of the current LinearPoints
+    if (dlp.forward) {
       pos = 0.0f;
     } else {
       pos = 1.0f;
@@ -55,7 +59,7 @@ public class Blob {
 
   public void reset(int lightBarNum, float initialPos, float randomSpeed, boolean forward) {
     pos = initialPos;
-    dlb = new DirectionalLP(lightBarNum, forward);
+    dlp = new DirectionalLP(lightBarNum, forward);
     speed = randomSpeed * (float)Math.random();
     nextLPs = new ArrayList<DirectionalLP>();
     prevLPs = new ArrayList<DirectionalLP>();
@@ -69,10 +73,12 @@ public class Blob {
   }
 
   /**
-   * Renders a 'blob'.  Could we a number of different 'waveforms' centered at the current
+   * Renders a 'blob'.  Could be a number of different 'waveforms' centered at the current
    * position.  Position will be incremented by baseSpeed + the blobs random speed component.
-   * This method will handle making sure there are enough DirectionalLightBars so that the
-   * waveform can be rendered across multiple lightbars.
+   * This method will handle making sure there are enough DirectionalLinearPoints so that the
+   * waveform can be rendered across multiple LinearPoints.  Accounting for both trailing LinearPoints and
+   * leading LinearPoints (for example with a triangle wave that can fall-off forward).
+   *
    * @param colors
    * @param baseSpeed
    * @param defaultWidth
@@ -85,112 +91,117 @@ public class Blob {
                          float maxValue, int waveform, int whichJoint, boolean initialTail, LXColor.Blend blend,
                          int whichEffect, float fxDepth, float cosineFreq) {
     if (!enabled) return;
-    boolean needsCurrentBarUpdate = false;
+    boolean needsCurrentLPUpdate = false;
     float resolvedWidth = defaultWidth;
     if (blobWidth >= 0f)
       resolvedWidth = blobWidth;
     for (Edge edge : SpiderTrapModel.allEdges) {
-      // NOTE(tracy): This was used for iterating both lightbars in a double sided lightbar.
+      // NOTE(tracy): This was used for iterating both LinearPoints in a double-sided LinearPoints.
       for (int elbNum = 0; elbNum < 1; elbNum++) {
-        LinearPoints lb = edge.linearPoints;
-        if (dlb.lp.lpNum == lb.lpNum) {
-          // -- Render on our target light bar --
-          float minMax[] = renderWaveform(colors, dlb, pos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
+        LinearPoints lp = edge.linearPoints;
+        if (dlp.lp.lpNum == lp.lpNum) {
+          // -- Render on our target linearpoints --
+          float minMax[] = renderWaveform(colors, dlp, pos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
 
           if (whichEffect == 1) {
-            LPRender.randomGrayBaseDepth(colors, dlb.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
+            LPRender.randomGrayBaseDepth(colors, dlp.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
                 (int) (255 * fxDepth));
           } else if (whichEffect == 2) {
-            LPRender.cosine(colors, dlb.lp, pos, cosineFreq, 0f, 1f - fxDepth, fxDepth, LXColor.Blend.MULTIPLY);
+            LPRender.cosine(colors, dlp.lp, pos, cosineFreq, 0f, 1f - fxDepth, fxDepth, LXColor.Blend.MULTIPLY);
           }
-          // -- Fix up the set of lightbars that we are rendering over.
-          int numPrevBars = -1 * (int) Math.floor(minMax[0]);
-          int numNextBars = (int) Math.ceil(minMax[1] - 1.0f);
-          if (!dlb.forward) {
-            int oldNumNextBars = numNextBars;
-            numNextBars = numPrevBars;
-            numPrevBars = oldNumNextBars;
+          // -- Fix up the set of multiple linearpoints that we are rendering over.  minMax values are always 0 to 1
+          // normalized.  This helps us compute how many trailing or leading linearpoints we need easily without accounting
+          // for their length.
+          int numPrevLPs = -1 * (int) Math.floor(minMax[0]);
+          int numNextLPs = (int) Math.ceil(minMax[1] - 1.0f);
+          if (!dlp.forward) {
+            int oldNumNextBars = numNextLPs;
+            numNextLPs = numPrevLPs;
+            numPrevLPs = oldNumNextBars;
           }
-          // We need to handle the initial case, so we might need to add multiple next bars to our list.
-          while (nextLPs.size() < numNextBars) {
-            DirectionalLP nextDlb;
+          // We need to handle the initial case, so we might need to add multiple next linearpoints to our list.
+          while (nextLPs.size() < numNextLPs) {
+            DirectionalLP nextDlp;
             if (nextLPs.size() == 0)
-              nextDlb = dlb.chooseNextBar(whichJoint);
+              nextDlp = dlp.chooseNextBar(whichJoint);
             else
-              nextDlb = nextLPs.get(nextLPs.size() - 1).chooseNextBar(whichJoint);
-            nextLPs.add(nextDlb);
+              nextDlp = nextLPs.get(nextLPs.size() - 1).chooseNextBar(whichJoint);
+            nextLPs.add(nextDlp);
           }
 
-          // Pre-populate the previous lightbars if we want an initial tail.  Otherwise
-          // these will be populated as we update the current bar to the next bar.
-          while (initialTail && (prevLPs.size() < numPrevBars)) {
-            DirectionalLP prevDlb;
+          // Pre-populate the previous linearpoints if we want an initial tail.  Otherwise
+          // these will be populated as we update the current linearpoints to the next linearpoints.
+          while (initialTail && (prevLPs.size() < numPrevLPs)) {
+            DirectionalLP prevDlp;
             if (prevLPs.size() == 0)
-              prevDlb = dlb.choosePrevBar(whichJoint);
+              prevDlp = dlp.choosePrevBar(whichJoint);
             else
-              prevDlb = prevLPs.get(prevLPs.size() - 1).choosePrevBar(whichJoint);
-            prevLPs.add(prevDlb);
+              prevDlp = prevLPs.get(prevLPs.size() - 1).choosePrevBar(whichJoint);
+            prevLPs.add(prevDlp);
           }
 
-          // Garbage collect any old bars.
-          // TODO(tracy): We should trim both nextBars and prevBars each time so for example if our slope changes
-          // dynamically, we might want to reduce our prevBars and nextBars list.  It is only an optimization since
+          // Garbage collect any old linearpoints.
+          // TODO(tracy): We should trim both nextLPs and prevLPs each time so for example if our slope changes
+          // dynamically, we might want to reduce our prevLPs and nextLPs list.  It is only an optimization since
           // we will just render black in ADD mode which should have no effect but is just inefficient.
-          if (prevLPs.size() > numPrevBars && prevLPs.size() > 0) {
+          if (prevLPs.size() > numPrevLPs && prevLPs.size() > 0) {
             prevLPs.remove(prevLPs.size() - 1);
           }
 
-          // For the number of previous bars, render on each bar
-          for (int j = 0; j < numPrevBars && j < prevLPs.size(); j++) {
-            DirectionalLP prevBar = prevLPs.get(j);
-            // We need to compute the next bar pos but we need to account for any intermediate bars.
-            float prevBarPos = dlb.computePrevBarPos(pos, prevBar);
-            // LightBar lengths are normalized to 1.0, so we need to shift our compute distance based on
-            // whether there are any intermediate lightbars.
-            if (prevBar.forward) prevBarPos += j;
-            else prevBarPos -= j; //
-            renderWaveform(colors, prevBar, prevBarPos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
+          // For the number of previous linearpoints, render on each linearpoints
+          for (int j = 0; j < numPrevLPs && j < prevLPs.size(); j++) {
+            DirectionalLP prevLP = prevLPs.get(j);
+            // We need to compute the next linearpoints pos but we need to account for any intermediate bars.
+            float prevLPPos = dlp.computePrevBarPos(pos, prevLP);
+            // LinearPoints lengths are normalized to 1.0, so we need to shift our compute distance based on
+            // whether there are any intermediate LinearPoints.
+            if (prevLP.forward) prevLPPos += j;
+            else prevLPPos -= j; //
+            renderWaveform(colors, prevLP, prevLPPos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
             if (whichEffect == 1) {
-              LPRender.randomGrayBaseDepth(colors, prevBar.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
+              LPRender.randomGrayBaseDepth(colors, prevLP.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
                   (int) (255 * fxDepth));
             } else if (whichEffect == 2) {
-              LPRender.cosine(colors, prevBar.lp, prevBarPos, cosineFreq, 0f, 1f - fxDepth, fxDepth, LXColor.Blend.MULTIPLY);
+              LPRender.cosine(colors, prevLP.lp, prevLPPos, cosineFreq, 0f, 1f - fxDepth, fxDepth, LXColor.Blend.MULTIPLY);
             }
           }
 
-          for (int j = 0; j < numNextBars; j++) {
-            DirectionalLP nextBar = nextLPs.get(j);
-            float nextBarPos = dlb.computeNextBarPos(pos, nextBar);
-            if (nextBar.forward)
-              nextBarPos -= j; // shift the position to the left by the number of bars away it is actually at.
+          for (int j = 0; j < numNextLPs; j++) {
+            DirectionalLP nextLP = nextLPs.get(j);
+            float nextLPPos = dlp.computeNextBarPos(pos, nextLP);
+            if (nextLP.forward)
+              nextLPPos -= j; // shift the position to the left by the number of linearpoints away it is actually at.
             else
-              nextBarPos += j;
-            renderWaveform(colors, nextBar, nextBarPos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
+              nextLPPos += j;
+            renderWaveform(colors, nextLP, nextLPPos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
             if (whichEffect == 1) {
-              LPRender.randomGrayBaseDepth(colors, nextBar.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
+              LPRender.randomGrayBaseDepth(colors, nextLP.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
                   (int) (255 * fxDepth));
             } else if (whichEffect == 2) {
-              LPRender.cosine(colors, nextBar.lp, nextBarPos, cosineFreq, 0f, 1f - fxDepth, fxDepth,
+              LPRender.cosine(colors, nextLP.lp, nextLPPos, cosineFreq, 0f, 1f - fxDepth, fxDepth,
                   LXColor.Blend.MULTIPLY);
             }
           }
 
-          if (dlb.forward) {
-            pos += (baseSpeed + speed) / 100f;
+          // NOTE(tracy): The position is normalized to the length of the linear points.  The effect from this is that
+          // the blob would travel faster on longer LinearPoints.  We need to scale the update by the length of the LinearPoints.
+          if (dlp.forward) {
+            pos += ((baseSpeed + speed) / 100f)/(dlp.lp.length);
           } else {
-            pos -= (baseSpeed + speed) / 100f;
+            pos -= ((baseSpeed + speed) / 100f)/(dlp.lp.length);
           }
 
-          // System.out.println("lightbar: " + dlb.lb.barNum + " pos: " + pos);
+          // logger.info("linear points: " + dlb.lp.lpNum + " pos: " + pos);
 
           if (pos <= 0.0 || pos >= 1.0f) {
-            needsCurrentBarUpdate = true;
+            needsCurrentLPUpdate = true;
           }
         }
       }
     }
 
-    if (needsCurrentBarUpdate) {
+    if (needsCurrentLPUpdate) {
+      //logger.info("Need bar update");
       updateCurrentLP(whichJoint);
     }
   }
