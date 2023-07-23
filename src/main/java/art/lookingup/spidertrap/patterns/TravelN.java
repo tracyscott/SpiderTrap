@@ -136,7 +136,7 @@ public class TravelN extends FPSPattern {
     float fadeLevel = maxValue.getValuef();
 
     for (int i = 0; i < numBlobs.getValuei(); i++) {
-      blobs[i].easeUtil.easeNum = ease.getValuei();
+      if (blobs[i].easeUtil != null) blobs[i].easeUtil.easeNum = ease.getValuei();
       blobs[i].pal = getPaletteIndex();
       blobs[i].renderBlob(colors, speed.getValuef(), widthKnob.getValuef(), slope.getValuef(), fadeLevel,
           waveKnob.getValuei(), nextBarKnob.getValuei(), false, fxKnob.getValuei(), fxDepth.getValuef(),
