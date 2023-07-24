@@ -57,7 +57,7 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
   private static final Logger logger = Logger.getLogger(Sdf2D.class.getName());
   public GL3 gl;
 
-  StringParameter scriptName = new StringParameter("scriptName", "sphere");
+  StringParameter scriptName = new StringParameter("scriptName", "SquareDot");
   CompoundParameter speed = new CompoundParameter("speed", 1f, 0f, 20f);
 
   // These parameters are loaded from the ISF Json declaration at the top of the shader

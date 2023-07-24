@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1690162271259,
+  "timestamp": 1690163777521,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -1198,13 +1198,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 8,
+              "focusedPattern": 9,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 8,
+            "patternIndex": 9,
             "patterns": [
               {
                 "id": 255,
@@ -1637,6 +1637,49 @@
                   }
                 },
                 "deviceVersion": -1
+              },
+              {
+                "id": 3466,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "SquareDot",
+                  "speed": 1.0,
+                  "r": 0.0,
+                  "t1": 0.0,
+                  "t2": 0.0,
+                  "t3": 0.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 3467,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
               }
             ]
           }
@@ -1680,7 +1723,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.5700966917413018
+            "basis": 0.45498230224232644
           },
           {
             "id": 2949,
@@ -1708,7 +1751,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.2062217591423942
+            "basis": 0.9265887715438966
           }
         ],
         "modulations": [
