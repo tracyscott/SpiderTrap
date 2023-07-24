@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1690157553270,
+  "timestamp": 1690162271259,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -1526,10 +1526,10 @@
                   "recall": false,
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
-                  "scriptName": "Temperance",
+                  "scriptName": "NCosines",
                   "speed": 0.40689660310744924,
-                  "x1": 0.0,
-                  "width": 0.062068966596290936,
+                  "x1": 0.2586207019743222,
+                  "width": 0.05172413883024249,
                   "rot": 0.0,
                   "freq": 0.0
                 },
@@ -1614,8 +1614,8 @@
                   "compositeLevel": 1.0,
                   "scriptName": "TheCross",
                   "speed": 1.0,
-                  "x1": 0.5517241321504116,
-                  "width": 0.05000000074505806,
+                  "thick": 0.4000000059604645,
+                  "size": 1.5,
                   "rot": 0.0,
                   "freq": 1.0
                 },
@@ -1680,7 +1680,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.9114204462881789
+            "basis": 0.5700966917413018
           },
           {
             "id": 2949,
@@ -1708,34 +1708,10 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.6176589789066298
+            "basis": 0.2062217591423942
           }
         ],
         "modulations": [
-          {
-            "source": {
-              "id": 2470,
-              "path": "/modulation/modulator/1"
-            },
-            "target": {
-              "componentId": 2238,
-              "parameterPath": "freq",
-              "path": "/mixer/channel/3/pattern/7/freq"
-            },
-            "id": 2471,
-            "class": "heronarts.lx.modulation.LXCompoundModulation",
-            "internal": {
-              "modulationColor": 0,
-              "modulationControlsExpanded": true
-            },
-            "parameters": {
-              "label": "LX",
-              "enabled": true,
-              "polarity": 0,
-              "range": 0.23750000353902578
-            },
-            "children": {}
-          },
           {
             "source": {
               "id": 2949,
@@ -1757,6 +1733,30 @@
               "enabled": true,
               "polarity": 0,
               "range": 0.44999999180436134
+            },
+            "children": {}
+          },
+          {
+            "source": {
+              "id": 2470,
+              "path": "/modulation/modulator/1"
+            },
+            "target": {
+              "componentId": 2238,
+              "parameterPath": "freq",
+              "path": "/mixer/channel/3/pattern/7/freq"
+            },
+            "id": 3209,
+            "class": "heronarts.lx.modulation.LXCompoundModulation",
+            "internal": {
+              "modulationColor": 0,
+              "modulationControlsExpanded": true
+            },
+            "parameters": {
+              "label": "LX",
+              "enabled": true,
+              "polarity": 0,
+              "range": 0.15000000223517418
             },
             "children": {}
           }
