@@ -68,7 +68,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   public static OutputMapping outputMap;
   UIPreviewComponents previewComponents;
-  public static PreviewComponents.Trees preview;
+  public static PreviewComponents.BodyRender preview;
   public static PApplet pApplet;
 
   static public float[] panelPosParams;
@@ -233,7 +233,8 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
   public void onUIReady(LXStudio lx, LXStudio.UI ui) {
     // At this point, the LX Studio application UI has been built. You may now add
     // additional views and components to the Ui heirarchy.
-    preview = new PreviewComponents.Trees();
+    Body.initBodies();
+    preview = new PreviewComponents.BodyRender();
     ui.preview.addComponent(preview);
     pixliteConfig = (UIPixliteConfig) new UIPixliteConfig(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     modelParams = (ModelParams) new ModelParams(ui, lx, ModelParams.modelParamFile).setExpanded(false).addToContainer(lx.ui.leftPane.global);
