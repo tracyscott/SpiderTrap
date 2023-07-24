@@ -1,6 +1,7 @@
 package art.lookingup.spidertrap;
 
 import art.lookingup.linear.Edge;
+import art.lookingup.linear.LPPoint;
 import art.lookingup.linear.Point3D;
 import art.lookingup.spidertrap.ui.ModelParams;
 import heronarts.lx.model.LXModel;
@@ -375,7 +376,25 @@ public class SpiderTrapModel extends LXModel {
     logger.info("Number of ring edges: " + allSegments.size());
     logger.info("Number of points: " + allPoints.size());
 
-    return new SpiderTrapModel(allPoints);
+    SpiderTrapModel m = new SpiderTrapModel(allPoints);
+
+    float xRange = m.xMax - m.xMin;
+    float zRange = m.zMax - m.zMin;
+    float yRange = m.yMax - m.yMin;
+    float largestRange = Math.max(xRange, zRange);
+
+    // Shaders expect a 0 to 1 range in both X and Z.  Since X is our largest range, we use that as
+    // the scaling factor for both X and Z so that we don't get aspect distortion.  We also need to offset
+    // the z, aka w, coordinates to re-center the z coordinates in the 0..1 by 0..1 rendering range.
+    float zOffset = 0.07f;
+    zOffset = (1.0f - (zRange / xRange))/2f;
+    // Compute normalized coordinates for all points for use in shaders.
+    for (LXPoint lxp : allPoints) {
+      ((LPPoint)lxp).u = (lxp.x - m.xMin)/largestRange;
+      ((LPPoint)lxp).v = (lxp.y - m.yMin)/yRange;
+      ((LPPoint)lxp).w = (lxp.z - m.zMin)/largestRange + zOffset;
+    }
+    return m;
   }
 
   public SpiderTrapModel(List<LXPoint> points) {

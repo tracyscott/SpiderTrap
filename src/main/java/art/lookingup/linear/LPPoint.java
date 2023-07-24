@@ -17,6 +17,10 @@ public class LPPoint extends LXPoint {
   public float lpt;  // normalized 0 to 1 x coordinate of point across the span of the leds.
   public float lptM; // normalized 0 to 1 x coordinate of point including margins.
 
+  public float u;
+  public float v;
+  public float w;
+
   public LPPoint(LinearPoints linearPoints, double x, double y, double z, double lpx, double lpxM, double lpt, double lptM) {
     super(x, y, z);
     this.linearPoints = linearPoints;
