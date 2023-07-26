@@ -174,7 +174,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     flags.startMultiThreaded = false;
 
     try {
-      addLogFileHandler(LOG_FILENAME_PREFIX);
+      addLogFileHandler("logs/" + LOG_FILENAME_PREFIX);
     } catch (IOException ex) {
       logger.log(Level.SEVERE, "Error creating log file: " + LOG_FILENAME_PREFIX, ex);
     }

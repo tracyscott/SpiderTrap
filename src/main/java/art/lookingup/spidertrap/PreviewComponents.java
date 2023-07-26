@@ -17,7 +17,7 @@ import static processing.core.PConstants.TRIANGLE_STRIP;
 public class PreviewComponents {
 
   public static class BodyRender extends UI3dComponent {
-    public boolean showBodies = true;
+    public boolean showBodies = false;
 
     public BodyRender() {
     }
