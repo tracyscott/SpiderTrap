@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1690405951313,
+  "timestamp": 1690415148768,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -743,7 +743,7 @@
               "release": 0.26334060752858685,
               "slope": 4.5,
               "band-1": 0.0,
-              "band-2": 0.0,
+              "band-2": 0.013453727416107841,
               "band-3": 0.0,
               "band-4": 0.0,
               "band-5": 0.0,
@@ -1198,13 +1198,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 14,
+              "focusedPattern": 15,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 14,
+            "patternIndex": 15,
             "patterns": [
               {
                 "id": 255,
@@ -1896,6 +1896,59 @@
                   }
                 },
                 "deviceVersion": -1
+              },
+              {
+                "id": 5407,
+                "class": "art.lookingup.spidertrap.patterns.ShaderToy",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "ShaderToy",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "Fps": 60.0,
+                  "Audio": true,
+                  "K1": 0.0,
+                  "K2": 0.4999999888241291,
+                  "K3": 0.29999999329447746,
+                  "K4": 0.7400000058114529,
+                  "U1x": 0.5699999872595072,
+                  "U1y": 0.7499999832361937,
+                  "U1z": 0.7399999834597111,
+                  "U1w": 1.0,
+                  "U2x": 0.0,
+                  "U2y": 0.0,
+                  "U2z": 0.0,
+                  "U2w": 0.0,
+                  "frag": "sparkleexplode",
+                  "tex": "NO TEXTURE"
+                },
+                "children": {
+                  "modulation": {
+                    "id": 5408,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
               }
             ]
           },
@@ -2021,7 +2074,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.3869960725639197
+            "basis": 0.7021628345881417
           },
           {
             "id": 2949,
@@ -2049,7 +2102,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.9888145740587035
+            "basis": 0.2880770576446353
           }
         ],
         "modulations": [
