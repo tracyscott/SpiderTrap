@@ -369,7 +369,8 @@ public class ShaderToy extends PGPixelPerfect implements UIDeviceControls<Shader
     shaderApply(context, toy, (PGraphicsOpenGL) toyGraphics, u1, u2);
     toyGraphics.loadPixels();
     toyGraphics.updatePixels();
-    pg.image(toyGraphics, 0, 0);
+    //pg.image(toyGraphics, 0, 0);
+    pg.background(toyGraphics);
     texAudio.release();
     postDraw(drawDeltaMs);
   }

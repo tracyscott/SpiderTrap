@@ -74,8 +74,8 @@ public class Image extends LXPattern implements UIDeviceControls<Image> {
 
   public Image(LX lx) {
     super(lx);
-    this.imageWidth = 800;
-    this.imageHeight = 800;
+    this.imageWidth = 512;
+    this.imageHeight = 512;
     this.filesDir = "images";
     if (!filesDir.endsWith("/")) {
       filesDir = filesDir + "/";

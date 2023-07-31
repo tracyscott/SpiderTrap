@@ -84,6 +84,11 @@ const float radian = M_PI/180.0;
 
 void main(){
     vec2 st = position.xz;
+    //st = st - 0.25;
+    //
+    //st = st *.25;
+    //st.x = st.x + 0.5;
+    st.y = 1. - st.y;
     vec3 color = vec3(0.);
 
     color = texture(textureSampler, st).rgb;
