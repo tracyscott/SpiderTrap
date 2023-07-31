@@ -8,6 +8,7 @@
 /.idea
 /build
 /natives
+/shadertoy
 hdpi
 pixliteconfig.json
 outputmap.json
