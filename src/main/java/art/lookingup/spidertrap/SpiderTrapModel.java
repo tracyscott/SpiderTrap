@@ -21,7 +21,19 @@ public class SpiderTrapModel extends LXModel {
   public static final int MAX_RADIALS = 16;
   public static final int NUM_WEBS = 1;
 
-  public static final float SEGMENT_MARGINS = 2f/12f;
+  public static final float SEGMENT_MARGINS = 2.75f/12f;
+  public static final float RING_SEG_MARGIN[] =  {
+      0f,  // 16
+      0f,  // 37
+      0.02f,  // 58
+      0f,  // 80
+      0f, // 101
+      0.02f, // 122
+      0f, // 144
+      0.1f/12f,  // 165
+      -0.65f/12f  // 189
+  };
+
 
   private static final Logger logger = Logger.getLogger(SpiderTrapModel.class.getName());
 
@@ -39,7 +51,7 @@ public class SpiderTrapModel extends LXModel {
 
   static public final float DISTANCE_FROM_CENTER = 4f;
   static public final float METERS_TO_FEET = 3.28084f;
-  static public final float MIN_CUT_DISTANCE = 9.84f/12f;
+  static public final float MIN_CUT_DISTANCE = 0.005f/12f; //9.84f/12f;
 
   static public int allSegmentsCount = 0;
 
@@ -88,10 +100,11 @@ public class SpiderTrapModel extends LXModel {
       points = new ArrayList<LXPoint>();
       float innerRadius = ModelParams.getInnerRadius();
       float outerRadius = ModelParams.getOuterRadius();
+      float hexInnerRadius = ModelParams.getHexInner();
 
       for (int i = 0; i < numRadials; i++) {
         logger.info("Creating Radial");
-        Radial radial = new Radial(i, curAngle, innerRadius, outerRadius, mx, my, mz);
+        Radial radial = new Radial(i, curAngle, innerRadius, outerRadius, hexInnerRadius, mx, my, mz);
         radials.add(radial);
         allRadials.add(radial);
         // TODO(tracy): We will initially create the Radials without points so that we have a scaffolding for
@@ -116,7 +129,9 @@ public class SpiderTrapModel extends LXModel {
         endRadialId = startRadialId + 1;
         if (endRadialId >= numRadials)
           endRadialId = 0;
-        Segment segment = new Segment(allSegmentsCount, startRadialId, endRadialId, curRadialDist, true, margins, webx, weby, webz);
+
+        Segment segment = new Segment(allSegmentsCount, startRadialId, endRadialId, curRadialDist, true,
+            margins + RING_SEG_MARGIN[curRing], webx, weby, webz);
         segments.add(segment);
         ringSegments.add(segment);
         allSegments.add(segment);
@@ -174,11 +189,12 @@ public class SpiderTrapModel extends LXModel {
 
   static public class Radial {
 
-    public Radial (int id, float angle, float innerRadius, float outerRadius, float webx, float weby, float webz) {
+    public Radial (int id, float angle, float innerRadius, float outerRadius, float hexInnerRadius, float webx, float weby, float webz) {
       this.id = id;
       this.angle = angle;
       this.innerRadius = innerRadius;
       this.outerRadius = outerRadius;
+      this.hexInnerRadius = hexInnerRadius;
       this.webx = webx;
       this.weby = weby;
       this.webz = webz;
@@ -209,6 +225,7 @@ public class SpiderTrapModel extends LXModel {
     int id;
     public float angle;
     public float innerRadius;
+    public float hexInnerRadius;
     public float webx;
     public float weby;
     public float webz;
@@ -223,9 +240,9 @@ public class SpiderTrapModel extends LXModel {
 
     public List<Edge> createEdges(float x, float y, float z, List<Float> radialDistances) {
       edges = new ArrayList<Edge>();
-      Point3D radialStart = new Point3D(x + polarX(innerRadius, angle),
+      Point3D radialStart = new Point3D(x + polarX(hexInnerRadius, angle),
                                         y,
-                                        z + polarZ(innerRadius, angle));
+                                        z + polarZ(hexInnerRadius, angle));
       Point3D unitVector = Point3D.unitVectorTo(new Point3D(polarX(innerRadius, angle), 0, polarZ(innerRadius, angle)),
           new Point3D(0, 0, 0));
       Point3D prevEdgeEnd = null;
@@ -256,9 +273,9 @@ public class SpiderTrapModel extends LXModel {
      * @return
      */
     public Edge createVirtualEdge(float x, float y, float z) {
-      Point3D edgeA = new Point3D(x + polarX(innerRadius, angle),
+      Point3D edgeA = new Point3D(x + polarX(hexInnerRadius, angle),
                                   y,
-                                  z + polarZ(innerRadius, angle));
+                                  z + polarZ(hexInnerRadius, angle));
       Point3D edgeB = new Point3D(x + polarX(outerRadius, angle),
                                   y,
                                      z + polarZ(outerRadius, angle));

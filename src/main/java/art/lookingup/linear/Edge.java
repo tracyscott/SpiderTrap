@@ -164,7 +164,7 @@ public class Edge {
     }
   }
 
-  static public final float adjacencyDistance = 6f/12f;
+  static public final float adjacencyDistance = 2f/12f;
 
   public int isEdgeAdjacentStart(Edge otherEdge) {
     if (p1.distanceTo(otherEdge.p1) < adjacencyDistance)
@@ -194,18 +194,18 @@ public class Edge {
         int adjacentValue = thisEdge.isEdgeAdjacentStart(otherEdge);
         if (adjacentValue == 1) {
           thisEdge.myStartPointJoints[currentStartJointNum++] = new Joint(otherEdge, true);
-          logger.info("start of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
+          //logger.info("start of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
         } else if (adjacentValue == 2) {
           thisEdge.myStartPointJoints[currentStartJointNum++] = new Joint(otherEdge, false);
-          logger.info("start of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
+          //logger.info("start of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
         }
         adjacentValue = thisEdge.isEdgeAdjacentEnd(otherEdge);
         if (adjacentValue == 1) {
           thisEdge.myEndPointJoints[currentEndJointNum++] = new Joint(otherEdge, true);
-          logger.info("end of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
+          //logger.info("end of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
         } else if (adjacentValue == 2) {
           thisEdge.myEndPointJoints[currentEndJointNum++] = new Joint(otherEdge, false);
-          logger.info("end of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
+          //logger.info("end of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
         }
       }
     }

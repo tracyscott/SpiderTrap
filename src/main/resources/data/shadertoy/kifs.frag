@@ -40,7 +40,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y;
     vec3 col = vec3(0);
-    vec2 mouse = iMouse.xy/iResolution.xy;
 
     uv *= 2.;
     uv.x = abs(uv.x);
@@ -54,10 +53,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     //col += smoothstep(.01, .0, abs(d));
 
-    n = N((2./3.)*3.1415);
+    n = N(10.*iMouse.y*(2./3.)*3.1415);
     float scale = 1.;
     uv.x += .5;
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<floor(iMouse.z * 10.); i++) {
       uv *= 3.;
       scale *= 3.;
       uv.x -= 1.5;
@@ -72,7 +71,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     //col += smoothstep(1./iResolution.y, .0, d/scale);
     //col.rg += uv;
     uv /= scale;
-    col += texture(iChannel2, uv*2.-iTime*.1).rgb;
+    col += texture(iChannel1, uv*2.-iTime*.1 * iMouse.x*10.).rgb;
 
     //col.rg += uv/(scale*.06);
     // Output to screen11
