@@ -238,6 +238,12 @@ public class SpiderTrapModel extends LXModel {
     public List<LXPoint> points;
     public List<Float> radialDistances;
 
+    // These can be computed from segment ID numbers.  For example, for radial 0, the segments are 0, 6, 12, 18, 24, 30, 36, 42, 48
+    // for radial 1 it is 1, 7, 13, 19, etc...
+    // for i in 0..8, add segId = i * 6 + radialId
+    public List<Segment> ccwSegments;
+    public List<Segment> cwSegments;
+
     public List<Edge> createEdges(float x, float y, float z, List<Float> radialDistances) {
       edges = new ArrayList<Edge>();
       Point3D radialStart = new Point3D(x + polarX(hexInnerRadius, angle),
@@ -260,6 +266,7 @@ public class SpiderTrapModel extends LXModel {
         prevEdgeEnd = edgeEnd;
       }
 
+      addCCWSegments();
       return edges;
     }
 
@@ -284,6 +291,14 @@ public class SpiderTrapModel extends LXModel {
 
     List<LXPoint> getPointsWireOrder() {
       return points;
+    }
+
+    public void addCCWSegments() {
+      ccwSegments = new ArrayList<Segment>();
+      for (int i = 0; i < 9; i++) {
+        Segment segment = allSegments.get(i * 6 + id);
+        ccwSegments.add(segment);
+      }
     }
   }
 

@@ -12,33 +12,46 @@ public class OutputMapping extends UIConfig {
   public static final String filename = "outputmap.json";
   public LX lx;
   private boolean parameterChanged = false;
+/*
+ * Per triangle.  This is repeated 6 times.
+ *
+ * First output:  Radial inwards and then T1 counter-clockwise, aka left and then T2 clockwise aka right.
+ * Second output: T5, T4, T3.  T5 is CCW aka left, T4 is CW aka right, T3 CCW aka left
+ * Third output: T7, T6.  T7 is CCW aka left and T6 is CW aka right.
+ * Fourth output: T9, T8.  T9 is CCW aka left and T8 is CW aka right.
 
+ */
   String[] defaultOutputMapping = {
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
+      "t1.r,t1.t1,t1.t2",
+      "t1.t5,t1.t4,t1.t3",
+      "t1.t7,t1.t6",
+      "t1.t9,t1.t8",
 
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
+      "t2.r,t2.t1,t2.t2",
+      "t2.t5,t2.t4,t2.t3",
+      "t2.t7,t2.t6",
+      "t2.t9,t2.t8",
+
+    "t3.r,t3.t1,t3.t2",
+    "t3.t5,t3.t4,t3.t3",
+    "t3.t7,t3.t6",
+    "t3.t9,t3.t8",
+
+    "t4.r,t4.t1,t4.t2",
+    "t4.t5,t4.t4,t4.t3",
+    "t4.t7,t4.t6",
+    "t4.t9,t4.t8",
+
+    "t5.r,t5.t1,t5.t2",
+    "t5.t5,t5.t4,t5.t3",
+    "t5.t7,t5.t6",
+    "t5.t9,t5.t8",
+
+    "t6.r,t6.t1,t6.t2",
+    "t6.t5,t6.t4,t6.t3",
+    "t6.t7,t6.t6",
+    "t6.t9,t6.t8",
+
       "25",
       "26",
       "27",

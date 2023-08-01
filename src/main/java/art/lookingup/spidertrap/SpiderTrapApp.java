@@ -241,7 +241,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     outputMap = (OutputMapping) new OutputMapping(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     previewComponents = (UIPreviewComponents) new UIPreviewComponents(ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     logger.info("Configuring pixlite output");
-    //Output.configurePixliteOutput2(lx);
+    Output.configurePixliteOutput(lx);
 
     logger.info("Model bounds: " + lx.getModel().xMin + "," + lx.getModel().yMin + " to " + lx.getModel().xMax + "," + lx.getModel().yMax);
 

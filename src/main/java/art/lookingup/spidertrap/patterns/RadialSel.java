@@ -18,12 +18,15 @@ public class RadialSel extends LXPattern {
   DiscreteParameter jointSel = new DiscreteParameter("joint", -1, 0, 3);
   DiscreteParameter webNum = new DiscreteParameter("web", -1, -1, SpiderTrapModel.NUM_WEBS).setDescription("web");
 
+  DiscreteParameter pos = new DiscreteParameter("pos", -1, -1, 190);
+
   public RadialSel(LX lx) {
     super(lx);
     addParameter("radial", radialNum);
     addParameter("edge", edgeSel);
     addParameter("joint", jointSel);
     addParameter("web", webNum);
+    addParameter("pos", pos);
   }
 
   public void run(double deltaMs) {
@@ -44,8 +47,11 @@ public class RadialSel extends LXPattern {
           for (int edgeN = 0; edgeN < numRadEdges; edgeN++) {
             if (radN == (int) Math.round(whichRadial) || (int) Math.round(whichRadial) == -1) {
               if (edgeN == edgeSel.getValuei() || edgeSel.getValuei() == -1) {
+                int ptCounter = 0;
                 for (LXPoint p : radial.edges.get(edgeN).points) {
-                  colors[p.index] = LXColor.WHITE;
+                  if (pos.getValuei() == -1 || ptCounter <= pos.getValuei())
+                    colors[p.index] = LXColor.WHITE;
+                  ++ptCounter;
                 }
                 int joint = jointSel.getValuei();
                 if (joint != -1 && edgeSel.getValuei() != -1) {

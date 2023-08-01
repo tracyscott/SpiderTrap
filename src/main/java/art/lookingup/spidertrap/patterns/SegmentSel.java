@@ -16,12 +16,14 @@ public class SegmentSel extends LXPattern {
   DiscreteParameter segNum = new DiscreteParameter("seg", -1, -1, 200).setDescription("segment");
   DiscreteParameter jointSel = new DiscreteParameter("joint", -1, 0, 3);
   DiscreteParameter webNum = new DiscreteParameter("web", -1, -1, SpiderTrapModel.NUM_WEBS).setDescription("web");
+  DiscreteParameter pos = new DiscreteParameter("pos", -1, -1, 190);
 
   public SegmentSel(LX lx) {
     super(lx);
     addParameter("seg", segNum);
     addParameter("joint", jointSel);
     addParameter("web", webNum);
+    addParameter("pos", pos);
   }
 
   public void run(double deltaMs) {
@@ -39,8 +41,11 @@ public class SegmentSel extends LXPattern {
         for (int gNum = 0; gNum < numSegs; gNum++) {
           SpiderTrapModel.Segment segment = SpiderTrapModel.allWebs.get(mNum).segments.get(gNum);
           if (gNum == whichSeg || whichSeg == -1) {
+            int ptCounter = 0;
             for (LXPoint p : segment.points) {
-              colors[p.index] = LXColor.WHITE;
+              if (pos.getValuei() == -1 || ptCounter <= pos.getValuei())
+                colors[p.index] = LXColor.WHITE;
+              ++ptCounter;
             }
             int joint = jointSel.getValuei();
             if (joint != -1 && whichSeg != -1) {

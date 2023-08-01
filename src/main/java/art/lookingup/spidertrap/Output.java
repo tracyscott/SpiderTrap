@@ -10,6 +10,7 @@ import heronarts.lx.output.LXDatagram;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,7 +72,7 @@ public class Output {
    *
    * @param lx
    */
-  public static void configurePixliteOutput(LX lx) {
+  public static void configurePixliteOutputGeneric(LX lx) {
     List<ArtNetDatagram> datagrams = new ArrayList<ArtNetDatagram>();
     String artNetIpAddress = SpiderTrapApp.pixliteConfig.getStringParameter(UIPixliteConfig.PIXLITE_IP).getString();
     int artNetIpPort = Integer.parseInt(SpiderTrapApp.pixliteConfig.getStringParameter(UIPixliteConfig.PIXLITE_PORT).getString());
@@ -134,6 +135,120 @@ public class Output {
     allOutputsPoints.clear();
     outputDatagrams.clear();
   }
+
+  /**
+   * General description.
+   * Per triangle.  This is repeated 6 times.
+   *
+   * First output:  Radial inwards and then T1 counter-clockwise, aka left and then T2 clockwise aka right.
+   * Second output: T5, T4, T3.  T5 is CCW aka left, T4 is CW aka right, T3 CCW aka left
+   * Third output: T7, T6.  T7 is CCW aka left and T6 is CW aka right.
+   * Fourth output: T9, T8.  T9 is CCW aka left and T8 is CW aka right.
+   *
+   * Note: Segment edges (not radials) are always counter clockwise.  Radial segments are in to out.
+   * @param lx
+   */
+  static public void configurePixliteOutput(LX lx) {
+    // For each radial, work on the radial and then work on all the CCW segments attached to the radial.
+    // TODO(tracy):  For each radial, create a mapping to CCW segment and CW segment, regardless of topology Edge/Joints.
+    List<ArtNetDatagram> datagrams = new ArrayList<ArtNetDatagram>();
+    String artNetIpAddress = SpiderTrapApp.pixliteConfig.getStringParameter(UIPixliteConfig.PIXLITE_IP).getString();
+    int artNetIpPort = Integer.parseInt(SpiderTrapApp.pixliteConfig.getStringParameter(UIPixliteConfig.PIXLITE_PORT).getString());
+    logger.log(Level.INFO, "Using Pixlite ArtNet: " + artNetIpAddress + ":" + artNetIpPort);
+
+    int universesPerOutput = 3;
+
+    allOutputsPoints.clear();
+    outputDatagrams.clear();
+
+    for (int outputNum = 0; outputNum < 32; outputNum++) {
+      List<LXPoint> outputPoints = new ArrayList<LXPoint>();
+      allOutputsPoints.add(outputPoints);
+
+      List<LXPoint> pointsWireOrder = new ArrayList<LXPoint>();
+      // Output Number is 1 based in the UI.
+      String mapping = SpiderTrapApp.outputMap.getOutputMapping(outputNum + 1);
+      logger.info("========== PIXLITE OUTPUT #" + (outputNum + 1) + "     ==============");
+
+      logger.info("mapping=" + mapping);
+      // Allow multiple components per output.  With a 1:1 mapping we are fully utilizing each long range receiver
+      // so there is no room for future expansion.
+      String[] components = mapping.split(",");
+
+      for (int ci = 0; ci < components.length; ci++) {
+        String ledSource = components[ci].trim();
+        // Each component should be of the form t1.*something* where *something* can be r, t1 ... t9
+        if ("".equals(ledSource)) continue;
+        logger.info("Parsing: " + ledSource);
+        String[] pieces = ledSource.split("\\.");
+        if (pieces.length < 2) continue;
+        int triangleNum = Integer.parseInt(pieces[0].substring(1));
+        // By default, use edgeNum -1 to represent the radial leds.
+        int edgeNum = -1;
+        // For related edges, they are always ccw
+        SpiderTrapModel.Radial radial = SpiderTrapModel.allRadials.get(triangleNum - 1);
+        if (pieces[1].contains("t")) edgeNum = Integer.parseInt(pieces[1].substring(1));
+        logger.info("  Triangle #" + triangleNum + " part: " + edgeNum);
+        if (edgeNum == -1) {
+          List<LXPoint> points = radial.points;
+          List<LXPoint> reversedPoints = new ArrayList<LXPoint>();
+          reversedPoints.addAll(points);
+          Collections.reverse(reversedPoints);
+          pointsWireOrder.addAll(reversedPoints);
+        } else {
+          List<LXPoint> points = new ArrayList<LXPoint>();
+          points.addAll(radial.ccwSegments.get(edgeNum - 1).points);
+          if (edgeNum == 2 || edgeNum == 4 || edgeNum == 6 || edgeNum ==8) {
+            Collections.reverse(points);
+          }
+          pointsWireOrder.addAll(points);
+        }
+      }
+
+      outputPoints.addAll(pointsWireOrder);
+
+      int numUniversesThisWire = (int) Math.ceil((float) pointsWireOrder.size() / 170f);
+      int univStartNum = outputNum * universesPerOutput;
+      int lastUniverseCount = pointsWireOrder.size() - 170 * (numUniversesThisWire - 1);
+      int maxLedsPerUniverse = (pointsWireOrder.size()>170)?170:pointsWireOrder.size();
+      int[] thisUniverseIndices = new int[maxLedsPerUniverse];
+      int curIndex = 0;
+      int curUnivOffset = 0;
+      for (LXPoint pt : pointsWireOrder) {
+        thisUniverseIndices[curIndex] = pt.index;
+        curIndex++;
+        if (curIndex == 170 || (curUnivOffset == numUniversesThisWire - 1 && curIndex == lastUniverseCount)) {
+          logger.log(Level.INFO, "Adding datagram: for: " + mapping + " PixLite universe=" + (univStartNum + curUnivOffset + 1) + " ArtNet universe=" + (univStartNum + curUnivOffset) + " points=" + curIndex);
+          ArtNetDatagram datagram = new ArtNetDatagram(lx, thisUniverseIndices, univStartNum + curUnivOffset);
+          try {
+            datagram.setAddress(InetAddress.getByName(artNetIpAddress)).setPort(artNetIpPort);
+          } catch (UnknownHostException uhex) {
+            logger.log(Level.SEVERE, "Configuring ArtNet: " + artNetIpAddress + ":" + artNetIpPort, uhex);
+          }
+          datagrams.add(datagram);
+          curUnivOffset++;
+          curIndex = 0;
+          if (curUnivOffset == numUniversesThisWire - 1) {
+            thisUniverseIndices = new int[lastUniverseCount];
+          } else {
+            thisUniverseIndices = new int[maxLedsPerUniverse];
+          }
+        }
+      }
+    }
+    for (ArtNetDatagram dgram : datagrams) {
+      lx.engine.addOutput(dgram);
+      outputDatagrams.add(dgram);
+    }
+
+    try {
+      artSyncDatagram = new ArtSyncDatagram(lx).setAddress(InetAddress.getByName(artNetIpAddress)).setPort(artNetIpPort);
+      lx.engine.addOutput(artSyncDatagram);
+    } catch (UnknownHostException unhex) {
+      logger.info("Uknown host exception for Pixlite IP: " + artNetIpAddress + " msg: " + unhex.getMessage());
+    }
+  }
+
 
   static public void restartOutput(LX lx) {
     boolean originalEnabled = lx.engine.output.enabled.getValueb();
