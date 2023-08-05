@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.logging.*;
 
+import art.lookingup.KinectV2;
 import art.lookingup.spidertrap.ui.ModelParams;
 import art.lookingup.spidertrap.ui.UIPixliteConfig;
 import art.lookingup.spidertrap.ui.UIPreviewComponents;
@@ -43,6 +44,8 @@ import processing.core.PApplet;
 import processing.event.KeyEvent;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
+
+import KinectPV2.*;
 
 /**
  * This is an example top-level class to build and run an LX Studio
@@ -87,6 +90,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   public static boolean fullscreenMode = false;
   public static UI3dContext fullscreenContext;
+  public static KinectV2 kinect;
 
   static {
     System.setProperty(
@@ -185,6 +189,15 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)getGraphics();
     PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
     logger.info("JOGL Reference: " + pJogl.gl);
+
+    logger.info("Initializing KinectV2");
+    try {
+      kinect = new KinectV2(new KinectPV2(this));
+      logger.info("Done initializing KinectV2");
+    } catch (Exception ex) {
+      logger.info("WARNING: Couldn't initialize KinectV2!");
+    }
+
 
     pApplet = this;
 

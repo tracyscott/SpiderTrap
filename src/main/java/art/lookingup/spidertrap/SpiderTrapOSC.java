@@ -126,6 +126,11 @@ public class SpiderTrapOSC implements LXOscListener {
 
 
                     }
+                    if ("blob".equals(path[2])) {
+                        logger.info("blob received at: " + message.getFloat(0) + " , " + message.getFloat(1) + " , " + message.getFloat(2));
+                        CVBlob.addCVBlob(message.getFloat(0), message.getFloat(1), message.getFloat(2));
+                        CVBlob.cleanExpired();
+                    }
                     // TODO(tracy): Maybe change this to mobilesensor or something?
                     if ("mobile".equals(path[2])) {
                         if (path.length > 3) {
