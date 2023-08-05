@@ -61,6 +61,8 @@ public class Tracers extends PGPixelPerfect {
     addParameter(outlinedKnob);
     addParameter(randomPaletteKnob);
     addParameter(randomVKnob);
+    addParameter("zoom", zoomKnob);
+    addParameter("rotate", rotateKnob);
   }
 
   public void draw(double drawDeltaMs) {

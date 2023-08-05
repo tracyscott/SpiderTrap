@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static com.jogamp.opengl.GL.*;
@@ -59,11 +60,21 @@ public class GLUtil {
     public int textureLoc = -3;
     public com.jogamp.opengl.util.texture.Texture glTexture;
     public double totalTime;
+    public Map<String, Integer> paramLocations = new HashMap<String, Integer>();
+    public LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
+  }
+
+  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
+    return spiderGLInit(gl, glTexture, scriptName, null);
   }
 
   // TODO(tracy): Load the TextureIO previous to this function.
-  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
+  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName,
+                                             LinkedHashMap<String, Float> scriptParams) {
     SpiderGLContext spGLCtx = new SpiderGLContext(gl);
+
+    if (scriptParams != null)
+      spGLCtx.scriptParams = scriptParams;
 
     float[] ledPositions = new float[SpiderTrapModel.allPoints.size() * 3];
     for (int i = 0; i < SpiderTrapModel.allPoints.size(); i++) {
@@ -127,13 +138,12 @@ public class GLUtil {
     // Now, find uniform locations.
     spGLCtx.fTimeLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "fTime");
     logger.info("Found fTimeLoc at: " + spGLCtx.fTimeLoc);
-    /*
-    for (String scriptParam : scriptParams.keySet()) {
-      int paramLoc = gl.glGetUniformLocation(shaderProgramId, scriptParam);
-      paramLocations.put(scriptParam, paramLoc);
-      //logger.info("Found " + scriptParam + " at: " + paramLoc);
+
+    for (String scriptParam : spGLCtx.scriptParams.keySet()) {
+      int paramLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, scriptParam);
+      spGLCtx.paramLocations.put(scriptParam, paramLoc);
+      logger.info("Found " + scriptParam + " at: " + paramLoc);
     }
-    */
     spGLCtx.textureLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "textureSampler");
     logger.info("Found textureSampler at location: " + spGLCtx.textureLoc);
   }
@@ -154,11 +164,11 @@ public class GLUtil {
     spGLCtx.gl.glUseProgram(spGLCtx.shaderProgramId);
 
     spGLCtx.gl.glUniform1f(spGLCtx.fTimeLoc, speed * (float)spGLCtx.totalTime);
-    /*
-    for (String paramName : scriptParams.keySet()) {
-      gl.glUniform1f(paramLocations.get(paramName), scriptParams.get(paramName).getValuef());
+
+    for (String paramName : spGLCtx.scriptParams.keySet()) {
+      spGLCtx.gl.glUniform1f(spGLCtx.paramLocations.get(paramName), spGLCtx.scriptParams.get(paramName));
     }
-     */
+
     spGLCtx.glTexture.enable(spGLCtx.gl);
     spGLCtx.glTexture.bind(spGLCtx.gl);
     spGLCtx.gl.glUniform1i(spGLCtx.textureLoc, 0); // 0 is the texture unit

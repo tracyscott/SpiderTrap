@@ -10,6 +10,7 @@ import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
 import java.awt.image.BufferedImage;
+import java.util.LinkedHashMap;
 
 import static processing.core.PConstants.P2D;
 
@@ -31,12 +32,19 @@ abstract class PGPixelPerfect extends PGBase {
     PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
     GL jogl = pJogl.gl;
     com.jogamp.opengl.util.texture.Texture glTexture = AWTTextureIO.newTexture(jogl.getGLProfile(), (BufferedImage) pg.getNative(), true);
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), glTexture, "render2d");
+    LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
+    //addParameter("zoom", zoomKnob);
+    //addParameter("rotate", rotateKnob);
+    scriptParams.put("zoom", zoomKnob.getValuef());
+    scriptParams.put("rotate", rotateKnob.getValuef());
+    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), glTexture, "render2d", scriptParams);
   }
 
   protected void imageToPoints(double deltaMs) {
     TextureData textureData = AWTTextureIO.newTextureData(spGLCtx.gl.getGLProfile(), (BufferedImage) pg.getNative(), false);
     spGLCtx.glTexture.updateImage(spGLCtx.gl, textureData, 0);
+    spGLCtx.scriptParams.put("zoom", zoomKnob.getValuef());
+    spGLCtx.scriptParams.put("rotate", rotateKnob.getValuef());
     GLUtil.glRun(spGLCtx, deltaMs, 1f);
     GLUtil.copyTFBufferToPoints(colors, spGLCtx);
   }

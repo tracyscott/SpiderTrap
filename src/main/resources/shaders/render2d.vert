@@ -7,18 +7,18 @@
 	],
 	"INPUTS": [
          {
-            "NAME": "x1",
+            "NAME": "zoom",
             "TYPE": "float",
-            "DEFAULT": 0.0,
-            "MIN": -0.1,
-            "MAX": 1.1
+            "DEFAULT": 1.0,
+            "MIN": 0.1,
+            "MAX": 20.0
          },
          {
-            "NAME": "y1",
+            "NAME": "rotate",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
-            "MAX": 1.1
+            "MIN": 360.0,
+            "MAX": -360.0
          }
 	]
 }*/
@@ -26,8 +26,8 @@
 #version 330
 
 uniform float fTime;
-uniform float x1;
-uniform float y1;
+uniform float zoom;
+uniform float rotate;
 
 uniform sampler2D textureSampler;
 
@@ -82,13 +82,25 @@ const float degree = 180.0/M_PI;
 // 1 radian in degrees
 const float radian = M_PI/180.0;
 
+mat2 rotationMatrix(float angle)
+{
+    angle *= PI / 180.0;
+    float s=sin(angle), c=cos(angle);
+    return mat2( c, -s, s, c );
+}
+
 void main(){
     vec2 st = position.xz;
     //st = st - 0.25;
     //
     //st = st *.25;
     //st.x = st.x + 0.5;
+    // uv *= rotationMatrix( SPEED * iTime ) * ZOOM;
     st.y = 1. - st.y;
+    st -= 0.5;
+    st *= rotationMatrix(rotate * degree);
+    st /= zoom;
+    st += 0.5;
     vec3 color = vec3(0.);
 
     color = texture(textureSampler, st).rgb;
