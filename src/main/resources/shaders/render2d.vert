@@ -98,7 +98,7 @@ void main(){
     // uv *= rotationMatrix( SPEED * iTime ) * ZOOM;
     st.y = 1. - st.y;
     st -= 0.5;
-    st *= rotationMatrix(rotate * degree);
+    st *= rotationMatrix(rotate);
     st /= zoom;
     st += 0.5;
     vec3 color = vec3(0.);
