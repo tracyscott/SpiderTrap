@@ -192,7 +192,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
     logger.info("Initializing KinectV2");
     try {
-      kinect = new KinectV2(new KinectPV2(this));
+      // kinect = new KinectV2(new KinectPV2(this));
       logger.info("Done initializing KinectV2");
     } catch (Exception ex) {
       logger.info("WARNING: Couldn't initialize KinectV2!");
