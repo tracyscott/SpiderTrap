@@ -5,6 +5,11 @@
 *.log
 *.log.lk
 *.log.lck
+KinectBlob/.vs
+KinectBlob/KinectBlob/x64
+KinectBlob/x64
+KinectBlob/KinectBlob/opencv_world470.dll
+KinectBlob/KinectBlob/opencv_world470d.dll
 /.idea
 /build
 /natives
