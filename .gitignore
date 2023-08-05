@@ -18,6 +18,10 @@ hdpi
 pixliteconfig.json
 outputmap.json
 modelparams.json
+modeselector.json
+stdchannels.json
+audiomonitor.json
+program.json
 .lxpreferences
 /target
 

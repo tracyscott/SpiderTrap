@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.logging.*;
 
 import art.lookingup.KinectV2;
-import art.lookingup.spidertrap.ui.ModelParams;
-import art.lookingup.spidertrap.ui.UIPixliteConfig;
-import art.lookingup.spidertrap.ui.UIPreviewComponents;
+import art.lookingup.spidertrap.ui.*;
 import art.lookingup.ui.*;
 import art.lookingup.util.SpeedOverride;
 import com.google.common.reflect.ClassPath;
@@ -68,6 +66,10 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   public static UIPixliteConfig pixliteConfig;
   public static ModelParams modelParams;
+  public static UIStdChConfig stdChConfig;
+  public static UIProgramConfig programConfig;
+  public static UIAudioMonitorLevels audioMonitorLevels;
+  public static UIModeSelector modeSelector;
 
   public static OutputMapping outputMap;
   UIPreviewComponents previewComponents;
@@ -252,6 +254,11 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     pixliteConfig = (UIPixliteConfig) new UIPixliteConfig(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     modelParams = (ModelParams) new ModelParams(ui, lx, ModelParams.modelParamFile).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     outputMap = (OutputMapping) new OutputMapping(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    audioMonitorLevels = (UIAudioMonitorLevels) new UIAudioMonitorLevels(lx.ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    stdChConfig = (UIStdChConfig) new UIStdChConfig(lx.ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    modeSelector = (UIModeSelector) new UIModeSelector(lx.ui, lx, audioMonitorLevels).setExpanded(true).addToContainer(lx.ui.leftPane.global);
+    programConfig = (UIProgramConfig) new UIProgramConfig(lx.ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+
     previewComponents = (UIPreviewComponents) new UIPreviewComponents(ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     logger.info("Configuring pixlite output");
     Output.configurePixliteOutput(lx);
