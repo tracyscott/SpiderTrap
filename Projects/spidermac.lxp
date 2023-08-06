@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691276075935,
+  "timestamp": 1691284125854,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -742,20 +742,20 @@
               "attack": 5.00000011175871,
               "release": 0.26334060752858685,
               "slope": 4.5,
-              "band-1": 0.0,
-              "band-2": 0.0,
-              "band-3": 0.0,
-              "band-4": 0.019298889516792372,
-              "band-5": 0.0803652468176782,
-              "band-6": 0.06015070329483441,
-              "band-7": 0.04791472920425888,
+              "band-1": 0.0214640448307043,
+              "band-2": 0.17992882051257164,
+              "band-3": 0.15728921769986703,
+              "band-4": 0.07889638656245557,
+              "band-5": 0.03658917476665435,
+              "band-6": 0.006108675490464344,
+              "band-7": 0.0,
               "band-8": 0.0,
               "band-9": 0.0,
               "band-10": 0.0,
-              "band-11": 0.06322579178256194,
-              "band-12": 0.19252749627032772,
-              "band-13": 0.19496507719244516,
-              "band-14": 0.23665671108812258,
+              "band-11": 0.0,
+              "band-12": 0.0,
+              "band-13": 0.0,
+              "band-14": 0.0,
               "band-15": 0.0,
               "band-16": 0.0
             },
@@ -1087,13 +1087,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 5,
+              "focusedPattern": 6,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 5,
+            "patternIndex": 6,
             "patterns": [
               {
                 "id": 164,
@@ -1458,7 +1458,7 @@
                           "periodSlow": 662905.0674795179
                         },
                         "children": {},
-                        "basis": 0.827941475256802,
+                        "basis": 0.3459932782034419,
                         "stages": [
                           {
                             "basis": 0.0,
@@ -1499,6 +1499,48 @@
                         "children": {}
                       }
                     ],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 17658,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Fireworks",
+                  "speed": 0.3,
+                  "fall": 1.4310344904661179,
+                  "parts": 75.47413800098002,
+                  "exps": 23.749999915249646
+                },
+                "children": {
+                  "modulation": {
+                    "id": 17659,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
                     "triggers": []
                   }
                 },
@@ -3093,7 +3135,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.6906676081341058
+            "basis": 0.3977457717543173
           },
           {
             "id": 2949,
@@ -3121,7 +3163,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.16285702628726517
+            "basis": 0.8157415093771172
           }
         ],
         "modulations": [
