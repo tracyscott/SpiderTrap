@@ -1,5 +1,6 @@
 package art.lookingup.spidertrap.patterns;
 
+
 import art.lookingup.spidertrap.CVBlob;
 import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.spidertrap.SpiderTrapModel;
@@ -20,18 +21,20 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 @LXCategory(LXCategory.FORM)
-public class CVBlobTest extends LXPattern {
+public class CVBlobExplode extends LXPattern {
   private static final Logger logger = Logger.getLogger(CVBlobTest.class.getName());
-  CompoundParameter freq = new CompoundParameter("freq", 0, 50, 200);
-  CompoundParameter rscale = new CompoundParameter("rscale", 1, .1, 20);
+  CompoundParameter fall = new CompoundParameter("fall", 1.2, 1, 5);
+  CompoundParameter parts = new CompoundParameter("parts", 100, 1, 200);
+  CompoundParameter exps = new CompoundParameter("exps", 1, 1, 20);
   CompoundParameter alive = new CompoundParameter("alive", 100, 10, 1000);
   GLUtil.SpiderGLContext spGLCtx;
 
-  public CVBlobTest(LX lx) {
+  public CVBlobExplode(LX lx) {
 
     super(lx);
-    addParameter("freq", freq);
-    addParameter("rscale", rscale);
+    addParameter("fall", fall);
+    addParameter("parts", parts);
+    addParameter("exps", exps);
     addParameter("alive", alive);
 
     PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
@@ -40,9 +43,10 @@ public class CVBlobTest extends LXPattern {
     LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
     scriptParams.put("x1", 0f);
     scriptParams.put("y1", 0f);
-    scriptParams.put("freq", freq.getValuef());
-    scriptParams.put("rscale", rscale.getValuef());
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), null, "Ripple", scriptParams);
+    scriptParams.put("fall", fall.getValuef());
+    scriptParams.put("parts", parts.getValuef());
+    scriptParams.put("exps", exps.getValuef());
+    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), null, "FireworksPos", scriptParams);
   }
 
   public void run(double deltaMs) {
@@ -52,11 +56,11 @@ public class CVBlobTest extends LXPattern {
       colors[p.index] = LXColor.BLACK;
 
     for (CVBlob cvBlob : CVBlob.blobs) {
-      logger.info("rendering blob");
-      spGLCtx.scriptParams.put("x1", cvBlob.u);
-      spGLCtx.scriptParams.put("y1", cvBlob.v);
-      spGLCtx.scriptParams.put("freq", freq.getValuef());
-      spGLCtx.scriptParams.put("rscale", rscale.getValuef());
+      spGLCtx.scriptParams.put("x1", cvBlob.u - 0.5f);
+      spGLCtx.scriptParams.put("y1", cvBlob.v - 0.5f);
+      spGLCtx.scriptParams.put("fall", fall.getValuef());
+      spGLCtx.scriptParams.put("parts", parts.getValuef());
+      spGLCtx.scriptParams.put("exps", exps.getValuef());
       GLUtil.glRun(spGLCtx, deltaMs, 1f);
       GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
     }

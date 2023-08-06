@@ -390,6 +390,13 @@ public class SpiderTrapModel extends LXModel {
   static public List<LXPoint> allPoints = new ArrayList<LXPoint>();
 
 
+  static public float xRange;
+  static public float yRange;
+  static public float zRange;
+  static public float largestRange;
+  static public float modelXMin;
+  static public float modelZMin;
+
   /**
    * Generate a model with random points.  Leaves are assigned to run based on leaf number.
    * @return
@@ -410,10 +417,12 @@ public class SpiderTrapModel extends LXModel {
 
     SpiderTrapModel m = new SpiderTrapModel(allPoints);
 
-    float xRange = m.xMax - m.xMin;
-    float zRange = m.zMax - m.zMin;
-    float yRange = m.yMax - m.yMin;
-    float largestRange = Math.max(xRange, zRange);
+    xRange = m.xMax - m.xMin;
+    zRange = m.zMax - m.zMin;
+    yRange = m.yMax - m.yMin;
+    largestRange = Math.max(xRange, zRange);
+    modelXMin = m.xMin;
+    modelZMin = m.zMin;
 
     // Shaders expect a 0 to 1 range in both X and Z.  Since X is our largest range, we use that as
     // the scaling factor for both X and Z so that we don't get aspect distortion.  We also need to offset

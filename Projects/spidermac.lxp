@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691311418746,
+  "timestamp": 1691313791761,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -742,17 +742,17 @@
               "attack": 5.00000011175871,
               "release": 0.26334060752858685,
               "slope": 4.5,
-              "band-1": 0.055129993872769845,
-              "band-2": 0.12284420159553877,
-              "band-3": 0.1551996396631341,
-              "band-4": 0.18503325759088673,
-              "band-5": 0.17218769192586303,
-              "band-6": 0.15457501381026884,
-              "band-7": 0.13827446404595867,
+              "band-1": 0.0,
+              "band-2": 0.10167720608995534,
+              "band-3": 0.06794117146734546,
+              "band-4": 0.0,
+              "band-5": 0.0,
+              "band-6": 0.0,
+              "band-7": 0.0,
               "band-8": 0.0,
-              "band-9": 0.0037022241926308874,
+              "band-9": 0.0,
               "band-10": 0.0,
-              "band-11": 0.0408975655972329,
+              "band-11": 0.0,
               "band-12": 0.0,
               "band-13": 0.0,
               "band-14": 0.0,
@@ -774,7 +774,7 @@
           "label": "Mixer",
           "crossfader": 0.5,
           "crossfaderBlendMode": 0,
-          "focusedChannel": 1,
+          "focusedChannel": 2,
           "focusedChannelAux": 4,
           "cueA": false,
           "cueB": false,
@@ -1065,9 +1065,9 @@
             },
             "parameters": {
               "label": "GIF",
-              "fader": 0.342857139185071,
+              "fader": 1.0,
               "arm": false,
-              "selected": true,
+              "selected": false,
               "enabled": false,
               "cue": false,
               "aux": false,
@@ -1087,13 +1087,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 7,
+              "focusedPattern": 10,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 7,
+            "patternIndex": 10,
             "patterns": [
               {
                 "id": 164,
@@ -1629,6 +1629,92 @@
                   }
                 },
                 "deviceVersion": -1
+              },
+              {
+                "id": 19449,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Fireworks",
+                  "speed": 1.0,
+                  "fall": 1.2241379488259554,
+                  "parts": 100.0,
+                  "exps": 1.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 19450,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 20068,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "FireworksPos",
+                  "speed": 1.0,
+                  "x1": 0.034482743591070175,
+                  "y1": -0.1034483052790165,
+                  "fall": 0.9999999981373549,
+                  "parts": 100.0,
+                  "exps": 1.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 20069,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
               }
             ]
           },
@@ -1647,7 +1733,7 @@
               "label": "SPECIAL",
               "fader": 1.0,
               "arm": false,
-              "selected": false,
+              "selected": true,
               "enabled": true,
               "cue": false,
               "aux": false,
@@ -3220,7 +3306,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.2744655085787984
+            "basis": 0.3025219371150444
           },
           {
             "id": 2949,
@@ -3248,7 +3334,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.9577826116083672
+            "basis": 0.9925909245992064
           }
         ],
         "modulations": [

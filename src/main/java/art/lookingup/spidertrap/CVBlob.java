@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static art.lookingup.spidertrap.SpiderTrapModel.largestRange;
+
 /**
  * Computer vision blobs.  These will be reported via OSC approximately at 10 FPS.  We will
  * timestamp their arrival and expire any old blobs.
@@ -19,12 +21,23 @@ public class CVBlob {
   public float y;
   public float z;
   public long created;
+  public float u;
+  public float v;
 
   public CVBlob(float x, float y, float z) {
     this.x = FEET_PER_METER * (x/1000f);
     this.y = FEET_PER_METER * (y/1000f);
     this.z = FEET_PER_METER * (z/1000f);
     created = System.currentTimeMillis();
+    // LXModel Z coordinates (or opencv vision y coordinates) have a vertical offset.  Since
+    // the model is rectangular, to create non-distorted uv coordinates ranging from 0 to 1 we
+    // need to "clip" the bottom and top of the Z or Y coordinates.
+    // TODO(tracy): This will need to be changed depending on how things are oriented at the build
+    // because the computer vision Y relative to the LX Model Z-coord might be different than our testing setup.
+    // ALso, the x-coordinate is mirrored from what we would expect.
+    float zOffset = 0.07f;
+    u = (-this.x - SpiderTrapModel.modelXMin)/largestRange;
+    v = (this.y - SpiderTrapModel.modelZMin)/largestRange + zOffset;
   }
 
   public boolean isInBlob(float x, float z, float radius) {

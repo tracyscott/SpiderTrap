@@ -1,11 +1,25 @@
 /*{
-	"DESCRIPTION": "Fireworks",
+	"DESCRIPTION": "FireworksPos",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
 		"VERTEX SDF"
 	],
 	"INPUTS": [
+	    {
+            "NAME": "x1",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": -2.0,
+            "MAX": 2.0
+         },
+         {
+            "NAME": "y1",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": -2.0,
+            "MAX": 2.0
+         },
          {
             "NAME": "fall",
             "TYPE": "float",
@@ -33,6 +47,8 @@
 #version 330
 
 uniform float fTime;
+uniform float x1;
+uniform float y1;
 uniform float fall;
 uniform float parts;
 uniform float exps;
@@ -159,7 +175,7 @@ float explosion(vec2 uv, float t) {
     return sparks;
 }
 
-#define NUM_EXPLOSIONS 10.
+    #define NUM_EXPLOSIONS 10.
 
 void main(){
     vec2 uv = position.xz - 0.5;
@@ -172,7 +188,7 @@ void main(){
         float t = fTime +i / exps;
         float ft = floor(t);
         vec3 color = (.75 + .25 * sin(4.*vec3(.34, .54, .43)*ft));
-        vec2 offs = Hash12(i+1.+ft) - 0.5;
+        vec2 offs = vec2(x1, y1);
         //offs *= vec2(1.0, 1.0); // vertical center
         col += explosion(uv-offs, fract(t)) * color;
     }

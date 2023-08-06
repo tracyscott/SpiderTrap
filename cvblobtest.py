@@ -13,8 +13,8 @@ if __name__ == "__main__":
     port = 7979
 
     while True:
-        x = random.randrange(-200,200)
-        y = random.randrange(-200,200)
+        x = random.randrange(-2000,2000)
+        y = random.randrange(-2000,2000)
         send_osc_message(ip, port, "/spidertrap/blob", float(x), float(y), float(5))
         sleepTime = random.randrange(2000)
         time.sleep(sleepTime/1000)
