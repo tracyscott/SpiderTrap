@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691291082782,
+  "timestamp": 1691311418746,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -742,17 +742,17 @@
               "attack": 5.00000011175871,
               "release": 0.26334060752858685,
               "slope": 4.5,
-              "band-1": 0.15150486630387316,
-              "band-2": 0.162898593515583,
-              "band-3": 0.11728032111400788,
-              "band-4": 0.0,
-              "band-5": 0.0,
-              "band-6": 0.0,
-              "band-7": 0.0,
+              "band-1": 0.055129993872769845,
+              "band-2": 0.12284420159553877,
+              "band-3": 0.1551996396631341,
+              "band-4": 0.18503325759088673,
+              "band-5": 0.17218769192586303,
+              "band-6": 0.15457501381026884,
+              "band-7": 0.13827446404595867,
               "band-8": 0.0,
-              "band-9": 0.0,
+              "band-9": 0.0037022241926308874,
               "band-10": 0.0,
-              "band-11": 0.0,
+              "band-11": 0.0408975655972329,
               "band-12": 0.0,
               "band-13": 0.0,
               "band-14": 0.0,
@@ -1065,10 +1065,10 @@
             },
             "parameters": {
               "label": "GIF",
-              "fader": 1.0,
+              "fader": 0.342857139185071,
               "arm": false,
               "selected": true,
-              "enabled": true,
+              "enabled": false,
               "cue": false,
               "aux": false,
               "crossfadeGroup": 0,
@@ -1586,6 +1586,49 @@
                   }
                 },
                 "deviceVersion": -1
+              },
+              {
+                "id": 18841,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Ripple",
+                  "speed": 1.0,
+                  "x1": 0.2586206930336253,
+                  "y1": 0.48620690947462786,
+                  "freq": 47.67241347581148,
+                  "rscale": 5.103448264300823
+                },
+                "children": {
+                  "modulation": {
+                    "id": 18842,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
               }
             ]
           },
@@ -1605,7 +1648,7 @@
               "fader": 1.0,
               "arm": false,
               "selected": false,
-              "enabled": false,
+              "enabled": true,
               "cue": false,
               "aux": false,
               "crossfadeGroup": 0,
@@ -1624,13 +1667,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 14,
+              "focusedPattern": 19,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 14,
+            "patternIndex": 19,
             "patterns": [
               {
                 "id": 255,
@@ -2587,8 +2630,9 @@
                   "recall": false,
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
-                  "radius": 0.5183999928832054,
-                  "alive": 466.29999181255704
+                  "freq": 50.0,
+                  "rscale": 5.0,
+                  "alive": 1000.0
                 },
                 "children": {
                   "modulation": {
@@ -3176,7 +3220,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.277315082554726
+            "basis": 0.2744655085787984
           },
           {
             "id": 2949,
@@ -3204,7 +3248,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.4456414749184946
+            "basis": 0.9577826116083672
           }
         ],
         "modulations": [

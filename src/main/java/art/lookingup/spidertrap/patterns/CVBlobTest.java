@@ -1,34 +1,64 @@
 package art.lookingup.spidertrap.patterns;
 
 import art.lookingup.spidertrap.CVBlob;
+import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.spidertrap.SpiderTrapModel;
+import art.lookingup.util.GLUtil;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.model.LXPoint;
 import heronarts.lx.parameter.CompoundParameter;
 import heronarts.lx.pattern.LXPattern;
+import processing.opengl.PGraphicsOpenGL;
+import processing.opengl.PJOGL;
+
+import java.awt.image.BufferedImage;
+import java.util.LinkedHashMap;
+import java.util.logging.Logger;
 
 @LXCategory(LXCategory.FORM)
 public class CVBlobTest extends LXPattern {
-
-  CompoundParameter radius = new CompoundParameter("radius", 0.2, 0.01, 2.0);
+  private static final Logger logger = Logger.getLogger(CVBlobTest.class.getName());
+  CompoundParameter freq = new CompoundParameter("freq", 0, 50, 200);
+  CompoundParameter rscale = new CompoundParameter("rscale", 1, .1, 20);
   CompoundParameter alive = new CompoundParameter("alive", 100, 10, 1000);
+  GLUtil.SpiderGLContext spGLCtx;
 
   public CVBlobTest(LX lx) {
 
     super(lx);
-    addParameter("radius", radius);
+    addParameter("freq", freq);
+    addParameter("rscale", rscale);
     addParameter("alive", alive);
+
+    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
+    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
+    GL jogl = pJogl.gl;
+    LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
+    scriptParams.put("x1", 0f);
+    scriptParams.put("y1", 0f);
+    scriptParams.put("freq", freq.getValuef());
+    scriptParams.put("rscale", rscale.getValuef());
+    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), null, "Ripple", scriptParams);
   }
 
   public void run(double deltaMs) {
     CVBlob.cleanExpired(alive.getValuef());
-    for (LXPoint p : SpiderTrapModel.allPoints) {
-      if (CVBlob.isInAnyBlob(p.x, p.z, radius.getValuef()))
-        colors[p.index] = LXColor.WHITE;
-      else
-        colors[p.index] = LXColor.rgba(0, 0, 0, 0);
+
+    for (LXPoint p : SpiderTrapModel.allPoints)
+      colors[p.index] = LXColor.BLACK;
+
+    for (CVBlob cvBlob : CVBlob.blobs) {
+      logger.info("rendering blob");
+      spGLCtx.scriptParams.put("x1", cvBlob.x);
+      spGLCtx.scriptParams.put("y1", cvBlob.y);
+      spGLCtx.scriptParams.put("freq", freq.getValuef());
+      spGLCtx.scriptParams.put("rscale", rscale.getValuef());
+      GLUtil.glRun(spGLCtx, deltaMs, 1f);
+      GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
     }
   }
 }
