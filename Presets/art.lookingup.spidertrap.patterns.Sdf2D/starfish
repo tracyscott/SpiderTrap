@@ -1,0 +1,98 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691345828290,
+  "id": 21991,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": true
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Stars",
+    "speed": 9.310345016419888,
+    "rsize": 13.448275756090878,
+    "brt": 1.0,
+    "sweep": 3.513793110147373
+  },
+  "children": {
+    "modulation": {
+      "id": 21992,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [
+        {
+          "id": 22654,
+          "class": "heronarts.lx.modulator.VariableLFO",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LFO",
+            "running": true,
+            "trigger": false,
+            "loop": true,
+            "tempoSync": false,
+            "tempoMultiplier": 5,
+            "tempoLock": true,
+            "clockMode": 0,
+            "periodFast": 21168.65311857544,
+            "periodSlow": 10000.0,
+            "wave": 0,
+            "skew": 0.0,
+            "shape": 0.0,
+            "bias": 0.0,
+            "phase": 0.0,
+            "exp": 0.0
+          },
+          "children": {},
+          "basis": 0.8271826851539833
+        }
+      ],
+      "modulations": [
+        {
+          "source": {
+            "id": 22654,
+            "path": "/modulation/modulator/1"
+          },
+          "target": {
+            "componentId": 21991,
+            "parameterPath": "sweep",
+            "path": "/sweep"
+          },
+          "id": 22655,
+          "class": "heronarts.lx.modulation.LXCompoundModulation",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LX",
+            "enabled": true,
+            "polarity": 1,
+            "range": 0.42000001296401024
+          },
+          "children": {}
+        }
+      ],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}
