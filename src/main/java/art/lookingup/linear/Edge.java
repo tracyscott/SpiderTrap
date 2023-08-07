@@ -84,6 +84,12 @@ public class Edge {
     return midp;
   }
 
+  public void interpolate(Point3D result, float t) {
+    result.x = p1.x + t * (p2.x - p1.x);
+    result.y = p1.y + t * (p2.y - p1.y);
+    result.z = p1.z + t * (p2.z - p1.z);
+  }
+
   public void translate(float x, float y, float z) {
     p1.x += x;
     p1.y += y;

@@ -3,8 +3,11 @@ package art.lookingup.linear;
 import art.lookingup.spidertrap.SpiderTrapModel;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 public class DirectionalLP {
+  private static final Logger logger = Logger.getLogger(DirectionalLP.class.getName());
+
   public DirectionalLP(int lpNum, boolean forward) {
     int edgeNum = lpNum;
     Edge edge = SpiderTrapModel.allEdges.get(edgeNum);
@@ -42,11 +45,16 @@ public class DirectionalLP {
    */
   static public DirectionalLP chooseBarFromJoints(Edge thisEdge, boolean thisForward, Joint[] joints, int jointSelector) {
     int jointNum = jointSelector;
-    if (jointNum == -1)
+    if (jointNum == -1) {
+      // logger.info("Choosing next LinearPoints by random from # joints: " + joints.length);
       jointNum = ThreadLocalRandom.current().nextInt(joints.length);
+    }
     Edge nextEdge;
     if (jointSelector < 3 && joints[jointNum] != null) nextEdge = joints[jointNum].edge;
-    else nextEdge = thisEdge;
+    else {
+      // logger.info("Couldn't get targeted joint, resetting to self. jointNum: " + jointNum);
+      nextEdge = thisEdge;
+    }
     DirectionalLP dlb;
     if (joints[jointNum] != null)
       dlb = new DirectionalLP(nextEdge.linearPoints.lpNum, joints[jointNum].isAdjacentEdgeAStartPoint);
