@@ -139,7 +139,16 @@ public class GLUtil {
   }
 
   static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed) {
+    glRun(spGLCtx, deltaMs, speed, true);
+  }
+
+  static public void glUpdateTotalTime(SpiderGLContext spGLCtx, double deltaMs) {
     spGLCtx.totalTime += deltaMs / 1000.0;
+  }
+
+  static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed, boolean incrementTime) {
+    if (incrementTime)
+      spGLCtx.totalTime += deltaMs / 1000.0;
     spGLCtx.gl.glBindBuffer(GL_ARRAY_BUFFER, SpiderGLContext.bufferNames.get(SpiderGLContext.Buffer.VERTEX));
     spGLCtx.gl.glBufferData(GL_ARRAY_BUFFER, spGLCtx.vertexBuffer.capacity() * Float.BYTES, spGLCtx.vertexBuffer, GL_STATIC_DRAW);
     int inputAttrib = spGLCtx.gl.glGetAttribLocation(spGLCtx.shaderProgramId, "position");

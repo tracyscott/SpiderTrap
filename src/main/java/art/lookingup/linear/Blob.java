@@ -42,6 +42,7 @@ public class Blob {
 
   // For render shaders
   public GLUtil.SpiderGLContext spGLCtx;
+  public float shaderSpeed = 1f;
 
   public void updateUV() {
     if (dlp != null) {
@@ -146,7 +147,7 @@ public class Blob {
             // TODO(tracy): Should params be set per blob?
             spGLCtx.scriptParams.put("x1", u - 0.5f);
             spGLCtx.scriptParams.put("y1", v - 0.5f);
-            GLUtil.glRun(spGLCtx, deltaMs, 1f);
+            GLUtil.glRun(spGLCtx, deltaMs, shaderSpeed, false);
             GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
           }
 
