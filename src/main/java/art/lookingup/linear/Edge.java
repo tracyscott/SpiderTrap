@@ -170,7 +170,7 @@ public class Edge {
     }
   }
 
-  static public final float adjacencyDistance = 2f/12f;
+  static public final float adjacencyDistance = 8f/12f;
 
   public int isEdgeAdjacentStart(Edge otherEdge) {
     if (p1.distanceTo(otherEdge.p1) < adjacencyDistance)
