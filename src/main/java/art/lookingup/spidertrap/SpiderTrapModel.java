@@ -251,12 +251,8 @@ public class SpiderTrapModel extends LXModel {
                                         z + polarZ(hexInnerRadius, angle));
       Point3D unitVector = Point3D.unitVectorTo(new Point3D(polarX(innerRadius, angle), 0, polarZ(innerRadius, angle)),
           new Point3D(0, 0, 0));
-      Point3D prevEdgeEnd = null;
+      Point3D prevEdgeEnd = radialStart;
       for (float curRadialDist : radialDistances) {
-        if (prevEdgeEnd == null) {
-          prevEdgeEnd = radialStart;
-          continue;
-        }
         Point3D edgeEnd = new Point3D(unitVector.x * curRadialDist,
             prevEdgeEnd.y,
             unitVector.z * curRadialDist);
