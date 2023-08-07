@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691439476482,
+  "timestamp": 1691442676626,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -742,11 +742,11 @@
               "attack": 5.00000011175871,
               "release": 0.26334060752858685,
               "slope": 4.5,
-              "band-1": 0.0,
-              "band-2": 0.0,
-              "band-3": 0.0,
-              "band-4": 0.0,
-              "band-5": 0.0,
+              "band-1": 0.06542375356765395,
+              "band-2": 0.14449347000590185,
+              "band-3": 0.1413692719597769,
+              "band-4": 0.11314734573773555,
+              "band-5": 0.07108334915471737,
               "band-6": 0.0,
               "band-7": 0.0,
               "band-8": 0.0,
@@ -1753,13 +1753,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 1,
+              "focusedPattern": 0,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 1,
+            "patternIndex": 0,
             "patterns": [
               {
                 "id": 255,
@@ -1779,7 +1779,7 @@
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
                   "radial": -0.35000001452863216,
-                  "edge": 0,
+                  "edge": 6,
                   "joint": 0,
                   "web": -1,
                   "pos": -1
@@ -1820,8 +1820,8 @@
                   "recall": false,
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
-                  "seg": 30,
-                  "joint": 0,
+                  "seg": 40,
+                  "joint": 2,
                   "web": -1,
                   "pos": -1
                 },
@@ -3150,7 +3150,7 @@
                   "speed": 35.40000054985285,
                   "blobs": 124,
                   "randspd": 0.0,
-                  "nxtBar": -1,
+                  "nxtBar": 0,
                   "fx": 2,
                   "fxDepth": 0.10000000149011612,
                   "wave": 2,
@@ -3244,7 +3244,7 @@
                           "exp": 0.0
                         },
                         "children": {},
-                        "basis": 0.41867048222184855
+                        "basis": 0.47143718370933413
                       }
                     ],
                     "modulations": [
@@ -3341,11 +3341,11 @@
                   "recall": false,
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
-                  "blobs": 12,
-                  "bspeed": 22.800000831484795,
+                  "blobs": 14,
+                  "bspeed": 28.20000071078539,
                   "randspd": 1.0,
                   "joint": -1,
-                  "fall": 0.567499989103526,
+                  "fall": 0.1774999978207052,
                   "parts": 48.26000115647912,
                   "exps": 1.0,
                   "alive": 100.0
@@ -3695,7 +3695,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.911997711610174
+            "basis": 0.1342881973906267
           },
           {
             "id": 2949,
@@ -3723,7 +3723,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.11116561568423532
+            "basis": 0.7431124576893595
           }
         ],
         "modulations": [
