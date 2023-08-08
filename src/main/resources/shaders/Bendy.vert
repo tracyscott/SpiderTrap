@@ -1,59 +1,38 @@
 /*{
-	"DESCRIPTION": "NCosines",
+	"DESCRIPTION": "Bendy",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
 		"VERTEX SDF"
 	],
 	"INPUTS": [
-         {
+	    {
             "NAME": "x1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
-            "MAX": 1.1
+            "MIN": -2.0,
+            "MAX": 2.0
          },
          {
-            "NAME": "width",
+            "NAME": "y1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
-            "MAX": 1.1
+            "MIN": -2.0,
+            "MAX": 2.0
          },
          {
-            "NAME": "rspeed",
+            "NAME": "fall",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": 0,
-            "MAX": 10
+            "MIN": 0.0,
+            "MAX": 2.0
          },
          {
-            "NAME": "freq",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0,
-            "MAX": 100
-         },
-         {
-            "NAME": "zoom",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
-         },
-          {
             "NAME": "pal",
             "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
-         },
-          {
-            "NAME": "intens",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
+            "DEFAULT": 0.0,
             "MIN": 0.0,
-            "MAX": 1.5
+            "MAX": 9.9
          }
 	]
 }*/
@@ -62,12 +41,9 @@
 
 uniform float fTime;
 uniform float x1;
-uniform float width;
-uniform float freq;
-uniform float rspeed;
-uniform float zoom;
+uniform float y1;
+uniform float fall;
 uniform float pal;
-uniform float intens;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -126,13 +102,6 @@ float stroke(float x, float s, float w) {
     return clamp(d, 0., 1.);
 }
 
-float stroke2(float x, float s, float w) {
-    float d = smoothstep(s-.05, s+.05, x+w*.5)
-    - smoothstep(s-.05, s+.05,x-w*.5);
-    return clamp(d, 0., 1.);
-}
-
-
 float circleSDF(vec2 st) {
     return length(st-.5)*2.;
 }
@@ -155,6 +124,7 @@ float rectSDF(vec2 st, vec2 s) {
     return max(abs(st.x/s.x),
     abs(st.y/s.y));
 }
+
 
 // http://dev.thi.ng/gradients/
 vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d)
@@ -288,37 +258,37 @@ vec3 paletteN(in float t, in float pal_num) {
     return palette0(t);
 }
 
+vec2 Hash12(float t) {
+    float x = fract(sin(t*674.3)*453.2);
+    float y = fract(sin((t+x)*711.3)*261.2);
+    return vec2(x, y);
+}
 
+vec2 Hash12_Polar(float t) {
+    float a = fract(sin(t*674.3)*453.2)*6.2832;
+    float d = fract(sin((t+a)*711.3)*261.2);
+    return vec2(sin(a), cos(a))*d;
+}
 
-mat2 Rot(float a) {
-    float s=sin(a), c=cos(a);
-    return mat2(c, -s, s, c);
+float Light(vec2 uv) {
+    float d = length(uv);
+    float m = (0.05*fall)/d;
+
+    m *= smoothstep(1., .2, d);
+    return m;
 }
 
 
 void main(){
     vec2 uv = position.xz - 0.5;
-    vec3 color = vec3(0.);
 
+    vec3 col = vec3(0.);
 
-    uv = uv*zoom;
-
-    float offset = sin(uv.y*PI*freq)*.15;
-
-    uv = uv * Rot(PI * rspeed * fTime);
-
-    float bright = 0.;
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
-
-    uv = uv * Rot(PI);
-
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
-
-    //bright = clamp(bright * .5, 0.0, 1.0);
-    color = paletteN(bright * .5, pal) * bright * intens;
-    tPosition = clamp(color, 0.0, 1.0);
+    vec3 color = (.75 + .25 * sin(4.*vec3(.34, .54, .43)));
+    vec2 offs = vec2(x1, y1);
+    float bright = clamp(Light(uv-offs), 0.0, 1.0);
+    float osc = .25*sin(fTime*1.)+.5;
+    col = paletteN(bright*(osc), pal)*bright;
+    //col = paletteN(bright, pal)*bright;
+    tPosition = clamp(col, 0.0, 1.0);
 }

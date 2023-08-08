@@ -1,5 +1,5 @@
 /*{
-	"DESCRIPTION": "NCosines",
+	"DESCRIPTION": "LRings",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
@@ -10,50 +10,57 @@
             "NAME": "x1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
+            "MIN": -1.1,
             "MAX": 1.1
          },
          {
-            "NAME": "width",
+            "NAME": "s1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
+            "MIN": -1.1,
             "MAX": 1.1
          },
          {
-            "NAME": "rspeed",
+            "NAME": "s2",
             "TYPE": "float",
-            "DEFAULT": 0.0,
-            "MIN": 0,
-            "MAX": 10
+            "DEFAULT": 0.1,
+            "MIN": -1.1,
+            "MAX": 1.1
          },
          {
-            "NAME": "freq",
+            "NAME": "radius",
             "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0,
-            "MAX": 100
+            "DEFAULT": 0.0,
+            "MIN": -0.25,
+            "MAX": 2.0
+         },
+         {
+            "NAME": "thick",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": -1.1,
+            "MAX": 1.1
          },
          {
             "NAME": "zoom",
             "TYPE": "float",
             "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
+            "MIN": -4.0,
+            "MAX": 4.0
          },
           {
-            "NAME": "pal",
+            "NAME": "brt",
             "TYPE": "float",
             "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
+            "MIN": .1,
+            "MAX": 20.
          },
-          {
-            "NAME": "intens",
+         {
+            "NAME": "palval",
             "TYPE": "float",
-            "DEFAULT": 1.0,
+            "DEFAULT": 0.0,
             "MIN": 0.0,
-            "MAX": 1.5
+            "MAX": 9.9
          }
 	]
 }*/
@@ -62,12 +69,13 @@
 
 uniform float fTime;
 uniform float x1;
-uniform float width;
-uniform float freq;
-uniform float rspeed;
+uniform float s1;
+uniform float s2;
+uniform float radius;
+uniform float thick;
 uniform float zoom;
-uniform float pal;
-uniform float intens;
+uniform float brt;
+uniform float palval;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -125,13 +133,6 @@ float stroke(float x, float s, float w) {
     - step(s,x-w*.5);
     return clamp(d, 0., 1.);
 }
-
-float stroke2(float x, float s, float w) {
-    float d = smoothstep(s-.05, s+.05, x+w*.5)
-    - smoothstep(s-.05, s+.05,x-w*.5);
-    return clamp(d, 0., 1.);
-}
-
 
 float circleSDF(vec2 st) {
     return length(st-.5)*2.;
@@ -290,35 +291,47 @@ vec3 paletteN(in float t, in float pal_num) {
 
 
 
+float HexDist(vec2 p) {
+    p = abs(p);
+    float c = dot(p, normalize(vec2(1,1.73)));
+    c = max(c, p.x);
+    return c;
+}
+
+float ring(vec2 ruv3) {
+    float d = HexDist(ruv3); //length(ruv3);
+    d -= radius;
+
+    d = abs(d)-thick;
+    d = smoothstep(s1, s2, d);
+    d = pow(brt*0.01/d, 1.3);
+    return clamp(d, 0., 1.);
+}
+
 mat2 Rot(float a) {
     float s=sin(a), c=cos(a);
     return mat2(c, -s, s, c);
 }
 
-
 void main(){
     vec2 uv = position.xz - 0.5;
-    vec3 color = vec3(0.);
+    vec3 color = vec3(1., 1., 1.);
 
+    float pal_d = length(uv);
 
-    uv = uv*zoom;
-
-    float offset = sin(uv.y*PI*freq)*.15;
-
-    uv = uv * Rot(PI * rspeed * fTime);
+    vec2 ruv = uv;
+    ruv *= zoom;
+    ruv.x += x1;
+    //ruv.y += y1;
 
     float bright = 0.;
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
+    for (float i = 0.; i < 6.; i++) {
+        vec2 iruv = Rot(i * PI/3.) * ruv;
+        float d = ring(iruv + vec2(0., .5));
+        bright += d;
+    }
 
-    uv = uv * Rot(PI);
+    color *= vec3(clamp(paletteN(pal_d + fTime * .5, palval)*bright, 0., 1.));
 
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
-
-    //bright = clamp(bright * .5, 0.0, 1.0);
-    color = paletteN(bright * .5, pal) * bright * intens;
-    tPosition = clamp(color, 0.0, 1.0);
+    tPosition = color;
 }

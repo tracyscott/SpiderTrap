@@ -1,5 +1,5 @@
 /*{
-	"DESCRIPTION": "NCosines",
+	"DESCRIPTION": "Strength",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
@@ -10,50 +10,36 @@
             "NAME": "x1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": -0.1,
+            "MIN": -1.1,
             "MAX": 1.1
          },
          {
-            "NAME": "width",
+            "NAME": "y1",
             "TYPE": "float",
             "DEFAULT": 0.0,
             "MIN": -0.1,
             "MAX": 1.1
-         },
-         {
-            "NAME": "rspeed",
-            "TYPE": "float",
-            "DEFAULT": 0.0,
-            "MIN": 0,
-            "MAX": 10
          },
          {
             "NAME": "freq",
             "TYPE": "float",
-            "DEFAULT": 1.0,
+            "DEFAULT": 0.0,
             "MIN": 0,
-            "MAX": 100
+            "MAX": 10.0
          },
          {
             "NAME": "zoom",
             "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
+            "DEFAULT": 0.0,
+            "MIN": 0.1,
+            "MAX": 10.0
          },
           {
             "NAME": "pal",
             "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.2,
-            "MAX": 10.
-         },
-          {
-            "NAME": "intens",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
+            "DEFAULT": 0.0,
             "MIN": 0.0,
-            "MAX": 1.5
+            "MAX": 9.5
          }
 	]
 }*/
@@ -62,12 +48,10 @@
 
 uniform float fTime;
 uniform float x1;
-uniform float width;
+uniform float y1;
 uniform float freq;
-uniform float rspeed;
 uniform float zoom;
 uniform float pal;
-uniform float intens;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -120,18 +104,17 @@ const float degree = 180.0/M_PI;
 // 1 radian in degrees
 const float radian = M_PI/180.0;
 
+float sdTorus( vec3 p, vec2 t )
+{
+    vec2 q = vec2(length(p.xz)-t.x,p.y);
+    return length(q)-t.y;
+}
+
 float stroke(float x, float s, float w) {
     float d = step(s, x+w*.5)
     - step(s,x-w*.5);
     return clamp(d, 0., 1.);
 }
-
-float stroke2(float x, float s, float w) {
-    float d = smoothstep(s-.05, s+.05, x+w*.5)
-    - smoothstep(s-.05, s+.05,x-w*.5);
-    return clamp(d, 0., 1.);
-}
-
 
 float circleSDF(vec2 st) {
     return length(st-.5)*2.;
@@ -145,15 +128,49 @@ float fill(float x, float size) {
     return 1.-step(size, x);
 }
 
+float sdVerticalCapsule( vec3 p, float h, float r )
+{
+    p.y -= clamp( p.y, 0.0, h );
+    return length( p ) - r;
+}
+
 float opOnion( in float sdf, in float thickness )
 {
     return abs(sdf)-thickness;
 }
 
-float rectSDF(vec2 st, vec2 s) {
-    st = st*2.-1.;
-    return max(abs(st.x/s.x),
-    abs(st.y/s.y));
+
+// Rotation matrix around the X axis.
+mat3 rotateX(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat3(
+    vec3(1, 0, 0),
+    vec3(0, c, -s),
+    vec3(0, s, c)
+    );
+}
+
+// Rotation matrix around the Y axis.
+mat3 rotateY(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat3(
+    vec3(c, 0, s),
+    vec3(0, 1, 0),
+    vec3(-s, 0, c)
+    );
+}
+
+// Rotation matrix around the Z axis.
+mat3 rotateZ(float theta) {
+    float c = cos(theta);
+    float s = sin(theta);
+    return mat3(
+    vec3(c, -s, 0),
+    vec3(s, c, 0),
+    vec3(0, 0, 1)
+    );
 }
 
 // http://dev.thi.ng/gradients/
@@ -289,36 +306,49 @@ vec3 paletteN(in float t, in float pal_num) {
 }
 
 
+float rectSDF(vec2 st, vec2 s) {
+    st = st*2.-1.;
+    return max(abs(st.x/s.x),
+    abs(st.y/s.y));
+}
 
 mat2 Rot(float a) {
     float s=sin(a), c=cos(a);
     return mat2(c, -s, s, c);
 }
 
+float HexDist(vec2 p) {
+    p = abs(p);
+    float c = dot(p, normalize(vec2(1,1.73)));
+    c = max(c, p.x);
+    return c;
+}
+
+
 
 void main(){
     vec2 uv = position.xz - 0.5;
-    vec3 color = vec3(0.);
+    vec3 col = vec3(0.);
 
+    float od = HexDist(uv);
 
-    uv = uv*zoom;
+    //uv = uv * Rot(fTime * -2.);
+    uv *= 4.*zoom;
+    uv = fract(uv);
+    vec2 gid = floor(uv + 0.5);
+    vec2 odd = mod(gid, 2.0);
+    float rotateDir = 0.5 - gid.x;
+    rotateDir *= -1.;
+   // if (odd.x > 0.0)
+    //    rotateDir = -1.0;
+    //uv -= 0.5;
+    vec2 uv2 = uv * Rot(rotateDir * fTime * 10.);
+    float bright = smoothstep(0.2, x1 + .5 + cos(uv2.y*PI*freq)*.25, uv2.x);
+    float osc = 1.; // 25*sin(fTime*1.)+.5;
+    float pal_val = 0.5 * sin(od*5.0*fTime) + .5;
+    //col = paletteN(bright*(osc), pal)*bright;
+    float intensity = 0.05/(1.01 - bright);
+    col = paletteN(pal_val, pal)*bright;
 
-    float offset = sin(uv.y*PI*freq)*.15;
-
-    uv = uv * Rot(PI * rspeed * fTime);
-
-    float bright = 0.;
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
-
-    uv = uv * Rot(PI);
-
-    bright += stroke2(uv.x -.28, offset, width);
-    bright += stroke2(uv.x, offset, width);
-    bright += stroke2(uv.x+.28, offset, width);
-
-    //bright = clamp(bright * .5, 0.0, 1.0);
-    color = paletteN(bright * .5, pal) * bright * intens;
-    tPosition = clamp(color, 0.0, 1.0);
+    tPosition = clamp(col, 0.0, 1.0);
 }
