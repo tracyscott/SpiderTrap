@@ -1,0 +1,45 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691647283982,
+  "id": 29778,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Hexagrams",
+    "speed": 0.5,
+    "rspeed": 1.9827586133033037,
+    "layers": 5.318965512327849,
+    "brt": 2.182758615923853,
+    "pal": 3.5215517110191286
+  },
+  "children": {
+    "modulation": {
+      "id": 29779,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

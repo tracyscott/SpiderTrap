@@ -1,5 +1,5 @@
 /*{
-	"DESCRIPTION": "Starfield",
+	"DESCRIPTION": "Test",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
@@ -7,45 +7,24 @@
 	],
 	"INPUTS": [
          {
-            "NAME": "rspeed",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": -5.0,
-            "MAX": 5.0
-         },
-         {
-            "NAME": "layers",
-            "TYPE": "float",
-            "DEFAULT": 4.0,
-            "MIN": 1.0,
-            "MAX": 10.0
-         },
-          {
-            "NAME": "ssize",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.0,
-            "MAX": 10.0
-         },
-         {
-            "NAME": "brt",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.1,
-            "MAX": 5.0
-         },
-         {
-            "NAME": "sparkle",
+            "NAME": "x1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": 0.0,
-            "MAX": 1.0
+            "MIN": -0.1,
+            "MAX": 1.1
          },
          {
-            "NAME": "spkspeed",
+            "NAME": "y1",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": -0.1,
+            "MAX": 1.1
+         },
+          {
+            "NAME": "zoom",
             "TYPE": "float",
             "DEFAULT": 1.0,
-            "MIN": 0.0,
+            "MIN": .1,
             "MAX": 4.0
          }
 	]
@@ -54,12 +33,9 @@
 #version 330
 
 uniform float fTime;
-uniform float rspeed;
-uniform float layers;
-uniform float ssize;
-uniform float brt;
-uniform float sparkle;
-uniform float spkspeed;
+uniform float x1;
+uniform float y1;
+uniform float zoom;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -141,59 +117,47 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
-mat2 Rot(float a) {
-    float s=sin(a), c=cos(a);
-    return mat2(c, -s, s, c);
+float sdStar5(in vec2 p, in float r, in float rf)
+{
+    const vec2 k1 = vec2(0.809016994375, -0.587785252292);
+    const vec2 k2 = vec2(-k1.x,k1.y);
+    p.x = abs(p.x);
+    p -= 2.0*max(dot(k1,p),0.0)*k1;
+    p -= 2.0*max(dot(k2,p),0.0)*k2;
+    p.x = abs(p.x);
+    p.y -= r;
+    vec2 ba = rf*vec2(-k1.y,k1.x) - vec2(0,1);
+    float h = clamp( dot(p,ba)/dot(ba,ba), 0.0, r );
+    return length(p-ba*h) * sign(p.y*ba.x-p.x*ba.y);
 }
 
-float Star(vec2 uv, float flare) {
-    float d = length(uv);
-    float m = (0.05*brt)/d;
-
-    m *= smoothstep(1., .2, d);
-    return m;
+float HexDist(vec2 p) {
+    p = abs(p);
+    float c = dot(p, normalize(vec2(1,1.73)));
+    c = max(c, p.x);
+    return c;
 }
 
-float Hash21(vec2 p) {
-    p = fract(p*vec2(123.34, 456.12));
-    p += dot(p, p+45.32);
-    return fract(p.x*p.y);
+float sdHexagram( in vec2 p, in float r )
+{
+    const vec4 k = vec4(-0.5,0.8660254038,0.5773502692,1.7320508076);
+    p = abs(p);
+    p -= 2.0*min(dot(k.xy,p),0.0)*k.xy;
+    p -= 2.0*min(dot(k.yx,p),0.0)*k.yx;
+    p -= vec2(clamp(p.x,r*k.z,r*k.w),r);
+    return length(p)*sign(p.y);
 }
 
 
-vec3 StarLayer(vec2 uv) {
-    vec3 col = vec3(0.);
-
-    vec2 gv = fract(uv)-.5;
-    vec2 id = floor(uv);
-
-    for (int y=-1; y <= 1; y++) {
-        for (int x=-1; x <= 1; x++) {
-            vec2 offs = vec2(x, y);
-
-            float n = Hash21(id + offs);
-            float size = fract(n*345.32) * ssize;
-            float star = Star(gv-offs-vec2(n, fract(n*34.))+.5, 0.);
-            vec3 color = sin(vec3(.2, .3, .9)*fract(n*2345.2)*123.2);
-            star *= (1. - sparkle) + sparkle*(sin(fTime*5.*spkspeed+n*6.2831)*.5+.5);
-            col += star*size*color;
-        }
-    }
-
-    return col;
-}
 
 void main(){
     vec2 uv = position.xz - 0.5;
-    vec3 col = vec3(0.);
+    vec3 color = vec3(0.);
 
-    float t = fTime * .1;
-    for (float i=0.; i<1.; i+= 1./layers) {
-        float depth = fract(i + t);
-        float scale = mix(20., .5, depth);
-        float fade = depth*smoothstep(1, .9, depth);
-        col += StarLayer((uv*Rot(fTime*depth*.1*rspeed))*scale+i*453.2)*fade;
-    }
-
-    tPosition = clamp(col, 0.0, 1.0);
+    uv *= zoom;
+    //float d = sdStar5(uv, x1, y1);
+    float d = sdHexagram(uv, x1);
+    //float d = HexDist(uv);
+    color = vec3(clamp(0.01/d, 0.0, 1.0));
+    tPosition = color;
 }

@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691519047475,
+  "timestamp": 1691701499717,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -742,21 +742,21 @@
               "attack": 5.00000011175871,
               "release": 0.26334060752858685,
               "slope": 4.5,
-              "band-1": 0.18214600783657653,
-              "band-2": 0.27185482773203684,
-              "band-3": 0.2907253719082673,
-              "band-4": 0.30189552293760336,
-              "band-5": 0.21817304677354565,
-              "band-6": 0.09737029004988929,
-              "band-7": 0.027137267102427365,
-              "band-8": 0.0,
+              "band-1": 0.32018693098107043,
+              "band-2": 0.35716271129916644,
+              "band-3": 0.3633438862246381,
+              "band-4": 0.35344690348347096,
+              "band-5": 0.3356657167649213,
+              "band-6": 0.18474295445031752,
+              "band-7": 0.21655088759634078,
+              "band-8": 0.11553350158346554,
               "band-9": 0.0,
-              "band-10": 0.019527940056782378,
-              "band-11": 0.2660553087586065,
-              "band-12": 0.26643690760947614,
-              "band-13": 0.21596746419853863,
-              "band-14": 0.170055975568712,
-              "band-15": 0.02140533642186304,
+              "band-10": 0.0,
+              "band-11": 0.09418752752641579,
+              "band-12": 0.0,
+              "band-13": 0.06947397330570249,
+              "band-14": 0.04074949713705911,
+              "band-15": 0.05011459098351201,
               "band-16": 0.0
             },
             "children": {}
@@ -2917,13 +2917,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 13,
+              "focusedPattern": 15,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 13,
+            "patternIndex": 15,
             "patterns": [
               {
                 "id": 3762,
@@ -3644,7 +3644,7 @@
                   "thick": 4.097817862813713E-9,
                   "zoom": 1.793103463947773,
                   "brt": 2.330172406808184,
-                  "palval": 0.5974137678581837
+                  "palval": 0.0
                 },
                 "children": {
                   "modulation": {
@@ -3685,7 +3685,7 @@
                           "exp": 0.0
                         },
                         "children": {},
-                        "basis": 0.7560255071226157
+                        "basis": 0.843308135379275
                       }
                     ],
                     "modulations": [
@@ -3714,6 +3714,101 @@
                         "children": {}
                       }
                     ],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 29778,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "hexagramwmelon"
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Hexagrams",
+                  "speed": 0.5172413773834705,
+                  "rspeed": 1.2344827547669412,
+                  "layers": 7.982758603058755,
+                  "brt": 1.0844827582802745,
+                  "pal": 5.159482748247683,
+                  "s1": 0.0,
+                  "s2": 0.017241379246115685,
+                  "cspeed": 1.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 29779,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 30535,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "spiralpal0"
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Spiral",
+                  "speed": 0.3,
+                  "a": 0.48275861889123917,
+                  "b": 1.2241379339247942,
+                  "pald": 11.499999960884452,
+                  "brt": 4.168103440073803,
+                  "pal": 0.0,
+                  "s1": 0.0,
+                  "s2": 0.2603448238223791,
+                  "cspeed": 10.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 30536,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
                     "triggers": []
                   }
                 },
@@ -3944,7 +4039,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.5781897429823714
+            "basis": 0.8453790381881059
           },
           {
             "id": 2949,
@@ -3972,7 +4067,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.3232522708981543
+            "basis": 0.09205841530791578
           }
         ],
         "modulations": [
@@ -4194,9 +4289,9 @@
         "centerPoint": false,
         "camera": {
           "active": false,
-          "radius": 169.59786214255496,
-          "theta": 6.29465065151453,
-          "phi": 1.3535219226032495,
+          "radius": 26.489034399186703,
+          "theta": 8.00590137578547,
+          "phi": 1.4137166738510132,
           "x": 0.0,
           "y": 10.0,
           "z": 0.0
@@ -4204,9 +4299,9 @@
         "cue": [
           {
             "active": false,
-            "radius": 169.59786214255496,
-            "theta": 6.29465065151453,
-            "phi": 1.3535219226032495,
+            "radius": 26.489034399186703,
+            "theta": 8.00590137578547,
+            "phi": 1.4137166738510132,
             "x": 0.0,
             "y": 10.0,
             "z": 0.0
