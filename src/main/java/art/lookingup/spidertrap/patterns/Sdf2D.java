@@ -5,6 +5,7 @@ import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.spidertrap.SpiderTrapModel;
 import art.lookingup.util.EaseUtil;
 import art.lookingup.colors.Colors;
+import art.lookingup.util.GLUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -138,14 +139,18 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
     reloadShader(shaderName, true);
   }
 
+
   public void reloadShader(String shaderName, boolean clearSliders) {
     if (shaderProgramId != -1)
       gl.glDeleteProgram(shaderProgramId);
 
     if (clearSliders) clearSliders();
 
+    String paletteDefs = GLUtil.loadPalettes();
+
     ShaderCode vertShader = ShaderCode.create(gl, GL_VERTEX_SHADER, this.getClass(), "shaders",
         null, shaderName, "vert", null, true);
+    vertShader.insertShaderSource(0, "INSERT-PALETTES", 0, paletteDefs);
     CharSequence[][] source = vertShader.shaderSource();
     newSliderKeys.clear();
     removeSliderKeys.clear();

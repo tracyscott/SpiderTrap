@@ -117,12 +117,15 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
+// INSERT-PALETTES
+
+
 void main(){
     vec2 st = position.xz;
     vec3 color = vec3(0.);
 
     float sdf = .5+(st.x-st.y)*.5;
     color += stroke(sdf, x1, width);
-
+    color *= paletteN(0., length(st));
     tPosition = color;
 }

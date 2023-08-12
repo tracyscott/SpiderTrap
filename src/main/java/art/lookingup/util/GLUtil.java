@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -112,8 +114,10 @@ public class GLUtil {
       spGLCtx.gl.glDeleteProgram(spGLCtx.shaderProgramId);
 
 
+    String paletteDefs = GLUtil.loadPalettes();
     ShaderCode vertShader = ShaderCode.create(spGLCtx.gl, GL_VERTEX_SHADER, spGLCtx.getClass(), "shaders",
         null, shaderName, "vert", null, true);
+    vertShader.insertShaderSource(0, "INSERT-PALETTES", 0, paletteDefs);
 
     ShaderProgram shaderProgram = new ShaderProgram();
     shaderProgram.add(vertShader);
@@ -207,6 +211,15 @@ public class GLUtil {
       colors[SpiderTrapModel.allPoints.get(i).index] = LXColor.blend(colors[SpiderTrapModel.allPoints.get(i).index],
           LXColor.rgbf(spGLCtx.tfbBuffer.get(i * 3), spGLCtx.tfbBuffer.get(i * 3 + 1), spGLCtx.tfbBuffer.get(i * 3 + 2)),
           blend);
+    }
+  }
+
+  static public String loadPalettes() {
+    try {
+      return new String(Files.readAllBytes(Paths.get("palettes.vert")));
+    } catch (Exception ex) {
+      logger.info("Unable to read palette definitions in palettes.vert");
+      return "";
     }
   }
 }

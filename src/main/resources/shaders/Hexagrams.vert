@@ -34,6 +34,13 @@
             "MIN": 0.0,
             "MAX": 9.5
          },
+          {
+            "NAME": "pald",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.0,
+            "MAX": 30.0
+         },
          {
             "NAME": "s1",
             "TYPE": "float",
@@ -54,6 +61,13 @@
             "DEFAULT": 1.0,
             "MIN": 0.0,
             "MAX": 10.0
+         },
+          {
+            "NAME": "pw",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.0,
+            "MAX": 5.0
          }
 	]
 }*/
@@ -65,9 +79,11 @@ uniform float rspeed;
 uniform float layers;
 uniform float brt;
 uniform float pal;
+uniform float pald;
 uniform float s1;
 uniform float s2;
 uniform float cspeed;
+uniform float pw;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -218,44 +234,46 @@ vec3 palette5(float t) {
     return palette(t, a, b, c, d);
 }
 
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
+// red cyan blue purple
+//[[0.354 -0.322 0.578] [0.321 0.861 0.394] [1.197 1.258 0.758] [0.788 0.368 0.434]]
 vec3 palette6(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
+    vec3 a = vec3(0.354, -0.322, 0.578);
+    vec3 b = vec3(0.321, 0.861, 0.394);
+    vec3 c = vec3(1.197, 1.258, 0.758);
+    vec3 d = vec3(0.788, 0.368, 0.434);
     return palette(t, a, b, c, d);
 }
 
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
+// multi pastel
+//[[0.768 0.748 0.828] [0.798 0.108 1.048] [3.108 0.798 2.008] [2.808 1.998 4.544]]
 vec3 palette7(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
+    vec3 a = vec3(0.768, 0.748, 0.828);
+    vec3 b = vec3(0.798, 0.108, 1.048);
+    vec3 c = vec3(3.1, 0.798, 2.008);
+    vec3 d = vec3(2.808, 1.998, 4.544);
     return palette(t, a, b, c, d);
 }
 
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
+
+// purple white blue green
+//[[0.472 0.658 0.577] [0.837 0.606 0.653] [1.025 1.508 0.407] [2.753 4.488 2.828]]
 vec3 palette8(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
+    vec3 a = vec3(0.472, 0.658, 0.577);
+    vec3 b = vec3(0.837, 0.606, 0.653);
+    vec3 c = vec3(1.025, 1.508, 0.407);
+    vec3 d = vec3(2.753, 4.488, 2.828);
     return palette(t, a, b, c, d);
 }
 
 // orange green blue pink
 //[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette9(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
+    return clamp(vec3(t, t, t), 0.0, 1.0);
+    //vec3 a = vec3(0.572, 0.574, 0.518);
+    //vec3 b = vec3(0.759, 0.171, 0.358);
+    //vec3 c = vec3(1.022, 0.318, 0.620);
+    //vec3 d = vec3(3.138, 5.5671, -0.172);
+    //return palette(t, a, b, c, d);
 }
 
 
@@ -308,7 +326,7 @@ float HexLayer(vec2 uv) {
     float hex = sdHexagram(uv, 0.1);
     hex = abs(hex);
     hex = smoothstep(s1, s2, hex);
-    return clamp(0.02 * brt / hex, 0.0, 1.0);
+    return clamp(pow(0.02 * brt / hex, pw), 0.0, 1.0);
 }
 
 void main(){
@@ -321,7 +339,7 @@ void main(){
         float scale = mix(6., .1, depth);
         float fade = depth*smoothstep(1, .9, depth);
         float bright = HexLayer((uv*Rot(fTime*depth*.1*rspeed))*scale)*fade;
-        col += paletteN(bright + i*fTime*cspeed, pal)*bright;
+        col += paletteN(bright*pald + i*fTime*cspeed, pal)*bright;
         //col += paletteN(bright*i*fTime*cspeed, pal)*bright;
         //col += bright;
     }

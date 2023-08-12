@@ -54,6 +54,13 @@
             "DEFAULT": 1.0,
             "MIN": 0.0,
             "MAX": 1.5
+         },
+          {
+            "NAME": "pw",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.0,
+            "MAX": 5.0
          }
 	]
 }*/
@@ -68,6 +75,7 @@ uniform float rspeed;
 uniform float zoom;
 uniform float pal;
 uniform float intens;
+uniform float pw;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -156,138 +164,7 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
-// http://dev.thi.ng/gradients/
-vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d)
-{
-    return a + b*cos(6.28318* (c*t + d));
-}
-
-
-vec3 palette0(float t) {
-    vec3 a = vec3(0.5, 0.5, 0.5);
-    vec3 b = vec3(0.5, 0.5, 0.5);
-    vec3 c = vec3(1.0, 1.0, 1.0);
-    vec3 d = vec3(0.263, 0.416, 0.557);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette1(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette2(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// [[0.806 0.355 0.693] [0.802 0.464 0.260] [1.514 1.131 1.197] [1.015 0.738 3.202]]
-vec3 palette3(float t) {
-    vec3 a = vec3(0.806, 0.355, 0.693);
-    vec3 b = vec3(0.802, 0.464, 0.260);
-    vec3 c = vec3(1.514, 1.131, 1.197);
-    vec3 d = vec3(1.015, 0.783, 3.202);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette4(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette5(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette6(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette7(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette8(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-// orange green blue pink
-//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
-vec3 palette9(float t) {
-    vec3 a = vec3(0.572, 0.574, 0.518);
-    vec3 b = vec3(0.759, 0.171, 0.358);
-    vec3 c = vec3(1.022, 0.318, 0.620);
-    vec3 d = vec3(3.138, 5.5671, -0.172);
-    return palette(t, a, b, c, d);
-}
-
-
-
-// which palette to use.
-vec3 paletteN(in float t, in float pal_num) {
-    pal_num = floor(pal_num);
-    if (pal_num == 0.)
-    return palette0(t);
-    if (pal_num == 1.)
-    return palette1(t);
-    if (pal_num == 2.)
-    return palette2(t);
-    if (pal_num == 3.)
-    return palette3(t);
-    if (pal_num == 4.)
-    return palette4(t);
-    if (pal_num == 5.)
-    return palette5(t);
-    if (pal_num == 6.)
-    return palette6(t);
-    if (pal_num == 7.)
-    return palette7(t);
-    if (pal_num == 8.)
-    return palette8(t);
-    if (pal_num == 9.)
-    return palette9(t);
-    return palette0(t);
-}
-
+// INSERT-PALETTES
 
 
 mat2 Rot(float a) {
@@ -319,6 +196,7 @@ void main(){
     bright += stroke2(uv.x+.28, offset, width);
 
     //bright = clamp(bright * .5, 0.0, 1.0);
+    bright = pow(bright, pw);
     color = paletteN(bright * .5, pal) * bright * intens;
     tPosition = clamp(color, 0.0, 1.0);
 }

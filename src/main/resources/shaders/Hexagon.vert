@@ -1,5 +1,5 @@
 /*{
-	"DESCRIPTION": "Half",
+	"DESCRIPTION": "Hexagon",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
@@ -19,6 +19,13 @@
             "DEFAULT": 0.0,
             "MIN": 0.001,
             "MAX": 0.5
+         },
+         {
+            "NAME": "palval",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": 20.0
          }
 	]
 }*/
@@ -28,6 +35,7 @@
 uniform float fTime;
 uniform float freq;
 uniform float bright;
+uniform float palval;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -109,27 +117,8 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
-vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d)
-{
-    return a + b*cos(6.28318* (c*t + d));
-}
 
-vec3 thispalette(float t) {
-    vec3 a = vec3(0.5, 0.5, 0.5);
-    vec3 b = vec3(0.5, 0.5, 0.5);
-    vec3 c = vec3(1.0, 1.0, 1.0);
-    vec3 d = vec3(0.263, 0.416, 0.557);
-    return palette(t, a, b, c, d);
-}
-
-// [[0.806 0.355 0.693] [0.802 0.464 0.260] [1.514 1.131 1.197] [1.015 0.738 3.202]]
-vec3 palette3(float t) {
-    vec3 a = vec3(0.806, 0.355, 0.693);
-    vec3 b = vec3(0.802, 0.464, 0.260);
-    vec3 c = vec3(1.514, 1.131, 1.197);
-    vec3 d = vec3(1.015, 0.783, 3.202);
-    return palette(t, a, b, c, d);
-}
+// INSERT-PALETTES
 
 
 float HexDist(vec2 p) {
@@ -154,7 +143,7 @@ void main(){
     uv *= rotationMatrix(30.0);
     float val = 0.5 + .5 * sin(HexDist(uv * freq)*10.+fTime);
     float brightness = bright / (1. - val);
-    col += palette3(val) * brightness;
+    col += paletteN(val,palval) * brightness;
 
     tPosition = clamp(col, 0.0, 1.0);
 }

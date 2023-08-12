@@ -1,5 +1,5 @@
 /*{
-	"DESCRIPTION": "Spiral",
+	"DESCRIPTION": "LRings",
 	"CREDIT": "by tracyscott",
 	"ISFVSN": "2.0",
 	"CATEGORIES": [
@@ -7,58 +7,86 @@
 	],
 	"INPUTS": [
          {
-            "NAME": "a",
+            "NAME": "shp",
             "TYPE": "float",
-            "DEFAULT": 1.0,
+            "DEFAULT": 0.0,
             "MIN": 0.0,
-            "MAX": 2.0
-         },
-          {
-            "NAME": "b",
-            "TYPE": "float",
-            "DEFAULT": 0.1759,
-            "MIN": 0.0,
-            "MAX": 2.0
-         },
-         {
-            "NAME": "pald",
-            "TYPE": "float",
-            "DEFAULT": 4.0,
-            "MIN": 0.0,
-            "MAX": 30.0
-         },
-         {
-            "NAME": "brt",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.1,
-            "MAX": 5.0
-         },
-         {
-            "NAME": "pal",
-            "TYPE": "float",
-            "DEFAULT": 1.0,
-            "MIN": 0.0,
-            "MAX": 9.5
+            "MAX": 3.5
          },
          {
             "NAME": "s1",
             "TYPE": "float",
             "DEFAULT": 0.0,
-            "MIN": 0.0,
-            "MAX": 1.0
+            "MIN": -1.1,
+            "MAX": 1.1
          },
          {
             "NAME": "s2",
             "TYPE": "float",
-            "DEFAULT": 0.2,
-            "MIN": 0.0,
-            "MAX": 1.0
+            "DEFAULT": 0.1,
+            "MIN": -1.1,
+            "MAX": 1.1
          },
-           {
-            "NAME": "cspeed",
+         {
+            "NAME": "r1",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": 2.0
+         },
+          {
+            "NAME": "r2",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": 2.0
+         },
+          {
+            "NAME": "h",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": 2.0
+         },
+         {
+            "NAME": "thick",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": .3
+         },
+         {
+            "NAME": "zoom",
             "TYPE": "float",
             "DEFAULT": 1.0,
+            "MIN": -4.0,
+            "MAX": 4.0
+         },
+          {
+            "NAME": "brt",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": .1,
+            "MAX": 20.
+         },
+         {
+            "NAME": "palval",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
+            "MIN": 0.0,
+            "MAX": 9.9
+         },
+          {
+            "NAME": "pw",
+            "TYPE": "float",
+            "DEFAULT": 1.3,
+            "MIN": 0.0,
+            "MAX": 5.0
+         },
+          {
+            "NAME": "rspeed",
+            "TYPE": "float",
+            "DEFAULT": 0.0,
             "MIN": 0.0,
             "MAX": 10.0
          }
@@ -68,14 +96,18 @@
 #version 330
 
 uniform float fTime;
-uniform float a;
-uniform float b;
-uniform float pald;
-uniform float brt;
-uniform float pal;
+uniform float shp;
 uniform float s1;
 uniform float s2;
-uniform float cspeed;
+uniform float r1;
+uniform float r2;
+uniform float h;
+uniform float thick;
+uniform float zoom;
+uniform float brt;
+uniform float palval;
+uniform float pw;
+uniform float rspeed;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -157,11 +189,6 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
-mat2 Rot(float a) {
-    float s=sin(a), c=cos(a);
-    return mat2(c, -s, s, c);
-}
-
 // http://dev.thi.ng/gradients/
 vec3 palette(in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d)
 {
@@ -187,13 +214,13 @@ vec3 palette1(float t) {
     return palette(t, a, b, c, d);
 }
 
-// neon green red purple
-// [[0.846 0.430 0.206] [0.349 0.678 0.651] [0.690 1.319 0.654] [6.205 2.511 3.523]]
+// orange green blue pink
+//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette2(float t) {
-    vec3 a = vec3(0.846, 0.430, 0.206);
-    vec3 b = vec3(0.349, 0.678, 0.651);
-    vec3 c = vec3(0.690, 1.319, 0.654);
-    vec3 d = vec3(6.205, 2.511, 3.523);
+    vec3 a = vec3(0.572, 0.574, 0.518);
+    vec3 b = vec3(0.759, 0.171, 0.358);
+    vec3 c = vec3(1.022, 0.318, 0.620);
+    vec3 d = vec3(3.138, 5.5671, -0.172);
     return palette(t, a, b, c, d);
 }
 
@@ -206,43 +233,43 @@ vec3 palette3(float t) {
     return palette(t, a, b, c, d);
 }
 
-// yellow red yellow
-//[[0.990 0.520 0.071] [0.063 0.800 0.918] [1.548 0.740 0.062] [1.261 5.091 5.773]]
+// orange green blue pink
+//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette4(float t) {
-    vec3 a = vec3(0.990, 0.520, 0.071);
-    vec3 b = vec3(0.063, 0.800, 0.918);
-    vec3 c = vec3(1.548, 0.740, 0.062);
-    vec3 d = vec3(1.261, 5.091, 5.773);
+    vec3 a = vec3(0.572, 0.574, 0.518);
+    vec3 b = vec3(0.759, 0.171, 0.358);
+    vec3 c = vec3(1.022, 0.318, 0.620);
+    vec3 d = vec3(3.138, 5.5671, -0.172);
     return palette(t, a, b, c, d);
 }
 
-// many color
-// [[0.481 0.619 0.755] [0.424 0.158 0.810] [3.136 1.650 2.155] [4.963 4.889 4.418]]
+// orange green blue pink
+//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette5(float t) {
-    vec3 a = vec3(0.481, 0.619, 0.755);
-    vec3 b = vec3(0.424, 0.158, 0.810);
-    vec3 c = vec3(3.136, 1.650, 2.155);
-    vec3 d = vec3(4.963, 4.889, 4.418);
+    vec3 a = vec3(0.572, 0.574, 0.518);
+    vec3 b = vec3(0.759, 0.171, 0.358);
+    vec3 c = vec3(1.022, 0.318, 0.620);
+    vec3 d = vec3(3.138, 5.5671, -0.172);
     return palette(t, a, b, c, d);
 }
 
-// red cyan blue purple
-//[[0.354 -0.322 0.578] [0.321 0.861 0.394] [1.197 1.258 0.758] [0.788 0.368 0.434]]
+// orange green blue pink
+//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette6(float t) {
-    vec3 a = vec3(0.354, -0.322, 0.578);
-    vec3 b = vec3(0.321, 0.361, 0.394);
-    vec3 c = vec3(1.197, 1.258, 0.758);
-    vec3 d = vec3(0.788, 0.368, 0.434);
+    vec3 a = vec3(0.572, 0.574, 0.518);
+    vec3 b = vec3(0.759, 0.171, 0.358);
+    vec3 c = vec3(1.022, 0.318, 0.620);
+    vec3 d = vec3(3.138, 5.5671, -0.172);
     return palette(t, a, b, c, d);
 }
 
-// multi pastel
-//[[0.768 0.748 0.828] [0.798 0.108 1.048] [3.108 0.798 2.008] [2.808 1.998 4.544]]
+// orange green blue pink
+//[[0.572 0.574 0.518] [0.759 0.171 0.358] [1.022 0.318 0.620] [3.138 5.671 -0.172]]
 vec3 palette7(float t) {
-    vec3 a = vec3(0.768, 0.748, 0.828);
-    vec3 b = vec3(0.798, 0.108, 1.048);
-    vec3 c = vec3(3.1, 0.798, 2.008);
-    vec3 d = vec3(2.808, 1.998, 4.544);
+    vec3 a = vec3(0.572, 0.574, 0.518);
+    vec3 b = vec3(0.759, 0.171, 0.358);
+    vec3 c = vec3(1.022, 0.318, 0.620);
+    vec3 d = vec3(3.138, 5.5671, -0.172);
     return palette(t, a, b, c, d);
 }
 
@@ -294,55 +321,103 @@ vec3 paletteN(in float t, in float pal_num) {
     return palette0(t);
 }
 
-float sdHexagram( in vec2 p, in float r )
-{
-    const vec4 k = vec4(-0.5,0.8660254038,0.5773502692,1.7320508076);
+
+
+float HexDist(vec2 p) {
     p = abs(p);
-    p -= 2.0*min(dot(k.xy,p),0.0)*k.xy;
-    p -= 2.0*min(dot(k.yx,p),0.0)*k.yx;
-    p -= vec2(clamp(p.x,r*k.z,r*k.w),r);
-    return length(p)*sign(p.y);
+    float c = dot(p, normalize(vec2(1,1.73)));
+    c = max(c, p.x);
+    return c;
+}
+
+float sdUnevenCapsule( vec2 p, float r1, float r2, float h )
+{
+    p.x = abs(p.x);
+    float b = (r1-r2)/h;
+    float a = sqrt(1.0-b*b);
+    float k = dot(p,vec2(-b,a));
+    if( k < 0.0 ) return length(p) - r1;
+    if( k > a*h ) return length(p-vec2(0.0,h)) - r2;
+    return dot(p, vec2(a,b) ) - r1;
+}
+
+float sdVesica(vec2 p, float r, float d)
+{
+    p = abs(p);
+    float b = sqrt(r*r-d*d);
+    return ((p.y-b)*d>p.x*b) ? length(p-vec2(0.0,b))
+    : length(p-vec2(-d,0.0))-r;
+}
+
+float sdEquilateralTriangle( in vec2 p, in float r )
+{
+    const float k = sqrt(3.0);
+    p.x = abs(p.x) - r;
+    p.y = p.y + r/k;
+    if( p.x+k*p.y>0.0 ) p = vec2(p.x-k*p.y,-k*p.x-p.y)/2.0;
+    p.x -= clamp( p.x, -2.0*r, 0.0 );
+    return -length(p)*sign(p.y);
+}
+
+float sdBox( in vec2 p, in vec2 b )
+{
+    vec2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
+
+float shapeN(float shape_num, in vec2 p, in float r1, in float r2, in float h) {
+    shape_num = floor(shape_num);
+    if (shape_num == 0.)
+        return sdUnevenCapsule(p, r1, r2, h);
+    if (shape_num == 1.)
+        return sdVesica(p, r1, h);
+    if (shape_num == 2.)
+        return sdEquilateralTriangle(p, r1);
+    if (shape_num == 3.)
+        return sdBox(p, vec2(r1, r2));
+
+    return sdBox(p, vec2(r1, r2));
 }
 
 
-float Hash21(vec2 p) {
-    p = fract(p*vec2(123.34, 456.12));
-    p += dot(p, p+45.32);
-    return fract(p.x*p.y);
+float ring(vec2 p, float r1, float r2, float h) {
+    //float d = sdUnevenCapsule(ruv3, r1, r2, h);
+    //float d = sdVesica(ruv3, r1, h);
+    //float d = sdEquilateralTriangle(ruv3, r1);
+    //float d = sdBox(ruv3, vec2(r1,r2));
+    float d = shapeN(shp, p, r1, r2, h);
+
+    d = abs(d)-thick;
+    d = smoothstep(s1, s2, d);
+    d = pow(brt*0.01/d, pw);
+    return clamp(d, 0., 1.);
 }
 
-
-float HexLayer(vec2 uv) {
-    float hex = sdHexagram(uv, 0.1);
-    hex = abs(hex);
-    hex = smoothstep(s1, s2, hex);
-    return clamp(0.02 * brt / hex, 0.0, 1.0);
-}
-
-
-float spiralSDF(vec2 uv, float a, float b, float theta_off) {
-    float t=atan(uv.y, uv.x) + fTime*8.0 + theta_off;
-    float r=length(uv.xy);
-    float n=(log(r/a)/b-t)/(2.*PI);
-    float r1=a*exp(b*(t+2.*PI*ceil(n)));
-    float r2=a*exp(b*(t+2.*PI*floor(n)));
-    return min(abs(r1-r),abs(r-r2));
+mat2 Rot(float a) {
+    float s=sin(a), c=cos(a);
+    return mat2(c, -s, s, c);
 }
 
 void main(){
     vec2 uv = position.xz - 0.5;
-    vec3 col = vec3(0.);
+    vec3 color = vec3(1., 1., 1.);
 
-    float spiral = clamp(spiralSDF(uv, a, b, 0.0), 0.0, 1.0);
-    spiral = 0.02 * brt / smoothstep(s1, s2, spiral);
-    float spiral2 = clamp(spiralSDF(uv, a, b, PI), 0.0, 1.0);
-    spiral2 = 0.02 * brt / smoothstep(s1, s2, spiral2);
+    float pal_d = length(uv);
 
-    spiral += spiral2;
-    spiral = clamp(spiral, 0.0, 1.0);
-    col = vec3(spiral);
-    vec3 color = paletteN(length(uv)*pald+fTime*cspeed*.1, pal)*spiral;
-    col *= color;
+    vec2 ruv = uv;
+    ruv = ruv * Rot(fTime * rspeed * .1);
+    ruv *= zoom;
+    //ruv.x += x1;
+    //ruv.y += y1;
 
-    tPosition = clamp(col, 0.0, 1.0);
+    float bright = 0.;
+    for (float i = 0.; i < 6.; i++) {
+        vec2 iruv = Rot(i * PI/3.) * ruv;
+        float d = ring(iruv + vec2(0., .5), r1, r2, h);
+        bright += d;
+    }
+
+    color *= vec3(clamp(paletteN(pal_d + fTime * .5, palval)*bright, 0., 1.));
+
+    tPosition = color;
 }
