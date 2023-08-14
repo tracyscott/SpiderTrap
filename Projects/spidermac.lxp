@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1691867254854,
+  "timestamp": 1691974725066,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -743,20 +743,20 @@
               "release": 0.26334060752858685,
               "slope": 4.5,
               "band-1": 0.0,
-              "band-2": 0.0,
-              "band-3": 0.0,
-              "band-4": 0.0,
-              "band-5": 0.10689558618448947,
-              "band-6": 0.1791462690903417,
-              "band-7": 0.025901748466966246,
-              "band-8": 0.0923529796765431,
-              "band-9": 0.1008011865227717,
-              "band-10": 0.1426914238103384,
-              "band-11": 0.1662876021076366,
-              "band-12": 0.22958602953322416,
-              "band-13": 0.20630749949846494,
-              "band-14": 0.24453206265532668,
-              "band-15": 0.007065425914502987,
+              "band-2": 0.11630784873152233,
+              "band-3": 0.0917139517216562,
+              "band-4": 0.007172472433751076,
+              "band-5": 0.026955256283026308,
+              "band-6": 0.0,
+              "band-7": 0.0,
+              "band-8": 0.0,
+              "band-9": 0.0,
+              "band-10": 0.0,
+              "band-11": 0.0,
+              "band-12": 0.0,
+              "band-13": 0.0,
+              "band-14": 0.0,
+              "band-15": 0.0,
               "band-16": 0.0
             },
             "children": {}
@@ -774,7 +774,7 @@
           "label": "Mixer",
           "crossfader": 0.5,
           "crossfaderBlendMode": 0,
-          "focusedChannel": 3,
+          "focusedChannel": 4,
           "focusedChannelAux": 4,
           "cueA": false,
           "cueB": false,
@@ -2937,7 +2937,7 @@
               "label": "AUDIO-1",
               "fader": 1.0,
               "arm": false,
-              "selected": true,
+              "selected": false,
               "enabled": true,
               "cue": false,
               "aux": false,
@@ -4177,9 +4177,9 @@
               "label": "AUDIO-M",
               "fader": 1.0,
               "arm": false,
-              "selected": false,
+              "selected": true,
               "enabled": false,
-              "cue": false,
+              "cue": true,
               "aux": false,
               "crossfadeGroup": 0,
               "blendMode": 0,
@@ -4197,13 +4197,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 2,
+              "focusedPattern": 3,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 2,
+            "patternIndex": 3,
             "patterns": [
               {
                 "id": 6937,
@@ -4342,6 +4342,46 @@
                   }
                 },
                 "deviceVersion": -1
+              },
+              {
+                "id": 36048,
+                "class": "art.lookingup.spidertrap.patterns.RadialSel2",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "RadialSel2",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "radial": -1.0,
+                  "web": -1,
+                  "pos": 40
+                },
+                "children": {
+                  "modulation": {
+                    "id": 36049,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
               }
             ]
           }
@@ -4385,7 +4425,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.13950139718215301
+            "basis": 0.5716090696504355
           },
           {
             "id": 2949,
@@ -4413,7 +4453,7 @@
               "exp": 0.0
             },
             "children": {},
-            "basis": 0.1882043855713147
+            "basis": 0.02656744646865805
           }
         ],
         "modulations": [
