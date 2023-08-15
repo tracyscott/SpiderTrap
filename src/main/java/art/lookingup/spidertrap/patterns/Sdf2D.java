@@ -9,8 +9,7 @@ import art.lookingup.util.GLUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
@@ -19,7 +18,6 @@ import heronarts.lx.LXCategory;
 import heronarts.lx.LXComponent;
 import heronarts.lx.color.LXColor;
 import heronarts.lx.command.LXCommand;
-import heronarts.lx.model.LXPoint;
 import heronarts.lx.parameter.CompoundParameter;
 import heronarts.lx.parameter.LXParameter;
 import heronarts.lx.parameter.MutableParameter;
@@ -41,6 +39,7 @@ import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static com.jogamp.opengl.GL.GL_ARRAY_BUFFER;
@@ -70,17 +69,40 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
   public final StringParameter error = new StringParameter("Error", null);
   private UIButton openButton;
 
+  public static GLOffscreenAutoDrawable glDrawable;
+
+
   public Sdf2D(LX lx) {
     super(lx);
 
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
-    gl = jogl.getGL3();
-
+    initializeGLContext();
+    //glDrawable.getContext().makeCurrent();
+    //logger.info("glDrawable.getGL()=" + glDrawable.getGL());
+    //gl = glDrawable.getGL().getGL3();
+    //glDrawable.getContext().release();
     addParameter("scriptName", scriptName);
     addParameter("speed", speed);
     glInit();
+  }
+
+  /**
+   * NOTE(tracy): These need to be called only after the the UI is up and running otherwise we are causing GL Context
+   * issues with threads.  We need top defer all initialization until the first run time.  This is going to be
+   * annoying.
+   */
+  static public void initializeGLContext() {
+    logger.info("Calling initializeGLContext");
+    if (glDrawable == null) {
+      GLProfile glp = GLProfile.get(GLProfile.GL3);
+      GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL3));
+      caps.setOnscreen(false);
+      GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
+      glDrawable = factory.createOffscreenAutoDrawable(null, caps,null,512,512);
+
+      glDrawable.display();
+      //glDrawable.getContext().makeCurrent();
+      //glDrawable.getContext().release();
+    }
   }
 
   private interface Buffer {
@@ -120,6 +142,9 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
       ledPositions[i * 3 + 1] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).v;
       ledPositions[i * 3 + 2] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).w;
     }
+
+    glDrawable.getContext().makeCurrent();
+    gl = glDrawable.getGL().getGL3();
     vertexBuffer = GLBuffers.newDirectFloatBuffer(ledPositions);
     // This is just a destination, make it large enough to accept all the vertex data.  The vertex
     // shader always outputs the all the elements.  To return just some of the points, attach a
@@ -128,6 +153,7 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
     tfbBuffer = GLBuffers.newDirectFloatBuffer(vertexBuffer.capacity());
 
     gl.glGenBuffers(Buffer.MAX, bufferNames);
+    glDrawable.getContext().release();
 
     reloadShader(scriptName.getString());
   }
@@ -141,6 +167,9 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
 
 
   public void reloadShader(String shaderName, boolean clearSliders) {
+
+    glDrawable.getContext().makeCurrent();
+
     if (shaderProgramId != -1)
       gl.glDeleteProgram(shaderProgramId);
 
@@ -208,6 +237,7 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
       paramLocations.put(scriptParam, paramLoc);
       //logger.info("Found " + scriptParam + " at: " + paramLoc);
     }
+    glDrawable.getContext().release();
     // Notify the UI
     onReload.bang();
   }
@@ -233,6 +263,7 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
    */
   public void glRun(double deltaMs) {
     totalTime += deltaMs/1000.0;
+    glDrawable.getContext().makeCurrent();
     gl.glBindBuffer(GL_ARRAY_BUFFER, bufferNames.get(Buffer.VERTEX));
     gl.glBufferData(GL_ARRAY_BUFFER, vertexBuffer.capacity() * Float.BYTES, vertexBuffer, GL_STATIC_DRAW);
     int inputAttrib = gl.glGetAttribLocation(shaderProgramId, "position");
@@ -267,6 +298,8 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
       //System.out.print(tfbBuffer.get(i) + ",");
     }
     //System.out.println();
+
+    glDrawable.getContext().release();
   }
 
   @Override

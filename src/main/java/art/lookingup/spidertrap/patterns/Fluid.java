@@ -111,12 +111,12 @@ public class Fluid extends LXPattern {
     super(lx);
     pg = SpiderTrapApp.pApplet.createGraphics(512, 512, P3D);
 
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
-    com.jogamp.opengl.util.texture.Texture glTexture = AWTTextureIO.newTexture(jogl.getGLProfile(), (BufferedImage) pg.getNative(), false);
+    Sdf2D.initializeGLContext();
 
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), glTexture, "render2d");
+    com.jogamp.opengl.util.texture.Texture glTexture =
+        AWTTextureIO.newTexture(Sdf2D.glDrawable.getGLProfile(), (BufferedImage) pg.getNative(), false);
+
+    spGLCtx = GLUtil.spiderGLInit(glTexture, "render2d");
 
 
     DwPixelFlow context = new DwPixelFlow(SpiderTrapApp.pApplet);

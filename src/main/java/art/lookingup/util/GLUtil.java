@@ -66,13 +66,17 @@ public class GLUtil {
     public LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
   }
 
-  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
-    return spiderGLInit(gl, glTexture, scriptName, null);
+  static public SpiderGLContext spiderGLInit(com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
+    return spiderGLInit(glTexture, scriptName, null);
   }
 
   // TODO(tracy): Load the TextureIO previous to this function.
-  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName,
+  static public SpiderGLContext spiderGLInit(com.jogamp.opengl.util.texture.Texture glTexture, String scriptName,
                                              LinkedHashMap<String, Float> scriptParams) {
+
+    Sdf2D.initializeGLContext();
+    GL3 gl = Sdf2D.glDrawable.getGL().getGL3();
+
     SpiderGLContext spGLCtx = new SpiderGLContext(gl);
 
     if (scriptParams != null)
@@ -85,6 +89,8 @@ public class GLUtil {
       ledPositions[i * 3 + 1] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).v;
       ledPositions[i * 3 + 2] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).w;
     }
+
+    spGLCtx.gl.getContext().makeCurrent();
 
     spGLCtx.vertexBuffer = GLBuffers.newDirectFloatBuffer(ledPositions);
     // This is just a destination, make it large enough to accept all the vertex data.  The vertex
@@ -104,12 +110,16 @@ public class GLUtil {
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
     }
+    spGLCtx.gl.getContext().release();
     reloadShader(spGLCtx, scriptName);
     return spGLCtx;
   }
 
 
   static public void reloadShader(SpiderGLContext spGLCtx, String shaderName) {
+
+    spGLCtx.gl.getContext().makeCurrent();
+
     if (spGLCtx.shaderProgramId != -1)
       spGLCtx.gl.glDeleteProgram(spGLCtx.shaderProgramId);
 
@@ -140,6 +150,7 @@ public class GLUtil {
       spGLCtx.textureLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "textureSampler");
       logger.info("Found textureSampler at location: " + spGLCtx.textureLoc);
     }
+    spGLCtx.gl.getContext().release();
   }
 
   static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed) {
@@ -153,6 +164,8 @@ public class GLUtil {
   static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed, boolean incrementTime) {
     if (incrementTime)
       spGLCtx.totalTime += deltaMs / 1000.0;
+
+    spGLCtx.gl.getContext().makeCurrent();
     spGLCtx.gl.glBindBuffer(GL_ARRAY_BUFFER, SpiderGLContext.bufferNames.get(SpiderGLContext.Buffer.VERTEX));
     spGLCtx.gl.glBufferData(GL_ARRAY_BUFFER, spGLCtx.vertexBuffer.capacity() * Float.BYTES, spGLCtx.vertexBuffer, GL_STATIC_DRAW);
     int inputAttrib = spGLCtx.gl.glGetAttribLocation(spGLCtx.shaderProgramId, "position");
@@ -196,6 +209,8 @@ public class GLUtil {
       //System.out.print(tfbBuffer.get(i) + ",");
     }
     //System.out.println();
+
+    spGLCtx.gl.getContext().release();
   }
 
   static public void copyTFBufferToPoints(int[] colors, SpiderGLContext spGLCtx) {

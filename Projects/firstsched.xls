@@ -1,0 +1,36 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1692133523263,
+  "entries": [
+    {
+      "id": 132,
+      "class": "heronarts.lx.scheduler.LXScheduledProject",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "spidertest2.lxp",
+        "enabled": true,
+        "projectFile": "spidertest2.lxp",
+        "hours": 0,
+        "minutes": 0,
+        "seconds": 0
+      },
+      "children": {}
+    }
+  ],
+  "id": 4,
+  "class": "heronarts.lx.scheduler.LXScheduler",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true
+  },
+  "parameters": {
+    "label": "LX",
+    "enabled": true,
+    "fade": true,
+    "fadeTimeSecs": 5.0
+  },
+  "children": {}
+}

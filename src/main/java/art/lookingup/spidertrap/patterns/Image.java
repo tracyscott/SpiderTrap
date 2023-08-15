@@ -4,12 +4,9 @@ import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.util.FileItemBase;
 import art.lookingup.util.GLUtil;
 import art.lookingup.util.PathUtils;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import heronarts.lx.LX;
 import heronarts.lx.parameter.*;
-import heronarts.lx.pattern.LXPattern;
 import heronarts.lx.studio.LXStudio;
 import heronarts.lx.studio.ui.device.UIDevice;
 import heronarts.lx.studio.ui.device.UIDeviceControls;
@@ -26,10 +23,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import processing.core.PConstants;
-import processing.core.PGraphics;
 import processing.core.PImage;
-import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PJOGL;
 
 import static processing.core.PConstants.P2D;
 
@@ -78,8 +72,6 @@ public class Image extends PGPixelPerfect implements UIDeviceControls<Image> {
         loadImg(iKnob.getString());
       }
     });
-    //addParameter("fps", fpsKnob);
-    //addParameter("fps", fpsKnob);
     addParameter("xOff", xOff);
     addParameter("yOff", yOff);
     addParameter("zoom", zoomKnob);
@@ -87,11 +79,11 @@ public class Image extends PGPixelPerfect implements UIDeviceControls<Image> {
 
     imgKnob.setValue("sky.jpg");
     loadImg(imgKnob.getString());
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
-    com.jogamp.opengl.util.texture.Texture glTexture = AWTTextureIO.newTexture(jogl.getGLProfile(), (BufferedImage) image.getNative(), true);
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), glTexture, "texture");
+
+    Sdf2D.initializeGLContext();
+
+    com.jogamp.opengl.util.texture.Texture glTexture = AWTTextureIO.newTexture(Sdf2D.glDrawable.getGLProfile(), (BufferedImage) image.getNative(), true);
+    spGLCtx = GLUtil.spiderGLInit(glTexture, "texture");
 
     addParameter("alpha", alpha);
   }

@@ -27,8 +27,10 @@ import java.util.logging.*;
 import art.lookingup.KinectV2;
 import art.lookingup.spidertrap.ui.*;
 import art.lookingup.ui.*;
+import art.lookingup.util.PropertyFile;
 import art.lookingup.util.SpeedOverride;
 import com.google.common.reflect.ClassPath;
+import com.jogamp.opengl.GL;
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.effect.LXEffect;
@@ -161,6 +163,9 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   private static final Logger logger = Logger.getLogger(SpiderTrapApp.class.getName());
 
+  public static String projectFileForEngine = null;
+  public static boolean startupFileIsSchedule = false;
+
   @Override
   public void settings() {
     if (FULLSCREEN) {
@@ -173,11 +178,32 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   @Override
   public void setup() {
-    frameRate(GLOBAL_FRAME_RATE);
+    // frameRate(GLOBAL_FRAME_RATE);
     LXStudio.Flags flags = new LXStudio.Flags(this);
     flags.resizable = false;
     flags.useGLPointCloud = false;
-    flags.startMultiThreaded = false;
+    flags.startMultiThreaded = true;
+
+    File projectFile = null;
+
+    try {
+      projectFile = new File(LX.Media.PROJECTS + File.separator + "empty.lxp");
+      PropertyFile pf = new PropertyFile(".lxpreferences");
+      if (pf.exists()) {
+        pf.load();
+        projectFileForEngine = pf.getString("projectFileName");
+        String scheduleFilename = pf.getString("scheduleFileName");
+        LX.log("schedulerEnabled: " + pf.getBoolean("schedulerEnabled"));
+        if (scheduleFilename != null && pf.getBoolean("schedulerEnabled")) {
+          startupFileIsSchedule = true;
+          projectFileForEngine = scheduleFilename;
+        }
+      }
+
+    } catch (Exception ex) {
+      logger.info("Exception: " + ex.getMessage());
+    }
+    flags.initialFile = projectFile;
 
     try {
       addLogFileHandler("logs/" + LOG_FILENAME_PREFIX);
@@ -242,7 +268,36 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
           speedOverride.speed.setValue(0.5f);
         }
       }
+
     });
+    lx.engine.addTask(new Runnable() {
+      @Override
+      public void run() {
+        loadProjectFileOnEngineThread();
+      }
+    });
+  }
+
+  static public void loadProjectFileOnEngineThread() {
+    File projectFile;
+    if (projectFileForEngine == null || "".equals(projectFileForEngine))
+      return;
+
+    try {
+      LX.log("loading file: " + projectFileForEngine);
+      projectFile = lx.getMediaFile(LX.Media.PROJECTS, projectFileForEngine);
+      if (projectFile.exists()) {
+        if (!startupFileIsSchedule) {
+          LX.log("Opening project file: " + projectFile);
+          lx.openProject(projectFile);
+        } else {
+          LX.log("Opening schedule file: " + projectFile);
+          lx.scheduler.openSchedule(projectFile, true);
+        }
+      }
+    } catch (Exception ex) {
+      logger.info("couldn't load file: " + ex.getMessage());
+    }
   }
 
   public void onUIReady(LXStudio lx, LXStudio.UI ui) {
@@ -305,10 +360,17 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     }
   }
 
+  static public boolean projectLoaded = false;
+
   @Override
   public void draw() {
     // All handled by core LX engine, do not modify, method exists only so that Processing
     // will run a draw-loop.
+    //if (!projectLoaded) {
+    //  loadProjectFileOnUI();
+    //  projectLoaded = true;
+    //}
+    //super.draw();
   }
 
   /**

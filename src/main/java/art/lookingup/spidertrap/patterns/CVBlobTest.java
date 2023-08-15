@@ -34,15 +34,12 @@ public class CVBlobTest extends LXPattern {
     addParameter("rscale", rscale);
     addParameter("alive", alive);
 
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
     LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
     scriptParams.put("x1", 0f);
     scriptParams.put("y1", 0f);
     scriptParams.put("freq", freq.getValuef());
     scriptParams.put("rscale", rscale.getValuef());
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), null, "Ripple", scriptParams);
+    spGLCtx = GLUtil.spiderGLInit(null, "Ripple", scriptParams);
   }
 
   public void run(double deltaMs) {

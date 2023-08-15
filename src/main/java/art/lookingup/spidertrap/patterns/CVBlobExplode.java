@@ -37,16 +37,13 @@ public class CVBlobExplode extends LXPattern {
     addParameter("exps", exps);
     addParameter("alive", alive);
 
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
     LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
     scriptParams.put("x1", 0f);
     scriptParams.put("y1", 0f);
     scriptParams.put("fall", fall.getValuef());
     scriptParams.put("parts", parts.getValuef());
     scriptParams.put("exps", exps.getValuef());
-    spGLCtx = GLUtil.spiderGLInit(jogl.getGL3(), null, "FireworksPos", scriptParams);
+    spGLCtx = GLUtil.spiderGLInit(null, "FireworksPos", scriptParams);
   }
 
   public void run(double deltaMs) {
