@@ -270,12 +270,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
       }
 
     });
-    lx.engine.addTask(new Runnable() {
-      @Override
-      public void run() {
-        loadProjectFileOnEngineThread();
-      }
-    });
+    lx.engine.addTask(() -> loadProjectFileOnEngineThread());
   }
 
   static public void loadProjectFileOnEngineThread() {
