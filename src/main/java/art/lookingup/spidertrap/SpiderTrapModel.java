@@ -100,10 +100,12 @@ public class SpiderTrapModel extends LXModel {
       float curAngle = radialOffset * angleIncr;
       points = new ArrayList<LXPoint>();
       float innerRadius = ModelParams.getInnerRadius();
-      float outerRadius = ModelParams.getOuterRadius();
-      float hexInnerRadius = ModelParams.getHexInner();
+      //float outerRadius = ModelParams.getOuterRadius();
+      //float hexInnerRadius = ModelParams.getHexInner();
 
       for (int i = 0; i < numRadials; i++) {
+        float hexInnerRadius = ModelParams.getHexInner(i);
+        float outerRadius = ModelParams.getOuterRadius(i);
         logger.info("Creating Radial");
         Radial radial = new Radial(i, curAngle, innerRadius, outerRadius, hexInnerRadius, mx, my, mz);
         radials.add(radial);
@@ -253,7 +255,10 @@ public class SpiderTrapModel extends LXModel {
       Point3D unitVector = Point3D.unitVectorTo(new Point3D(polarX(innerRadius, angle), 0, polarZ(innerRadius, angle)),
           new Point3D(0, 0, 0));
       Point3D prevEdgeEnd = radialStart;
+      int radialDistIndex = 0;
       for (float curRadialDist : radialDistances) {
+        if (radialDistIndex == radialDistances.size() - 1)
+          curRadialDist += ModelParams.getRadialOffset(id);
         Point3D edgeEnd = new Point3D(unitVector.x * curRadialDist,
             prevEdgeEnd.y,
             unitVector.z * curRadialDist);
@@ -261,6 +266,7 @@ public class SpiderTrapModel extends LXModel {
         edges.add(edge);
         allEdges.add(edge);
         prevEdgeEnd = edgeEnd;
+        radialDistIndex++;
       }
 
       addCCWSegments();
