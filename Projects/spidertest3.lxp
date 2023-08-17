@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1692218265837,
+  "timestamp": 1692222471544,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -26,7 +26,7 @@
       "multithreaded": true,
       "channelMultithreaded": false,
       "networkMultithreaded": false,
-      "framesPerSecond": 19.0,
+      "framesPerSecond": 40.0,
       "speed": 1.0,
       "performanceMode": false
     },
@@ -350,7 +350,7 @@
               "band-11": 0.0,
               "band-12": 0.0,
               "band-13": 0.0,
-              "band-14": 0.0,
+              "band-14": 0.2769353997973306,
               "band-15": 0.0,
               "band-16": 0.0
             },
@@ -435,13 +435,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 3,
+              "focusedPattern": 2,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 3,
+            "patternIndex": 2,
             "patterns": [
               {
                 "id": 33642,
@@ -640,12 +640,12 @@
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
                   "scriptName": "Kifs",
-                  "texName": "fractal3",
-                  "speed": 2.413793094456196,
+                  "texName": "fa1",
+                  "speed": 0.5172413773834705,
                   "folds": 0.7155172396451235,
                   "tscale": 0.0,
-                  "zoom": 0.36896550673027967,
-                  "fractn": 0.4655172424390912
+                  "zoom": 0.10000000149011612,
+                  "fractn": 0.6293103452771902
                 },
                 "children": {
                   "modulation": {
@@ -696,6 +696,104 @@
                 "children": {
                   "modulation": {
                     "id": 34645,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 34763,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "lightning1"
+                },
+                "parameters": {
+                  "label": "Sdf2D",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "FbmLightning",
+                  "speed": 1.1724137924611568,
+                  "x": -0.3400000035762787,
+                  "y": 0.10000000149011612,
+                  "radius": 0.0,
+                  "thick": 0.0,
+                  "zoom": -0.689655214548111,
+                  "brt": 6.489655151552166,
+                  "palval": 0.5120689438784432,
+                  "pald": 1.0,
+                  "pw": 0.5689655235037208
+                },
+                "children": {
+                  "modulation": {
+                    "id": 34764,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 34893,
+                "class": "art.lookingup.spidertrap.patterns.FireBlob",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "fireblob1"
+                },
+                "parameters": {
+                  "label": "FireBlob",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "blobs": 3,
+                  "bspeed": 8.199999839067459,
+                  "randspd": 1.0,
+                  "joint": -1,
+                  "sspeed": 0.2000000178813935,
+                  "pal": 1.3299999702721834,
+                  "brt": 1.822999984510243,
+                  "pw": 1.849999987706542,
+                  "thick": 0.0,
+                  "s1": 0.0,
+                  "s2": 0.22999999664723875
+                },
+                "children": {
+                  "modulation": {
+                    "id": 34894,
                     "class": "heronarts.lx.modulation.LXModulationEngine",
                     "internal": {
                       "modulationColor": 0,
@@ -1027,7 +1125,7 @@
         "centerPoint": false,
         "camera": {
           "active": false,
-          "radius": 19.05609395201606,
+          "radius": 16.957814737902307,
           "theta": -1.862645149230957E-9,
           "phi": 1.4137166738510132,
           "x": 0.0,
@@ -1037,7 +1135,7 @@
         "cue": [
           {
             "active": false,
-            "radius": 19.05609395201606,
+            "radius": 16.957814737902307,
             "theta": -1.862645149230957E-9,
             "phi": 1.4137166738510132,
             "x": 0.0,
