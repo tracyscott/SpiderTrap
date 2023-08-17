@@ -1,9 +1,11 @@
 package art.lookingup.spidertrap.patterns;
 
+import art.lookingup.spidertrap.SpiderTrapModel;
 import art.lookingup.util.EaseUtil;
 import art.lookingup.colors.Colors;
 import heronarts.lx.LX;
 import heronarts.lx.color.LXColor;
+import heronarts.lx.model.LXPoint;
 import heronarts.lx.parameter.BooleanParameter;
 import heronarts.lx.parameter.DiscreteParameter;
 import heronarts.lx.pattern.texture.NoisePattern;
@@ -44,7 +46,8 @@ public class PalNoise extends NoisePattern implements UIDeviceControls<PalNoise>
     // For all points, extract the greyscale value (brightness) and map it to a palette color and then
     // multiply it back down
     float hsb[] = new float[3];
-    for (int index = 0; index < colors.length; index++) {
+    for (LXPoint p : SpiderTrapModel.allPoints) {
+      int index = p.index;
       float b = (float)LXColor.red(colors[index])/255f;
       hsb = Colors.RGBtoHSB(colors[index], hsb);
       colors[index] = Colors.getParameterizedPaletteColor(lx, pal.getValuei(), hsb[2], easeUtil);

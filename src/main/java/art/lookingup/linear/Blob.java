@@ -38,7 +38,7 @@ public class Blob {
   // World space coordinates
   public float u;
   public float v;
-  Point3D worldSpace = new Point3D(0f, 0f, 0f);
+  public Point3D worldSpace = new Point3D(0f, 0f, 0f);
 
   // For render shaders
   public GLUtil.SpiderGLContext spGLCtx;

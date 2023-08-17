@@ -1,6 +1,6 @@
 {
   "version": "0.4.2-SNAPSHOT",
-  "timestamp": 1692222471544,
+  "timestamp": 1692262893225,
   "model": {
     "id": 2,
     "class": "heronarts.lx.structure.LXStructure",
@@ -344,13 +344,13 @@
               "band-5": 0.0,
               "band-6": 0.0,
               "band-7": 0.0,
-              "band-8": 0.0,
+              "band-8": 0.01057428639842739,
               "band-9": 0.0,
               "band-10": 0.0,
               "band-11": 0.0,
               "band-12": 0.0,
               "band-13": 0.0,
-              "band-14": 0.2769353997973306,
+              "band-14": 0.0,
               "band-15": 0.0,
               "band-16": 0.0
             },
@@ -401,7 +401,7 @@
         },
         "channels": [
           {
-            "id": 87,
+            "id": 35384,
             "class": "heronarts.lx.mixer.LXChannel",
             "internal": {
               "modulationColor": 0,
@@ -435,13 +435,13 @@
               "transitionEnabled": false,
               "transitionTimeSecs": 5.0,
               "transitionBlendMode": 0,
-              "focusedPattern": 2,
+              "focusedPattern": 4,
               "triggerPatternCycle": false
             },
             "children": {},
             "effects": [],
             "clips": [],
-            "patternIndex": 2,
+            "patternIndex": 4,
             "patterns": [
               {
                 "id": 33642,
@@ -631,7 +631,8 @@
                   "expanded": true,
                   "expandedCue": true,
                   "expandedAux": true,
-                  "modulationExpanded": false
+                  "modulationExpanded": false,
+                  "presetFile": "kifs2"
                 },
                 "parameters": {
                   "label": "Sdf2DTex",
@@ -640,12 +641,12 @@
                   "compositeMode": 0,
                   "compositeLevel": 1.0,
                   "scriptName": "Kifs",
-                  "texName": "fa1",
+                  "texName": "fa2",
                   "speed": 0.5172413773834705,
                   "folds": 0.7155172396451235,
                   "tscale": 0.0,
-                  "zoom": 0.10000000149011612,
-                  "fractn": 0.6293103452771902
+                  "zoom": 0.20086207004135537,
+                  "fractn": 0.6982758650556207
                 },
                 "children": {
                   "modulation": {
@@ -794,6 +795,191 @@
                 "children": {
                   "modulation": {
                     "id": 34894,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 35034,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2DTex",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "kifs3"
+                },
+                "parameters": {
+                  "label": "Sdf2DTex",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Kifs",
+                  "texName": "fa3",
+                  "speed": 1.0,
+                  "folds": 0.508620691485703,
+                  "tscale": 1.0,
+                  "zoom": 0.26810344907551487,
+                  "fractn": 0.551724137738347
+                },
+                "children": {
+                  "modulation": {
+                    "id": 35035,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 35045,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2DTex",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Sdf2DTex",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Kifs",
+                  "texName": "fa4",
+                  "speed": 7.55172411352396,
+                  "folds": 0.09482758957892656,
+                  "tscale": 1.0,
+                  "zoom": 0.94051723941711,
+                  "fractn": 0.6120689669623971
+                },
+                "children": {
+                  "modulation": {
+                    "id": 35046,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 35208,
+                "class": "art.lookingup.spidertrap.patterns.Sdf2DTex",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false,
+                  "presetFile": "kifs5b"
+                },
+                "parameters": {
+                  "label": "Sdf2DTex",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "scriptName": "Kifs",
+                  "texName": "fa5",
+                  "speed": 10.31034479290247,
+                  "folds": 1.0,
+                  "tscale": 1.0,
+                  "zoom": 0.8060344813487906,
+                  "fractn": 1.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 35209,
+                    "class": "heronarts.lx.modulation.LXModulationEngine",
+                    "internal": {
+                      "modulationColor": 0,
+                      "modulationControlsExpanded": true
+                    },
+                    "parameters": {
+                      "label": "Modulation"
+                    },
+                    "children": {},
+                    "modulators": [],
+                    "modulations": [],
+                    "triggers": []
+                  }
+                },
+                "deviceVersion": -1
+              },
+              {
+                "id": 35382,
+                "class": "art.lookingup.spidertrap.patterns.Collide",
+                "internal": {
+                  "modulationColor": 0,
+                  "modulationControlsExpanded": true,
+                  "expanded": true,
+                  "expandedCue": true,
+                  "expandedAux": true,
+                  "modulationExpanded": false
+                },
+                "parameters": {
+                  "label": "Collide",
+                  "enabled": true,
+                  "recall": false,
+                  "compositeMode": 0,
+                  "compositeLevel": 1.0,
+                  "blobs": 4,
+                  "bspeed": 22.599998958408836,
+                  "randspd": 1.0,
+                  "joint": -1,
+                  "colld": 6.0,
+                  "sspeed": 1.0,
+                  "brt": 0.5960000313818455,
+                  "pw": 1.891000404767692,
+                  "clr1/brightness": 100.0,
+                  "clr1/saturation": 100.0,
+                  "clr1/hue": 116.99999237060547,
+                  "clr2/brightness": 100.0,
+                  "clr2/saturation": 100.0,
+                  "clr2/hue": 345.0
+                },
+                "children": {
+                  "modulation": {
+                    "id": 35383,
                     "class": "heronarts.lx.modulation.LXModulationEngine",
                     "internal": {
                       "modulationColor": 0,
@@ -1125,8 +1311,8 @@
         "centerPoint": false,
         "camera": {
           "active": false,
-          "radius": 16.957814737902307,
-          "theta": -1.862645149230957E-9,
+          "radius": 21.210751953405865,
+          "theta": -0.051595501601696014,
           "phi": 1.4137166738510132,
           "x": 0.0,
           "y": 10.0,
@@ -1135,8 +1321,8 @@
         "cue": [
           {
             "active": false,
-            "radius": 16.957814737902307,
-            "theta": -1.862645149230957E-9,
+            "radius": 21.210751953405865,
+            "theta": -0.051595501601696014,
             "phi": 1.4137166738510132,
             "x": 0.0,
             "y": 10.0,

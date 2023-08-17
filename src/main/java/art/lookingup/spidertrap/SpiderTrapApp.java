@@ -166,6 +166,8 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
   public static String projectFileForEngine = null;
   public static boolean startupFileIsSchedule = false;
 
+  public static boolean useKinectV2 = false;
+
   @Override
   public void settings() {
     if (FULLSCREEN) {
@@ -218,12 +220,15 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
     logger.info("JOGL Reference: " + pJogl.gl);
 
-    logger.info("Initializing KinectV2");
-    try {
-      // kinect = new KinectV2(new KinectPV2(this));
-      logger.info("Done initializing KinectV2");
-    } catch (Exception ex) {
-      logger.info("WARNING: Couldn't initialize KinectV2!");
+
+    if (useKinectV2) {
+      logger.info("Initializing KinectV2");
+      try {
+        kinect = new KinectV2(new KinectPV2(this));
+        logger.info("Done initializing KinectV2");
+      } catch (Exception ex) {
+        logger.info("WARNING: Couldn't initialize KinectV2!");
+      }
     }
 
 
@@ -312,8 +317,6 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     previewComponents = (UIPreviewComponents) new UIPreviewComponents(ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     logger.info("Configuring pixlite output");
     Output.configurePixliteOutput(lx);
-
-    logger.info("Model bounds: " + lx.getModel().xMin + "," + lx.getModel().yMin + " to " + lx.getModel().xMax + "," + lx.getModel().yMax);
 
     lx.ui.leftPane.audio.setExpanded(false);
     lx.ui.leftPane.snapshots.setExpanded(false);
@@ -422,6 +425,10 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
       File hdpiFlag = new File("hdpi");
       if (hdpiFlag.exists())
         pixelDensity = 2;
+      File kinectV2Flag = new File("kinectv2");
+      if (kinectV2Flag.exists()) {
+        useKinectV2 = true;
+      }
       PApplet.main(concat(sketchArgs, args));
       //PApplet.runSketch(sketchArgs, null);
     }

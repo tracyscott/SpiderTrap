@@ -76,10 +76,6 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
     super(lx);
 
     initializeGLContext();
-    //glDrawable.getContext().makeCurrent();
-    //logger.info("glDrawable.getGL()=" + glDrawable.getGL());
-    //gl = glDrawable.getGL().getGL3();
-    //glDrawable.getContext().release();
     addParameter("scriptName", scriptName);
     addParameter("speed", speed);
     glInit();
@@ -98,10 +94,7 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
       caps.setOnscreen(false);
       GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
       glDrawable = factory.createOffscreenAutoDrawable(null, caps,null,512,512);
-
       glDrawable.display();
-      //glDrawable.getContext().makeCurrent();
-      //glDrawable.getContext().release();
     }
   }
 
