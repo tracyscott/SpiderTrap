@@ -451,9 +451,12 @@ public class SpiderTrapModel extends LXModel {
 
     // Add 11 floods in a circle
     float radius = 10f;
+    float angleIncr = 2f * (float)Math.PI / (float)(NUM_FLOODS);
+
     for (int i = 0; i < NUM_FLOODS; i++) {
-      float x = radius * (float) Math.cos(2f * Math.PI / ((float) i / (float) NUM_FLOODS));
-      float z = radius * (float) Math.sin(2f * Math.PI / ((float) i / (float) NUM_FLOODS));
+
+      float x = radius * (float) Math.cos(i * angleIncr);
+      float z = radius * (float) Math.sin(i * angleIncr);
       floods.add(new LXPoint(x, 0f, z));
     }
     allPointsWithFloods.addAll(floods);
