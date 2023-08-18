@@ -40,6 +40,8 @@ public class Edge {
   public List<Joint> myStartPointJoints = new ArrayList<Joint>();
   public List<Joint> myEndPointJoints = new ArrayList<Joint>();
 
+  public boolean isRadial = false;
+
   static public float margins = 0f;
 
   public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins) {

@@ -264,6 +264,7 @@ public class SpiderTrapModel extends LXModel {
             unitVector.z * curRadialDist);
         Edge edge = new Edge(prevEdgeEnd, edgeEnd, ModelParams.getLedsPerFoot(),0f);
         edges.add(edge);
+        edge.isRadial = true;
         allEdges.add(edge);
         prevEdgeEnd = edgeEnd;
         radialDistIndex++;
