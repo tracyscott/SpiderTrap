@@ -30,12 +30,10 @@ public class UIPreviewComponents extends UICollapsibleSection {
       public void onToggle(boolean on) {
         SpiderTrapApp.edgesPreview.showEdges = on;
       }
-    }.setLabel("bodies").setActive(SpiderTrapApp.edgesPreview.showEdges);
-    showBodies.setWidth(35).setHeight(16);
-    showBodies.addToContainer(viewToggleContainer);
+    }.setLabel("edges").setActive(SpiderTrapApp.edgesPreview.showEdges);
+    showEdges.setWidth(35).setHeight(16);
+    showEdges.addToContainer(viewToggleContainer);
 
-    UI2dContainer body1Knobs = new UI2dContainer(0, 0, getContentWidth(), 20);
-    UIKnob body1X = new UIKnob(0, 0, 20, 20);
 
   }
 }
