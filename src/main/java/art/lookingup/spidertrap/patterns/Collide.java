@@ -27,8 +27,8 @@ import java.util.logging.Logger;
 public class Collide extends LXPattern {
   private static final Logger logger = Logger.getLogger(CVBlobTest.class.getName());
 
-  public DiscreteParameter numBlobs = new DiscreteParameter("blobs", 2, 1, MAX_BLOBS + 1);
-  public CompoundParameter bspeed = new CompoundParameter("bspeed", 1.0, 0.0, 60.0);
+  public DiscreteParameter numBlobs = new DiscreteParameter("blobs", 4, 1, MAX_BLOBS + 1);
+  public CompoundParameter bspeed = new CompoundParameter("bspeed", 19.0, 0.0, 60.0);
   public CompoundParameter randSpeed = new CompoundParameter("randspd", 1.0, 0.0, 5.0);
   public DiscreteParameter jointKnob = new DiscreteParameter("joint", 0, -1, 3);
   public CompoundParameter collDist = new CompoundParameter("colld", 6f, 1f, 12f).setDescription("Collision distance inches");
@@ -63,6 +63,8 @@ public class Collide extends LXPattern {
     addParameter("pw", pw);
     addParameter("clr1", color1);
     addParameter("clr2", color2);
+    color1.setColor(LXColor.rgb(255, 0, 0));
+    color2.setColor(LXColor.rgb(0, 255, 0));
 
     LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
     scriptParams.put("x1", 0f);
