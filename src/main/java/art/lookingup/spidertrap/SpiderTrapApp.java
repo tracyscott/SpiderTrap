@@ -222,20 +222,33 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     logger.info("JOGL Reference: " + pJogl.gl);
 
 
-    if (useKinectV2) {
-      logger.info("Initializing KinectV2");
-      try {
-        kinect = new KinectV2(new KinectPV2(this));
-        logger.info("Done initializing KinectV2");
-      } catch (Exception ex) {
-        logger.info("WARNING: Couldn't initialize KinectV2!");
-      }
-    }
 
 
     pApplet = this;
 
     loadModelParams();
+
+    float kinectThreadSleepMs = 1000f / ModelParams.getKV2FPS();
+    if (useKinectV2) {
+      logger.info("Initializing KinectV2");
+      try {
+        kinect = new KinectV2(new KinectPV2(this));
+        logger.info("Done initializing KinectV2");
+        new Thread(() -> {
+          while (true) {
+            kinect.update();
+            try {
+              Thread.sleep((long)kinectThreadSleepMs);
+            } catch (InterruptedException iex) {
+              //
+            }
+          }
+        }).start();
+      } catch (Exception ex) {
+        logger.info("WARNING: Couldn't initialize KinectV2!");
+      }
+    }
+
     LXModel model;
     logger.info("Creating model");
     model = SpiderTrapModel.createModel();

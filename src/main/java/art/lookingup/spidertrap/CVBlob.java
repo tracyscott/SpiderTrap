@@ -54,6 +54,10 @@ public class CVBlob {
     }
   }
 
+  static public void addKinectV2CVBlob(float x, float y, float z) {
+    addCVBlob(-x, y, z);
+  }
+
   static public boolean isInAnyBlob(float x, float z, float radius) {
     synchronized(blobs) {
       for (CVBlob blob : blobs) {

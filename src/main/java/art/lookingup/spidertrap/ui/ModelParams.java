@@ -1,5 +1,6 @@
 package art.lookingup.spidertrap.ui;
 
+import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.ui.UIConfig;
 import art.lookingup.util.ParameterFile;
 import heronarts.lx.LX;
@@ -24,6 +25,10 @@ public class ModelParams extends UIConfig {
 
   public static final String NUM_RINGS = "num_rings";
 
+  public static final String KV2_MIN_D = "kv2_min_d";
+  public static final String KV2_MAX_D = "kv2_max_d";
+  public static final String KV2_FPS = "kv2_fps";
+
 
   public static final String title = "Model Params";
   public static final String filename = "modelparams.json";
@@ -43,13 +48,16 @@ public class ModelParams extends UIConfig {
     registerStringParameter(HEX_INNER, "");
     registerStringParameter(LEDS_PER_FOOT, "");
     registerStringParameter(NUM_RINGS, "");
+    registerStringParameter(KV2_MIN_D, "");
+    registerStringParameter(KV2_MAX_D, "");
+    registerStringParameter(KV2_FPS, "");
 
-    registerStringParameter(RAD0_OFFSET, "0.0");
-    registerStringParameter(RAD1_OFFSET, "0.0");
-    registerStringParameter(RAD2_OFFSET, "0.0");
-    registerStringParameter(RAD3_OFFSET, "0.0");
-    registerStringParameter(RAD4_OFFSET, "0.0");
-    registerStringParameter(RAD5_OFFSET, "0.0");
+    registerStringParameter(RAD0_OFFSET, "");
+    registerStringParameter(RAD1_OFFSET, "");
+    registerStringParameter(RAD2_OFFSET, "");
+    registerStringParameter(RAD3_OFFSET, "");
+    registerStringParameter(RAD4_OFFSET, "");
+    registerStringParameter(RAD5_OFFSET, "");
 
     save();
 
@@ -67,6 +75,9 @@ public class ModelParams extends UIConfig {
     modelParamFile.getStringParameter(HEX_INNER, ".24");
     modelParamFile.getStringParameter(LEDS_PER_FOOT, "21.946");
     modelParamFile.getStringParameter(NUM_RINGS, "9");
+    modelParamFile.getStringParameter(KV2_MIN_D, "1.5");
+    modelParamFile.getStringParameter(KV2_MAX_D, "2");
+    modelParamFile.getStringParameter(KV2_FPS, "10");
 
     modelParamFile.getStringParameter(RAD0_OFFSET, "0.0");
     modelParamFile.getStringParameter(RAD1_OFFSET, "0.0");
@@ -138,6 +149,18 @@ public class ModelParams extends UIConfig {
 
   static public int getNumRings() { return Integer.parseInt(modelParamFile.getStringParameter(NUM_RINGS, "9").getString()); }
 
+  static public float getKV2MinD() {
+    return modelParamFile.getStringParameterF(KV2_MIN_D, "1.5");
+  }
+
+  static public float getKV2MaxD() {
+    return modelParamFile.getStringParameterF(KV2_MAX_D, "2");
+  }
+
+  static public float getKV2FPS() {
+    return modelParamFile.getStringParameterF(KV2_FPS, "10");
+  }
+
   static public float getRadialOffset(int radial) {
     switch (radial) {
       case 0:
@@ -183,6 +206,8 @@ public class ModelParams extends UIConfig {
   @Override
   public void onSave() {
     if (parameterChanged) {
+      if (SpiderTrapApp.kinect != null)
+        SpiderTrapApp.kinect.updateDistanceParams();
     }
   }
 }

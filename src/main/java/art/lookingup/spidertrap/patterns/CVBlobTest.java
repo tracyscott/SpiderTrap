@@ -48,14 +48,16 @@ public class CVBlobTest extends LXPattern {
     for (LXPoint p : SpiderTrapModel.allPoints)
       colors[p.index] = LXColor.BLACK;
 
-    for (CVBlob cvBlob : CVBlob.blobs) {
-      logger.info("rendering blob");
-      spGLCtx.scriptParams.put("x1", cvBlob.u);
-      spGLCtx.scriptParams.put("y1", cvBlob.v);
-      spGLCtx.scriptParams.put("freq", freq.getValuef());
-      spGLCtx.scriptParams.put("rscale", rscale.getValuef());
-      GLUtil.glRun(spGLCtx, deltaMs, 1f);
-      GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
+    synchronized (CVBlob.blobs) {
+      for (CVBlob cvBlob : CVBlob.blobs) {
+        logger.info("rendering blob");
+        spGLCtx.scriptParams.put("x1", cvBlob.u - 0.5f);
+        spGLCtx.scriptParams.put("y1", cvBlob.v - 0.5f);
+        spGLCtx.scriptParams.put("freq", freq.getValuef());
+        spGLCtx.scriptParams.put("rscale", rscale.getValuef());
+        GLUtil.glRun(spGLCtx, deltaMs, 1f);
+        GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
+      }
     }
   }
 }
