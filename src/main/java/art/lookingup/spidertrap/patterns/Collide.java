@@ -30,7 +30,7 @@ public class Collide extends LXPattern {
   public DiscreteParameter numBlobs = new DiscreteParameter("blobs", 4, 1, MAX_BLOBS + 1);
   public CompoundParameter bspeed = new CompoundParameter("bspeed", 19.0, 0.0, 60.0);
   public CompoundParameter randSpeed = new CompoundParameter("randspd", 1.0, 0.0, 5.0);
-  public DiscreteParameter jointKnob = new DiscreteParameter("joint", 0, -1, 3);
+  public DiscreteParameter jointKnob = new DiscreteParameter("joint", -1, -1, 3);
   public CompoundParameter collDist = new CompoundParameter("colld", 6f, 1f, 12f).setDescription("Collision distance inches");
 
   CompoundParameter sspeed = new CompoundParameter("sspeed", 1.0, 0.0, 20.0).setDescription("shader speed");
