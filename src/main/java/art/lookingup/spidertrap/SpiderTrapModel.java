@@ -52,7 +52,7 @@ public class SpiderTrapModel extends LXModel {
 
   static public final float DISTANCE_FROM_CENTER = 4f;
   static public final float METERS_TO_FEET = 3.28084f;
-  static public final float MIN_CUT_DISTANCE = 0.005f/12f; //9.84f/12f;
+  static public final float MIN_CUT_DISTANCE = 0.001f/12f; //9.84f/12f;
 
   static public int allSegmentsCount = 0;
 

@@ -76,6 +76,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
   public static OutputMapping outputMap;
   UIPreviewComponents previewComponents;
   public static PreviewComponents.BodyRender preview;
+  public static PreviewComponents.EdgeLabels edgesPreview;
   public static PApplet pApplet;
 
   static public float[] panelPosParams;
@@ -306,6 +307,8 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     Body.initBodies();
     preview = new PreviewComponents.BodyRender();
     ui.preview.addComponent(preview);
+    edgesPreview = new PreviewComponents.EdgeLabels();
+    ui.preview.addComponent(edgesPreview);
     pixliteConfig = (UIPixliteConfig) new UIPixliteConfig(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     modelParams = (ModelParams) new ModelParams(ui, lx, ModelParams.modelParamFile).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     outputMap = (OutputMapping) new OutputMapping(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);

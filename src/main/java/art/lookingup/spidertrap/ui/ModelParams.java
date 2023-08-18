@@ -64,7 +64,7 @@ public class ModelParams extends UIConfig {
     modelParamFile.getStringParameter(RADIAL_INCR, "0.03");
     modelParamFile.getStringParameter(INNER_RADIUS, "1.2");
     modelParamFile.getStringParameter(OUTER_RADIUS, "9.0");
-    modelParamFile.getStringParameter(HEX_INNER, ".25");
+    modelParamFile.getStringParameter(HEX_INNER, ".24");
     modelParamFile.getStringParameter(LEDS_PER_FOOT, "21.946");
     modelParamFile.getStringParameter(NUM_RINGS, "9");
 
@@ -111,7 +111,7 @@ public class ModelParams extends UIConfig {
     return dist;
   }
 
-  static public float getHexInner() { return modelParamFile.getStringParameterF(HEX_INNER, ".25"); }
+  static public float getHexInner() { return modelParamFile.getStringParameterF(HEX_INNER, ".24"); }
 
   static public float getHexInner(int radial) {
     float dist = getHexInner();
