@@ -193,7 +193,6 @@ int main(int argc, char** argv)
 
         // Change these as needed for your specific requirements
         params.filterByArea = true;
-        params.minArea = 50;
         params.minThreshold = 0;
         params.maxThreshold = 250;
         params.filterByArea = true;
@@ -412,6 +411,12 @@ void parseArgs(int argc, char** argv) {
             std::string valueStr = argv[i + 1];
             std::stringstream ss(valueStr);
             ss >> bottomFilter;
+            i++; // Skip the value in the next iteration
+        }
+        else if (arg == "--blobmin") {
+            std::string valueStr = argv[i + 1];
+            std::stringstream ss(valueStr);
+            ss >> blobMinArea;
             i++; // Skip the value in the next iteration
         }
         else if (arg == "--verbose") {
