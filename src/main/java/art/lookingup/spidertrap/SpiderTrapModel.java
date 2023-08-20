@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 public class SpiderTrapModel extends LXModel {
   public static final int MAX_RADIALS = 16;
   public static final int NUM_WEBS = 1;
+  public static final int NUM_FLOODS = 11;
 
   public static final float SEGMENT_MARGINS = 2.75f/12f;
   public static final float RING_SEG_MARGIN[] =  {
@@ -51,7 +52,7 @@ public class SpiderTrapModel extends LXModel {
 
   static public final float DISTANCE_FROM_CENTER = 4f;
   static public final float METERS_TO_FEET = 3.28084f;
-  static public final float MIN_CUT_DISTANCE = 0.005f/12f; //9.84f/12f;
+  static public final float MIN_CUT_DISTANCE = 0.001f/12f; //9.84f/12f;
 
   static public int allSegmentsCount = 0;
 
@@ -99,10 +100,12 @@ public class SpiderTrapModel extends LXModel {
       float curAngle = radialOffset * angleIncr;
       points = new ArrayList<LXPoint>();
       float innerRadius = ModelParams.getInnerRadius();
-      float outerRadius = ModelParams.getOuterRadius();
-      float hexInnerRadius = ModelParams.getHexInner();
+      //float outerRadius = ModelParams.getOuterRadius();
+      //float hexInnerRadius = ModelParams.getHexInner();
 
       for (int i = 0; i < numRadials; i++) {
+        float hexInnerRadius = ModelParams.getHexInner(i);
+        float outerRadius = ModelParams.getOuterRadius(i);
         logger.info("Creating Radial");
         Radial radial = new Radial(i, curAngle, innerRadius, outerRadius, hexInnerRadius, mx, my, mz);
         radials.add(radial);
@@ -251,19 +254,20 @@ public class SpiderTrapModel extends LXModel {
                                         z + polarZ(hexInnerRadius, angle));
       Point3D unitVector = Point3D.unitVectorTo(new Point3D(polarX(innerRadius, angle), 0, polarZ(innerRadius, angle)),
           new Point3D(0, 0, 0));
-      Point3D prevEdgeEnd = null;
+      Point3D prevEdgeEnd = radialStart;
+      int radialDistIndex = 0;
       for (float curRadialDist : radialDistances) {
-        if (prevEdgeEnd == null) {
-          prevEdgeEnd = radialStart;
-          continue;
-        }
+        if (radialDistIndex == radialDistances.size() - 1)
+          curRadialDist += ModelParams.getRadialOffset(id);
         Point3D edgeEnd = new Point3D(unitVector.x * curRadialDist,
             prevEdgeEnd.y,
             unitVector.z * curRadialDist);
         Edge edge = new Edge(prevEdgeEnd, edgeEnd, ModelParams.getLedsPerFoot(),0f);
         edges.add(edge);
+        edge.isRadial = true;
         allEdges.add(edge);
         prevEdgeEnd = edgeEnd;
+        radialDistIndex++;
       }
 
       addCCWSegments();
@@ -388,7 +392,18 @@ public class SpiderTrapModel extends LXModel {
   static public List<List<Segment>> allRings = new ArrayList<List<Segment>>();
 
   static public List<LXPoint> allPoints = new ArrayList<LXPoint>();
+  static public List<LXPoint> floods = new ArrayList<LXPoint>();
+  static public List<LXPoint> allPointsWithFloods = new ArrayList<LXPoint>();
 
+
+  static public float xRange;
+  static public float yRange;
+  static public float zRange;
+  static public float largestRange;
+  static public float modelXMin;
+  static public float modelXMax;
+  static public float modelZMin;
+  static public float modelZMax;
 
   /**
    * Generate a model with random points.  Leaves are assigned to run based on leaf number.
@@ -406,14 +421,26 @@ public class SpiderTrapModel extends LXModel {
 
     logger.info("Number of logical edges: " + allEdges.size());
     logger.info("Number of ring edges: " + allSegments.size());
-    logger.info("Number of points: " + allPoints.size());
+    logger.info("Number of web points: " + allPoints.size());
 
-    SpiderTrapModel m = new SpiderTrapModel(allPoints);
-
-    float xRange = m.xMax - m.xMin;
-    float zRange = m.zMax - m.zMin;
-    float yRange = m.yMax - m.yMin;
-    float largestRange = Math.max(xRange, zRange);
+    // Since we are adding floods, we need to compute the web model bounds separately before adding the floods.
+    modelXMax = Float.MIN_VALUE;
+    modelXMin = Float.MAX_VALUE;
+    modelZMin = Float.MAX_VALUE;
+    modelZMax = Float.MIN_VALUE;
+    for (LXPoint pt : allPoints) {
+      if (pt.x < modelXMin)
+        modelXMin = pt.x;
+      if (pt.x > modelXMax)
+        modelXMax = pt.x;
+      if (pt.z < modelZMin)
+        modelZMin = pt.z;
+      if (pt.z > modelZMax)
+        modelZMax = pt.z;
+    }
+    xRange = modelXMax - modelXMin;
+    zRange = modelZMax - modelZMin;
+    largestRange = Math.max(xRange, zRange);
 
     // Shaders expect a 0 to 1 range in both X and Z.  Since X is our largest range, we use that as
     // the scaling factor for both X and Z so that we don't get aspect distortion.  We also need to offset
@@ -422,10 +449,26 @@ public class SpiderTrapModel extends LXModel {
     zOffset = (1.0f - (zRange / xRange))/2f;
     // Compute normalized coordinates for all points for use in shaders.
     for (LXPoint lxp : allPoints) {
-      ((LPPoint)lxp).u = (lxp.x - m.xMin)/largestRange;
-      ((LPPoint)lxp).v = (lxp.y - m.yMin)/yRange;
-      ((LPPoint)lxp).w = (lxp.z - m.zMin)/largestRange + zOffset;
+      ((LPPoint)lxp).u = (lxp.x - modelXMin)/largestRange;
+      ((LPPoint)lxp).v = 0;
+      ((LPPoint)lxp).w = (lxp.z - modelZMin)/largestRange + zOffset;
     }
+
+    allPointsWithFloods.addAll(allPoints);
+
+    // Add 11 floods in a circle
+    float radius = 10f;
+    float angleIncr = 2f * (float)Math.PI / (float)(NUM_FLOODS);
+
+    for (int i = 0; i < NUM_FLOODS; i++) {
+
+      float x = radius * (float) Math.cos(i * angleIncr);
+      float z = radius * (float) Math.sin(i * angleIncr);
+      floods.add(new LXPoint(x, 0f, z));
+    }
+    allPointsWithFloods.addAll(floods);
+
+    SpiderTrapModel m = new SpiderTrapModel(allPointsWithFloods);
     return m;
   }
 

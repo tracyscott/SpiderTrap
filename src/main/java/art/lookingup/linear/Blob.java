@@ -3,11 +3,14 @@ package art.lookingup.linear;
 import art.lookingup.colors.ColorPalette;
 import art.lookingup.spidertrap.SpiderTrapModel;
 import art.lookingup.util.EaseUtil;
+import art.lookingup.util.GLUtil;
 import heronarts.lx.color.LXColor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static art.lookingup.spidertrap.SpiderTrapModel.*;
 
 public class Blob {
   private static final Logger logger = Logger.getLogger(Blob.class.getName());
@@ -32,6 +35,25 @@ public class Blob {
   // that we intend to render on.
   public List<DirectionalLP> pathLPs;
 
+  // World space coordinates
+  public float u;
+  public float v;
+  public Point3D worldSpace = new Point3D(0f, 0f, 0f);
+
+  // For render shaders
+  public GLUtil.SpiderGLContext spGLCtx;
+  public float shaderSpeed = 1f;
+
+  public void updateUV() {
+    if (dlp != null) {
+      dlp.lp.edge.interpolate(worldSpace, pos);
+      float zOffset = 0.07f;
+      zOffset = (1.0f - (zRange / xRange))/2f;
+      u = (worldSpace.x - SpiderTrapModel.modelXMin)/largestRange;
+      v = (worldSpace.z - SpiderTrapModel.modelZMin)/largestRange + zOffset;
+    }
+  }
+
   public void updateCurrentLP(int barSelector) {
     // First, lets transfer the current LinearPoints into our
     // previous LinearPoints list.  The list of older linearpoints will be trimmed in our draw loop.
@@ -42,14 +64,14 @@ public class Blob {
     // leading edge of the triangle might be on the 'next' LinearPoints, so we need to look ahead and compute
     // them as we need them.
 
-    //logger.info("current lp: " + dlb.lp.lpNum + " " + ((dlb.forward)?"forward":"reverse"));
+    //logger.info("current lp: " + dlp.lp.lpNum + " " + ((dlp.forward)?"forward":"reverse"));
     if (nextLPs.size() > 0) {
       dlp = nextLPs.remove(0);
     } else {
       dlp = dlp.chooseNextBar(barSelector);
     }
 
-    //logger.info("new lp: " + dlb.lp.lpNum + " " + ((dlb.forward)?"forward":"reverse"));
+    //logger.info("new lp: " + dlp.lp.lpNum + " " + ((dlp.forward)?"forward":"reverse"));
 
     // Set our position based on the directionality of the current LinearPoints
     if (dlp.forward) {
@@ -57,6 +79,7 @@ public class Blob {
     } else {
       pos = 1.0f;
     }
+    updateUV();
   }
 
   public void reset(int lightBarNum, float initialPos, float randomSpeed, boolean forward) {
@@ -72,6 +95,18 @@ public class Blob {
                          int whichEffect, float fxDepth, float cosineFreq) {
     renderBlob(colors, baseSpeed, defaultWidth, slope, maxValue, waveform, whichJoint, initialTail, LXColor.Blend.ADD,
         whichEffect, fxDepth, cosineFreq);
+  }
+
+  public void renderBlobShader(int[] colors, float baseSpeed, int whichJoint, LXColor.Blend blend, double deltaMs) {
+    renderBlob(colors, baseSpeed, 1.0f, 1.0f, 1.0f, 0, whichJoint,
+        false, blend, 0, 0.0f, 0.0f,  true, deltaMs);
+  }
+
+  public void renderBlob(int[] colors, float baseSpeed, float defaultWidth, float slope,
+                         float maxValue, int waveform, int whichJoint, boolean initialTail, LXColor.Blend blend,
+                         int whichEffect, float fxDepth, float cosineFreq) {
+      renderBlob(colors, baseSpeed, defaultWidth, slope, maxValue, waveform, whichJoint, initialTail, blend,
+          whichEffect, fxDepth, cosineFreq, false, 0.0);
   }
 
   /**
@@ -91,7 +126,7 @@ public class Blob {
    */
   public void renderBlob(int[] colors, float baseSpeed, float defaultWidth, float slope,
                          float maxValue, int waveform, int whichJoint, boolean initialTail, LXColor.Blend blend,
-                         int whichEffect, float fxDepth, float cosineFreq) {
+                         int whichEffect, float fxDepth, float cosineFreq, boolean useShader, double deltaMs) {
     if (!enabled) return;
     boolean needsCurrentLPUpdate = false;
     float resolvedWidth = defaultWidth;
@@ -103,7 +138,18 @@ public class Blob {
         LinearPoints lp = edge.linearPoints;
         if (dlp.lp.lpNum == lp.lpNum) {
           // -- Render on our target linearpoints --
-          float minMax[] = renderWaveform(colors, dlp, pos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
+
+          float minMax[] = {0.5f, 0.5f};
+
+          if (!useShader)
+            minMax = renderWaveform(colors, dlp, pos, resolvedWidth, slope, intensity * maxValue, waveform, blend);
+          else {
+            // TODO(tracy): Should params be set per blob?
+            spGLCtx.scriptParams.put("x1", u - 0.5f);
+            spGLCtx.scriptParams.put("y1", v - 0.5f);
+            GLUtil.glRun(spGLCtx, deltaMs, shaderSpeed, false);
+            GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
+          }
 
           if (whichEffect == 1) {
             LPRender.randomGrayBaseDepth(colors, dlp.lp, LXColor.Blend.MULTIPLY, (int) (255 * (1f - fxDepth)),
@@ -193,7 +239,9 @@ public class Blob {
             pos -= ((baseSpeed + speed) / 100f)/(dlp.lp.length);
           }
 
-          // logger.info("linear points: " + dlb.lp.lpNum + " pos: " + pos);
+          updateUV();
+
+          //logger.info("linear points: " + dlp.lp.lpNum + " pos: " + pos);
 
           if (pos <= 0.0 || pos >= 1.0f) {
             needsCurrentLPUpdate = true;

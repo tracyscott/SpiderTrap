@@ -1,0 +1,104 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691519316623,
+  "id": 28276,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": true,
+    "presetFile": "lringhex"
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "LRings",
+    "speed": 2.206896547228098,
+    "x1": 2.0489097085629737E-9,
+    "s1": -0.01896551348397435,
+    "s2": 0.41724139089728274,
+    "radius": 0.040948274778202176,
+    "thick": 4.097817862813713E-9,
+    "zoom": 1.793103463947773,
+    "brt": 2.330172406808184,
+    "palval": 0.5974137678581837
+  },
+  "children": {
+    "modulation": {
+      "id": 28277,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [
+        {
+          "id": 29020,
+          "class": "heronarts.lx.modulator.VariableLFO",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LFO",
+            "running": true,
+            "trigger": false,
+            "loop": true,
+            "tempoSync": false,
+            "tempoMultiplier": 5,
+            "tempoLock": true,
+            "clockMode": 0,
+            "periodFast": 3556.2040115569753,
+            "periodSlow": 10000.0,
+            "wave": 1,
+            "skew": 0.0,
+            "shape": 0.0,
+            "bias": 0.0,
+            "phase": 0.0,
+            "exp": 0.0
+          },
+          "children": {},
+          "basis": 0.43953498108068473
+        }
+      ],
+      "modulations": [
+        {
+          "source": {
+            "id": 29020,
+            "path": "/modulation/modulator/1"
+          },
+          "target": {
+            "componentId": 28276,
+            "parameterPath": "radius",
+            "path": "/radius"
+          },
+          "id": 29021,
+          "class": "heronarts.lx.modulation.LXCompoundModulation",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LX",
+            "enabled": true,
+            "polarity": 0,
+            "range": 0.47999998927116394
+          },
+          "children": {}
+        }
+      ],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

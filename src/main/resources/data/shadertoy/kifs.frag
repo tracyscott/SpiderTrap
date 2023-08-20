@@ -72,7 +72,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     //col.rg += uv;
     uv /= scale;
     col += texture(iChannel1, uv*2.-iTime*.1 * iMouse.x*10.).rgb;
-
     //col.rg += uv/(scale*.06);
     // Output to screen11
     fragColor = vec4(col,1.0);

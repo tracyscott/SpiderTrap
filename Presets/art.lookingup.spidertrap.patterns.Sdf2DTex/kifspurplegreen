@@ -1,0 +1,46 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1692249172887,
+  "id": 34536,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2DTex",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false
+  },
+  "parameters": {
+    "label": "Sdf2DTex",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Kifs",
+    "texName": "fa1",
+    "speed": 0.5172413773834705,
+    "folds": 0.7155172396451235,
+    "tscale": 0.0,
+    "zoom": 0.10000000149011612,
+    "fractn": 0.7155172415077686
+  },
+  "children": {
+    "modulation": {
+      "id": 34537,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

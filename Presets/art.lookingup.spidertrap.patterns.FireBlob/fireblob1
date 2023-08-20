@@ -1,0 +1,50 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1692207374549,
+  "id": 30541,
+  "class": "art.lookingup.spidertrap.patterns.FireBlob",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false
+  },
+  "parameters": {
+    "label": "FireBlob",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "blobs": 3,
+    "bspeed": 15.399999678134918,
+    "randspd": 1.0,
+    "joint": -1,
+    "sspeed": 0.40000001341104513,
+    "pal": 1.3299999702721834,
+    "brt": 1.13,
+    "pw": 1.5499999944120646,
+    "thick": 0.0,
+    "s1": 0.0,
+    "s2": 0.08
+  },
+  "children": {
+    "modulation": {
+      "id": 30542,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

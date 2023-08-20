@@ -21,7 +21,7 @@
             "MAX": 1.1
          },
          {
-            "NAME": "rot",
+            "NAME": "rspeed",
             "TYPE": "float",
             "DEFAULT": 0.0,
             "MIN": 0,
@@ -33,6 +33,34 @@
             "DEFAULT": 1.0,
             "MIN": 0,
             "MAX": 100
+         },
+         {
+            "NAME": "zoom",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.2,
+            "MAX": 10.
+         },
+          {
+            "NAME": "pal",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.2,
+            "MAX": 10.
+         },
+          {
+            "NAME": "intens",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.0,
+            "MAX": 1.5
+         },
+          {
+            "NAME": "pw",
+            "TYPE": "float",
+            "DEFAULT": 1.0,
+            "MIN": 0.0,
+            "MAX": 5.0
          }
 	]
 }*/
@@ -42,8 +70,12 @@
 uniform float fTime;
 uniform float x1;
 uniform float width;
-uniform float rot;
 uniform float freq;
+uniform float rspeed;
+uniform float zoom;
+uniform float pal;
+uniform float intens;
+uniform float pw;
 
 layout(location = 0) in vec3 position;
 out vec3 tPosition;
@@ -102,6 +134,13 @@ float stroke(float x, float s, float w) {
     return clamp(d, 0., 1.);
 }
 
+float stroke2(float x, float s, float w) {
+    float d = smoothstep(s-.05, s+.05, x+w*.5)
+    - smoothstep(s-.05, s+.05,x-w*.5);
+    return clamp(d, 0., 1.);
+}
+
+
 float circleSDF(vec2 st) {
     return length(st-.5)*2.;
 }
@@ -125,15 +164,39 @@ float rectSDF(vec2 st, vec2 s) {
     abs(st.y/s.y));
 }
 
+// INSERT-PALETTES
+
+
+mat2 Rot(float a) {
+    float s=sin(a), c=cos(a);
+    return mat2(c, -s, s, c);
+}
+
+
 void main(){
-    vec2 st = position.xz;
+    vec2 uv = position.xz - 0.5;
     vec3 color = vec3(0.);
 
-    float offset = cos(st.y*PI*freq)*.15;
 
-    color += stroke(st.x, .28+offset, width);
-    color += stroke(st.x, .5+offset, width);
-    color += stroke(st.x, .72+offset, width);
+    uv = uv*zoom;
 
-    tPosition = color;
+    float offset = sin(uv.y*PI*freq)*.15;
+
+    uv = uv * Rot(PI * rspeed * fTime);
+
+    float bright = 0.;
+    bright += stroke2(uv.x -.28, offset, width);
+    bright += stroke2(uv.x, offset, width);
+    bright += stroke2(uv.x+.28, offset, width);
+
+    uv = uv * Rot(PI);
+
+    bright += stroke2(uv.x -.28, offset, width);
+    bright += stroke2(uv.x, offset, width);
+    bright += stroke2(uv.x+.28, offset, width);
+
+    //bright = clamp(bright * .5, 0.0, 1.0);
+    bright = pow(bright, pw);
+    color = paletteN(bright * .5, pal) * bright * intens;
+    tPosition = clamp(color, 0.0, 1.0);
 }

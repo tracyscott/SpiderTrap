@@ -1,0 +1,50 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691701238775,
+  "id": 30535,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false,
+    "presetFile": "spiralbubblegum"
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Spiral",
+    "speed": 0.2,
+    "a": 0.9137930925935507,
+    "b": 0.2241379301995039,
+    "pald": 11.499999960884452,
+    "brt": 4.168103440073803,
+    "pal": 4.504310336895287,
+    "s1": 0.0,
+    "s2": 0.03620689548552036,
+    "cspeed": 10.0
+  },
+  "children": {
+    "modulation": {
+      "id": 30536,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

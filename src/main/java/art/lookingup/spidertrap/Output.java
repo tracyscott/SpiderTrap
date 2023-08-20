@@ -247,6 +247,29 @@ public class Output {
     } catch (UnknownHostException unhex) {
       logger.info("Uknown host exception for Pixlite IP: " + artNetIpAddress + " msg: " + unhex.getMessage());
     }
+
+    //
+    // FLOODS
+    //
+    String floodIpAddress = SpiderTrapApp.pixliteConfig.floodIp();
+    int floodPort = SpiderTrapApp.pixliteConfig.floodPort();
+    logger.log(Level.INFO, "Using Flood ArtNet: " + floodIpAddress + ":" + floodPort);
+
+    // Output floods
+    int[] thisUniverseIndices = new int[SpiderTrapModel.floods.size()];
+    int curIndex = 0;
+    for (LXPoint p : SpiderTrapModel.floods) {
+      thisUniverseIndices[curIndex] = p.index;
+      curIndex++;
+    }
+
+    ArtNetDatagram floodDatagram = new ArtNetDatagram(lx, thisUniverseIndices, 0);
+    try {
+      floodDatagram.setAddress(InetAddress.getByName(floodIpAddress)).setPort(floodPort);
+    } catch (UnknownHostException uhex) {
+      logger.log(Level.SEVERE, "Configuring Flood ArtNet: " + floodIpAddress + ":" + floodPort, uhex);
+    }
+    lx.engine.addOutput(floodDatagram);
   }
 
 

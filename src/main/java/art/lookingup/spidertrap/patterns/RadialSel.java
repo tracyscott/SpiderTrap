@@ -56,8 +56,12 @@ public class RadialSel extends LXPattern {
                 int joint = jointSel.getValuei();
                 if (joint != -1 && edgeSel.getValuei() != -1) {
                   Edge edge = SpiderTrapModel.allEdges.get(radial.edges.get(edgeN).id);
-                  Joint startJoint = edge.myStartPointJoints[joint];
-                  Joint endJoint = edge.myEndPointJoints[joint];
+                  Joint startJoint = null;
+                  if (joint < edge.myStartPointJoints.size())
+                    startJoint = edge.myStartPointJoints.get(joint);
+                  Joint endJoint = null;
+                  if (joint < edge.myEndPointJoints.size())
+                    endJoint = edge.myEndPointJoints.get(joint);
                   if (startJoint != null) {
                     for (LXPoint p : startJoint.edge.points) {
                       colors[p.index] = LXColor.RED;

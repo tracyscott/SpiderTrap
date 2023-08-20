@@ -55,7 +55,7 @@ public class EaseUtil {
       case 7:
         return ease7(t);
       case 8:
-        return ease8(t);
+        return ease8(t, freq);
     }
     return t;
   }

@@ -24,12 +24,13 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.logging.*;
 
-import art.lookingup.spidertrap.ui.ModelParams;
-import art.lookingup.spidertrap.ui.UIPixliteConfig;
-import art.lookingup.spidertrap.ui.UIPreviewComponents;
+import art.lookingup.KinectV2;
+import art.lookingup.spidertrap.ui.*;
 import art.lookingup.ui.*;
+import art.lookingup.util.PropertyFile;
 import art.lookingup.util.SpeedOverride;
 import com.google.common.reflect.ClassPath;
+import com.jogamp.opengl.GL;
 import heronarts.lx.LX;
 import heronarts.lx.LXPlugin;
 import heronarts.lx.effect.LXEffect;
@@ -43,6 +44,8 @@ import processing.core.PApplet;
 import processing.event.KeyEvent;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
+
+import KinectPV2.*;
 
 /**
  * This is an example top-level class to build and run an LX Studio
@@ -65,10 +68,15 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   public static UIPixliteConfig pixliteConfig;
   public static ModelParams modelParams;
+  public static UIStdChConfig stdChConfig;
+  public static UIProgramConfig programConfig;
+  public static UIAudioMonitorLevels audioMonitorLevels;
+  public static UIModeSelector modeSelector;
 
   public static OutputMapping outputMap;
   UIPreviewComponents previewComponents;
   public static PreviewComponents.BodyRender preview;
+  public static PreviewComponents.EdgeLabels edgesPreview;
   public static PApplet pApplet;
 
   static public float[] panelPosParams;
@@ -87,6 +95,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   public static boolean fullscreenMode = false;
   public static UI3dContext fullscreenContext;
+  public static KinectV2 kinect;
 
   static {
     System.setProperty(
@@ -155,6 +164,11 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   private static final Logger logger = Logger.getLogger(SpiderTrapApp.class.getName());
 
+  public static String projectFileForEngine = null;
+  public static boolean startupFileIsSchedule = false;
+
+  public static boolean useKinectV2 = false;
+
   @Override
   public void settings() {
     if (FULLSCREEN) {
@@ -167,11 +181,32 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
   @Override
   public void setup() {
-    frameRate(GLOBAL_FRAME_RATE);
+    // frameRate(GLOBAL_FRAME_RATE);
     LXStudio.Flags flags = new LXStudio.Flags(this);
     flags.resizable = false;
     flags.useGLPointCloud = false;
-    flags.startMultiThreaded = false;
+    flags.startMultiThreaded = true;
+
+    File projectFile = null;
+
+    try {
+      projectFile = new File(LX.Media.PROJECTS + File.separator + "empty.lxp");
+      PropertyFile pf = new PropertyFile(".lxpreferences");
+      if (pf.exists()) {
+        pf.load();
+        projectFileForEngine = pf.getString("projectFileName");
+        String scheduleFilename = pf.getString("scheduleFileName");
+        LX.log("schedulerEnabled: " + pf.getBoolean("schedulerEnabled"));
+        if (scheduleFilename != null && pf.getBoolean("schedulerEnabled")) {
+          startupFileIsSchedule = true;
+          projectFileForEngine = scheduleFilename;
+        }
+      }
+
+    } catch (Exception ex) {
+      logger.info("Exception: " + ex.getMessage());
+    }
+    flags.initialFile = projectFile;
 
     try {
       addLogFileHandler("logs/" + LOG_FILENAME_PREFIX);
@@ -186,9 +221,34 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
     logger.info("JOGL Reference: " + pJogl.gl);
 
+
+
+
     pApplet = this;
 
     loadModelParams();
+
+    float kinectThreadSleepMs = 1000f / ModelParams.getKV2FPS();
+    if (useKinectV2) {
+      logger.info("Initializing KinectV2");
+      try {
+        kinect = new KinectV2(new KinectPV2(this));
+        logger.info("Done initializing KinectV2");
+        new Thread(() -> {
+          while (true) {
+            kinect.update();
+            try {
+              Thread.sleep((long)kinectThreadSleepMs);
+            } catch (InterruptedException iex) {
+              //
+            }
+          }
+        }).start();
+      } catch (Exception ex) {
+        logger.info("WARNING: Couldn't initialize KinectV2!");
+      }
+    }
+
     LXModel model;
     logger.info("Creating model");
     model = SpiderTrapModel.createModel();
@@ -227,7 +287,31 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
           speedOverride.speed.setValue(0.5f);
         }
       }
+
     });
+    lx.engine.addTask(() -> loadProjectFileOnEngineThread());
+  }
+
+  static public void loadProjectFileOnEngineThread() {
+    File projectFile;
+    if (projectFileForEngine == null || "".equals(projectFileForEngine))
+      return;
+
+    try {
+      LX.log("loading file: " + projectFileForEngine);
+      projectFile = lx.getMediaFile(LX.Media.PROJECTS, projectFileForEngine);
+      if (projectFile.exists()) {
+        if (!startupFileIsSchedule) {
+          LX.log("Opening project file: " + projectFile);
+          lx.openProject(projectFile);
+        } else {
+          LX.log("Opening schedule file: " + projectFile);
+          lx.scheduler.openSchedule(projectFile, true);
+        }
+      }
+    } catch (Exception ex) {
+      logger.info("couldn't load file: " + ex.getMessage());
+    }
   }
 
   public void onUIReady(LXStudio lx, LXStudio.UI ui) {
@@ -236,14 +320,19 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     Body.initBodies();
     preview = new PreviewComponents.BodyRender();
     ui.preview.addComponent(preview);
+    edgesPreview = new PreviewComponents.EdgeLabels();
+    ui.preview.addComponent(edgesPreview);
     pixliteConfig = (UIPixliteConfig) new UIPixliteConfig(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     modelParams = (ModelParams) new ModelParams(ui, lx, ModelParams.modelParamFile).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     outputMap = (OutputMapping) new OutputMapping(ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    audioMonitorLevels = (UIAudioMonitorLevels) new UIAudioMonitorLevels(lx.ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    stdChConfig = (UIStdChConfig) new UIStdChConfig(lx.ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+    modeSelector = (UIModeSelector) new UIModeSelector(lx.ui, lx, audioMonitorLevels).setExpanded(true).addToContainer(lx.ui.leftPane.global);
+    programConfig = (UIProgramConfig) new UIProgramConfig(lx.ui, lx).setExpanded(false).addToContainer(lx.ui.leftPane.global);
+
     previewComponents = (UIPreviewComponents) new UIPreviewComponents(ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     logger.info("Configuring pixlite output");
     Output.configurePixliteOutput(lx);
-
-    logger.info("Model bounds: " + lx.getModel().xMin + "," + lx.getModel().yMin + " to " + lx.getModel().xMax + "," + lx.getModel().yMax);
 
     lx.ui.leftPane.audio.setExpanded(false);
     lx.ui.leftPane.snapshots.setExpanded(false);
@@ -285,10 +374,17 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
     }
   }
 
+  static public boolean projectLoaded = false;
+
   @Override
   public void draw() {
     // All handled by core LX engine, do not modify, method exists only so that Processing
     // will run a draw-loop.
+    //if (!projectLoaded) {
+    //  loadProjectFileOnUI();
+    //  projectLoaded = true;
+    //}
+    //super.draw();
   }
 
   /**
@@ -345,6 +441,10 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
       File hdpiFlag = new File("hdpi");
       if (hdpiFlag.exists())
         pixelDensity = 2;
+      File kinectV2Flag = new File("kinectv2");
+      if (kinectV2Flag.exists()) {
+        useKinectV2 = true;
+      }
       PApplet.main(concat(sketchArgs, args));
       //PApplet.runSketch(sketchArgs, null);
     }

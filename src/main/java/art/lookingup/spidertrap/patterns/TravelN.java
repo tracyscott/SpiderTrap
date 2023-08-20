@@ -39,6 +39,7 @@ public class TravelN extends FPSPattern {
   public CompoundParameter cosineFreq = new CompoundParameter("cfreq", 1.0, 1.0, 400.0);
 
   DiscreteParameter ease = new DiscreteParameter("ease", 0, EaseUtil.MAX_EASE+1);
+  public CompoundParameter efreq = new CompoundParameter("efreq", 1.0, 0.0, 20.0);
   DiscreteParameter pal = new DiscreteParameter("pal", 0, 21);
 
   ColorParameter color = new ColorParameter("clr");
@@ -66,6 +67,7 @@ public class TravelN extends FPSPattern {
     addParameter("cfreq", cosineFreq);
     addParameter("pal", pal);
     addParameter("ease", ease);
+    addParameter("efreq", efreq);
 
     addParameter("clr", color);
 
@@ -93,14 +95,17 @@ public class TravelN extends FPSPattern {
         if (perBlobColor.isOn()) {
           blobs[i].color = Colors.getParameterizedPaletteColor(lx, pal.getValuei(), (float) Math.random(), easeUtil);
           blobs[i].pal = -1;
+
         }
         else {
           blobs[i].pal = pal.getValuei();
-          blobs[i].easeUtil = easeUtil;
         }
+
       } else {
         blobs[i].pal = -1;
       }
+      blobs[i].easeUtil = easeUtil;
+      easeUtil.freq = efreq.getValuef();
     }
   }
 
@@ -136,7 +141,10 @@ public class TravelN extends FPSPattern {
     float fadeLevel = maxValue.getValuef();
 
     for (int i = 0; i < numBlobs.getValuei(); i++) {
-      if (blobs[i].easeUtil != null) blobs[i].easeUtil.easeNum = ease.getValuei();
+      if (blobs[i].easeUtil != null) {
+        blobs[i].easeUtil.easeNum = ease.getValuei();
+        blobs[i].easeUtil.freq = efreq.getValuef();
+      }
       blobs[i].pal = getPaletteIndex();
       blobs[i].renderBlob(colors, speed.getValuef(), widthKnob.getValuef(), slope.getValuef(), fadeLevel,
           waveKnob.getValuei(), nextBarKnob.getValuei(), false, fxKnob.getValuei(), fxDepth.getValuef(),

@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static com.jogamp.opengl.GL.*;
@@ -59,11 +62,25 @@ public class GLUtil {
     public int textureLoc = -3;
     public com.jogamp.opengl.util.texture.Texture glTexture;
     public double totalTime;
+    public Map<String, Integer> paramLocations = new HashMap<String, Integer>();
+    public LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
+  }
+
+  static public SpiderGLContext spiderGLInit(com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
+    return spiderGLInit(glTexture, scriptName, null);
   }
 
   // TODO(tracy): Load the TextureIO previous to this function.
-  static public SpiderGLContext spiderGLInit(GL3 gl, com.jogamp.opengl.util.texture.Texture glTexture, String scriptName) {
+  static public SpiderGLContext spiderGLInit(com.jogamp.opengl.util.texture.Texture glTexture, String scriptName,
+                                             LinkedHashMap<String, Float> scriptParams) {
+
+    Sdf2D.initializeGLContext();
+    GL3 gl = Sdf2D.glDrawable.getGL().getGL3();
+
     SpiderGLContext spGLCtx = new SpiderGLContext(gl);
+
+    if (scriptParams != null)
+      spGLCtx.scriptParams = scriptParams;
 
     float[] ledPositions = new float[SpiderTrapModel.allPoints.size() * 3];
     for (int i = 0; i < SpiderTrapModel.allPoints.size(); i++) {
@@ -72,6 +89,8 @@ public class GLUtil {
       ledPositions[i * 3 + 1] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).v;
       ledPositions[i * 3 + 2] = ((LPPoint)SpiderTrapModel.allPoints.get(i)).w;
     }
+
+    spGLCtx.gl.getContext().makeCurrent();
 
     spGLCtx.vertexBuffer = GLBuffers.newDirectFloatBuffer(ledPositions);
     // This is just a destination, make it large enough to accept all the vertex data.  The vertex
@@ -82,39 +101,33 @@ public class GLUtil {
 
     gl.glGenBuffers(SpiderGLContext.Buffer.MAX, SpiderGLContext.bufferNames);
 
-
-
-    //try {
-    // Load the image from a file
-    //File imageFile = new File("/Users/tracyscott/blackberries.jpg");
-    //glTexture = TextureIO.newTexture(imageFile, true);
-
-    spGLCtx.glTexture = glTexture;
-    // Set texture parameters for sampling
-    glTexture.bind(gl);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-
-
-    //} catch (
-    //IOException e) {
-    //e.printStackTrace();
-    //}
-
+    if (glTexture != null) {
+      spGLCtx.glTexture = glTexture;
+      // Set texture parameters for sampling
+      glTexture.bind(gl);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    }
+    spGLCtx.gl.getContext().release();
     reloadShader(spGLCtx, scriptName);
     return spGLCtx;
   }
 
 
   static public void reloadShader(SpiderGLContext spGLCtx, String shaderName) {
+
+    spGLCtx.gl.getContext().makeCurrent();
+
     if (spGLCtx.shaderProgramId != -1)
       spGLCtx.gl.glDeleteProgram(spGLCtx.shaderProgramId);
 
 
+    String paletteDefs = GLUtil.loadPalettes();
     ShaderCode vertShader = ShaderCode.create(spGLCtx.gl, GL_VERTEX_SHADER, spGLCtx.getClass(), "shaders",
         null, shaderName, "vert", null, true);
+    vertShader.insertShaderSource(0, "INSERT-PALETTES", 0, paletteDefs);
 
     ShaderProgram shaderProgram = new ShaderProgram();
     shaderProgram.add(vertShader);
@@ -127,19 +140,32 @@ public class GLUtil {
     // Now, find uniform locations.
     spGLCtx.fTimeLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "fTime");
     logger.info("Found fTimeLoc at: " + spGLCtx.fTimeLoc);
-    /*
-    for (String scriptParam : scriptParams.keySet()) {
-      int paramLoc = gl.glGetUniformLocation(shaderProgramId, scriptParam);
-      paramLocations.put(scriptParam, paramLoc);
-      //logger.info("Found " + scriptParam + " at: " + paramLoc);
+
+    for (String scriptParam : spGLCtx.scriptParams.keySet()) {
+      int paramLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, scriptParam);
+      spGLCtx.paramLocations.put(scriptParam, paramLoc);
+      logger.info("Found " + scriptParam + " at: " + paramLoc);
     }
-    */
-    spGLCtx.textureLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "textureSampler");
-    logger.info("Found textureSampler at location: " + spGLCtx.textureLoc);
+    if (spGLCtx.glTexture != null) {
+      spGLCtx.textureLoc = spGLCtx.gl.glGetUniformLocation(spGLCtx.shaderProgramId, "textureSampler");
+      logger.info("Found textureSampler at location: " + spGLCtx.textureLoc);
+    }
+    spGLCtx.gl.getContext().release();
   }
 
   static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed) {
-    spGLCtx.totalTime += deltaMs/1000.0;
+    glRun(spGLCtx, deltaMs, speed, true);
+  }
+
+  static public void glUpdateTotalTime(SpiderGLContext spGLCtx, double deltaMs) {
+    spGLCtx.totalTime += deltaMs / 1000.0;
+  }
+
+  static public void glRun(SpiderGLContext spGLCtx, double deltaMs, float speed, boolean incrementTime) {
+    if (incrementTime)
+      spGLCtx.totalTime += deltaMs / 1000.0;
+
+    spGLCtx.gl.getContext().makeCurrent();
     spGLCtx.gl.glBindBuffer(GL_ARRAY_BUFFER, SpiderGLContext.bufferNames.get(SpiderGLContext.Buffer.VERTEX));
     spGLCtx.gl.glBufferData(GL_ARRAY_BUFFER, spGLCtx.vertexBuffer.capacity() * Float.BYTES, spGLCtx.vertexBuffer, GL_STATIC_DRAW);
     int inputAttrib = spGLCtx.gl.glGetAttribLocation(spGLCtx.shaderProgramId, "position");
@@ -153,15 +179,19 @@ public class GLUtil {
     spGLCtx.gl.glEnable(GL_RASTERIZER_DISCARD);
     spGLCtx.gl.glUseProgram(spGLCtx.shaderProgramId);
 
-    spGLCtx.gl.glUniform1f(spGLCtx.fTimeLoc, speed * (float)spGLCtx.totalTime);
-    /*
-    for (String paramName : scriptParams.keySet()) {
-      gl.glUniform1f(paramLocations.get(paramName), scriptParams.get(paramName).getValuef());
+    spGLCtx.gl.glUniform1f(spGLCtx.fTimeLoc, speed * (float) spGLCtx.totalTime);
+
+    for (String paramName : spGLCtx.scriptParams.keySet()) {
+      spGLCtx.gl.glUniform1f(spGLCtx.paramLocations.get(paramName), spGLCtx.scriptParams.get(paramName));
     }
-     */
-    spGLCtx.glTexture.enable(spGLCtx.gl);
-    spGLCtx.glTexture.bind(spGLCtx.gl);
-    spGLCtx.gl.glUniform1i(spGLCtx.textureLoc, 0); // 0 is the texture unit
+
+    if (spGLCtx.glTexture != null) {
+      logger.info("Attempting to bind the textureLoc to slot 0.");
+      spGLCtx.glTexture.enable(spGLCtx.gl);
+      spGLCtx.glTexture.bind(spGLCtx.gl);
+      spGLCtx.gl.glUniform1i(spGLCtx.textureLoc, 0); // 0 is the texture unit
+    }
+
     spGLCtx.gl.glBeginTransformFeedback(GL_POINTS);
     {
       spGLCtx.gl.glDrawArrays(GL_POINTS, 0, SpiderTrapModel.allPoints.size());
@@ -179,6 +209,8 @@ public class GLUtil {
       //System.out.print(tfbBuffer.get(i) + ",");
     }
     //System.out.println();
+
+    spGLCtx.gl.getContext().release();
   }
 
   static public void copyTFBufferToPoints(int[] colors, SpiderGLContext spGLCtx) {
@@ -186,6 +218,23 @@ public class GLUtil {
       colors[SpiderTrapModel.allPoints.get(i).index] = LXColor.rgbf(spGLCtx.tfbBuffer.get(i * 3),
           spGLCtx.tfbBuffer.get(i * 3 + 1),
           spGLCtx.tfbBuffer.get(i * 3 + 2));
+    }
+  }
+
+  static public void copyTFBufferToPoints(int[] colors, SpiderGLContext spGLCtx, LXColor.Blend blend) {
+    for (int i = 0; i < SpiderTrapModel.allPoints.size(); i++) {
+      colors[SpiderTrapModel.allPoints.get(i).index] = LXColor.blend(colors[SpiderTrapModel.allPoints.get(i).index],
+          LXColor.rgbf(spGLCtx.tfbBuffer.get(i * 3), spGLCtx.tfbBuffer.get(i * 3 + 1), spGLCtx.tfbBuffer.get(i * 3 + 2)),
+          blend);
+    }
+  }
+
+  static public String loadPalettes() {
+    try {
+      return new String(Files.readAllBytes(Paths.get("palettes.vert")));
+    } catch (Exception ex) {
+      logger.info("Unable to read palette definitions in palettes.vert");
+      return "";
     }
   }
 }

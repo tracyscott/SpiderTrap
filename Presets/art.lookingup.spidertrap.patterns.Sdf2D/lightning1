@@ -1,0 +1,50 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1692220593939,
+  "id": 34763,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "FbmLightning",
+    "speed": 1.6896551698446274,
+    "x": -0.3400000035762787,
+    "y": 0.10000000149011612,
+    "radius": 0.0,
+    "thick": 0.0,
+    "zoom": -0.689655214548111,
+    "brt": 6.489655151552166,
+    "palval": 0.5120689438784432,
+    "pald": 1.0,
+    "pw": 0.5689655235037208
+  },
+  "children": {
+    "modulation": {
+      "id": 34764,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

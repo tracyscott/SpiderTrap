@@ -1,0 +1,59 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691315170117,
+  "id": 594,
+  "class": "art.lookingup.spidertrap.patterns.TravelN",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false
+  },
+  "parameters": {
+    "label": "TravelN",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "fps": 71.0,
+    "rndOff": false,
+    "usePal": true,
+    "perBlC": true,
+    "slope": 1.6111199640110136,
+    "maxv": 1.0,
+    "speed": 35.40000054985285,
+    "blobs": 124,
+    "randspd": 0.0,
+    "nxtBar": 0,
+    "fx": 2,
+    "fxDepth": 0.10000000149011612,
+    "wave": 2,
+    "width": 0.0,
+    "cfreq": 112.72000642120838,
+    "pal": 3,
+    "ease": 0,
+    "clr/brightness": 75.8333511352539,
+    "clr/saturation": 89.16666412353516,
+    "clr/hue": 12.000000953674316
+  },
+  "children": {
+    "modulation": {
+      "id": 595,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

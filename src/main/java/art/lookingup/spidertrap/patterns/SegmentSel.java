@@ -50,8 +50,12 @@ public class SegmentSel extends LXPattern {
             int joint = jointSel.getValuei();
             if (joint != -1 && whichSeg != -1) {
               Edge edge = segment.edge;
-              Joint startJoint = edge.myStartPointJoints[joint];
-              Joint endJoint = edge.myEndPointJoints[joint];
+              Joint startJoint = null;
+              if (joint < edge.myStartPointJoints.size())
+                startJoint = edge.myStartPointJoints.get(joint);
+              Joint endJoint = null;
+              if (joint < edge.myEndPointJoints.size())
+                endJoint = edge.myEndPointJoints.get(joint);
               if (startJoint != null) {
                 for (LXPoint p : startJoint.edge.points) {
                   colors[p.index] = LXColor.RED;

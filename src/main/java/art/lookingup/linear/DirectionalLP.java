@@ -2,9 +2,13 @@ package art.lookingup.linear;
 
 import art.lookingup.spidertrap.SpiderTrapModel;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 public class DirectionalLP {
+  private static final Logger logger = Logger.getLogger(DirectionalLP.class.getName());
+
   public DirectionalLP(int lpNum, boolean forward) {
     int edgeNum = lpNum;
     Edge edge = SpiderTrapModel.allEdges.get(edgeNum);
@@ -40,18 +44,39 @@ public class DirectionalLP {
    * @param joints        Array of joints to select from.
    * @param jointSelector Which joint to select the next bar from.  If -1, then choose a random joint.
    */
-  static public DirectionalLP chooseBarFromJoints(Edge thisEdge, boolean thisForward, Joint[] joints, int jointSelector) {
+  static public DirectionalLP chooseBarFromJoints(Edge thisEdge, boolean thisForward, List<Joint> joints, int jointSelector) {
     int jointNum = jointSelector;
-    if (jointNum == -1)
-      jointNum = ThreadLocalRandom.current().nextInt(joints.length);
+    if (jointNum == -1) {
+      // logger.info("Choosing next LinearPoints by random from # joints: " + joints.length);
+      if (joints.size() == 0)
+        jointNum = -1;
+      else
+        jointNum = ThreadLocalRandom.current().nextInt(joints.size());
+    }
+     /*
     Edge nextEdge;
-    if (jointSelector < 3 && joints[jointNum] != null) nextEdge = joints[jointNum].edge;
-    else nextEdge = thisEdge;
+
+    if (jointSelector < 3 && joints[jointNum] != null)
+      nextEdge = joints[jointNum].edge;
+    else {
+      // logger.info("Couldn't get targeted joint, resetting to self. jointNum: " + jointNum);
+      nextEdge = thisEdge;
+    }
+     */
+    // If the selected joint number is greater than the number of joints we have then just clamp it.
+    if (jointNum >= joints.size())
+      jointNum = joints.size()-1;
+
+    Edge nextEdge;
     DirectionalLP dlb;
-    if (joints[jointNum] != null)
-      dlb = new DirectionalLP(nextEdge.linearPoints.lpNum, joints[jointNum].isAdjacentEdgeAStartPoint);
-    else
-      dlb = new DirectionalLP(nextEdge.linearPoints.lpNum, true);
+    if (jointNum >= 0) {
+      nextEdge = joints.get(jointNum).edge;
+      dlb = new DirectionalLP(nextEdge.linearPoints.lpNum, joints.get(jointNum).isAdjacentEdgeAStartPoint);
+    } else {
+      nextEdge = thisEdge;
+      // the end of this edge has no joints, just turn around.
+      dlb = new DirectionalLP(nextEdge.linearPoints.lpNum, !thisForward);
+    }
     return dlb;
   }
 

@@ -37,8 +37,10 @@ public class Edge {
 
   // Each edge can be connected up to 3 adjacent edges.  Edges on the outer or inner boundaries can have fewer
   // connections.
-  public Joint[] myStartPointJoints = new Joint[3];
-  public Joint[] myEndPointJoints = new Joint[3];
+  public List<Joint> myStartPointJoints = new ArrayList<Joint>();
+  public List<Joint> myEndPointJoints = new ArrayList<Joint>();
+
+  public boolean isRadial = false;
 
   static public float margins = 0f;
 
@@ -82,6 +84,12 @@ public class Edge {
 
   public Point3D midpoint() {
     return midp;
+  }
+
+  public void interpolate(Point3D result, float t) {
+    result.x = p1.x + t * (p2.x - p1.x);
+    result.y = p1.y + t * (p2.y - p1.y);
+    result.z = p1.z + t * (p2.z - p1.z);
   }
 
   public void translate(float x, float y, float z) {
@@ -164,7 +172,7 @@ public class Edge {
     }
   }
 
-  static public final float adjacencyDistance = 2f/12f;
+  static public final float adjacencyDistance = 8f/12f;
 
   public int isEdgeAdjacentStart(Edge otherEdge) {
     if (p1.distanceTo(otherEdge.p1) < adjacencyDistance)
@@ -193,18 +201,22 @@ public class Edge {
           continue;
         int adjacentValue = thisEdge.isEdgeAdjacentStart(otherEdge);
         if (adjacentValue == 1) {
-          thisEdge.myStartPointJoints[currentStartJointNum++] = new Joint(otherEdge, true);
+          thisEdge.myStartPointJoints.add(new Joint(otherEdge, true));
+          currentStartJointNum++;
           //logger.info("start of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
         } else if (adjacentValue == 2) {
-          thisEdge.myStartPointJoints[currentStartJointNum++] = new Joint(otherEdge, false);
+          thisEdge.myStartPointJoints.add(new Joint(otherEdge, false));
+          currentStartJointNum++;
           //logger.info("start of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
         }
         adjacentValue = thisEdge.isEdgeAdjacentEnd(otherEdge);
         if (adjacentValue == 1) {
-          thisEdge.myEndPointJoints[currentEndJointNum++] = new Joint(otherEdge, true);
+          thisEdge.myEndPointJoints.add(new Joint(otherEdge, true));
+          currentEndJointNum++;
           //logger.info("end of edge " + thisEdge.id + " adjacent to start of " + otherEdge.id);
         } else if (adjacentValue == 2) {
-          thisEdge.myEndPointJoints[currentEndJointNum++] = new Joint(otherEdge, false);
+          thisEdge.myEndPointJoints.add(new Joint(otherEdge, false));
+          currentEndJointNum++;
           //logger.info("end of edge " + thisEdge.id + " adjacent to end of " + otherEdge.id);
         }
       }

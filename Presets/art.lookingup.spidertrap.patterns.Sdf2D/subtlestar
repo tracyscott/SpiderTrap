@@ -1,0 +1,48 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1691357642076,
+  "id": 23322,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": false,
+    "presetFile": "subtlestar"
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Starfield",
+    "speed": 2.034482754766941,
+    "rspeed": 0.01,
+    "layers": 3.7672413801774374,
+    "ssize": 0.9137931037694216,
+    "brt": 5.0,
+    "sparkle": 0.7068965528160334,
+    "spkspeed": 1.2413793057203293
+  },
+  "children": {
+    "modulation": {
+      "id": 23323,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [],
+      "modulations": [],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

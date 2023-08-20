@@ -15,8 +15,13 @@ import processing.core.PGraphics;
 /** Abstract base class for all Processing PGraphics drawing and mapping to the Rainbow. */
 abstract class PGBase extends RBPattern {
   public final CompoundParameter fpsKnob =
-      new CompoundParameter("Fps", 60, 0.0,60)
+      new CompoundParameter("fps", 60, 0.0,60)
           .setDescription("Controls the frames per second.");
+  public final CompoundParameter zoomKnob =
+      new CompoundParameter("zoom", 1.0, 1.0, 40.0).setDescription("zoom");
+
+  public final CompoundParameter rotateKnob =
+      new CompoundParameter("rotate", 0.0, -360.0, 360.0).setDescription("rotation in degrees");
 
   protected PGraphics pg;
 
@@ -53,7 +58,7 @@ abstract class PGBase extends RBPattern {
       pg = SpiderTrapApp.pApplet.createGraphics(width, height);
     }
 
-    addParameter(fpsKnob);
+    addParameter("fps", fpsKnob);
   }
 
   /**

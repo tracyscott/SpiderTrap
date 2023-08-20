@@ -30,7 +30,7 @@ public class Body {
   public static List<Body> bodies = new ArrayList<Body>();
 
   public static void initBodies() {
-    bodies.add(new Body(4, 4, 2, 3));
+    bodies.add(new Body(4, 4, 1, 1));
   }
 
   public static boolean inAnyBody(float x, float z) {
