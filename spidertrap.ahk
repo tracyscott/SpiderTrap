@@ -15,7 +15,7 @@ Loop
     Process, Exist, java.exe
     
     if not Errorlevel {    
-	Run, C:\Users\tracy\Documents\GitHub\SpiderTrap\spidertrap.bat, C:\Users\tracy\Documents\GitHub\SpiderTrap
+	Run, C:\Users\accou\Documents\GitHub\SpiderTrap\spidertrap.bat, C:\Users\accou\Documents\GitHub\SpiderTrap
 	  Sleep 30000
 	}
 }
