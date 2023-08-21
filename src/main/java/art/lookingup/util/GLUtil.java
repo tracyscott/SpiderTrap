@@ -186,7 +186,7 @@ public class GLUtil {
     }
 
     if (spGLCtx.glTexture != null) {
-      logger.info("Attempting to bind the textureLoc to slot 0.");
+      //logger.info("Attempting to bind the textureLoc to slot 0.");
       spGLCtx.glTexture.enable(spGLCtx.gl);
       spGLCtx.glTexture.bind(spGLCtx.gl);
       spGLCtx.gl.glUniform1i(spGLCtx.textureLoc, 0); // 0 is the texture unit
@@ -222,11 +222,13 @@ public class GLUtil {
   }
 
   static public void copyTFBufferToPoints(int[] colors, SpiderGLContext spGLCtx, LXColor.Blend blend) {
+    spGLCtx.gl.getContext().makeCurrent();
     for (int i = 0; i < SpiderTrapModel.allPoints.size(); i++) {
       colors[SpiderTrapModel.allPoints.get(i).index] = LXColor.blend(colors[SpiderTrapModel.allPoints.get(i).index],
           LXColor.rgbf(spGLCtx.tfbBuffer.get(i * 3), spGLCtx.tfbBuffer.get(i * 3 + 1), spGLCtx.tfbBuffer.get(i * 3 + 2)),
           blend);
     }
+    spGLCtx.gl.getContext().release();
   }
 
   static public String loadPalettes() {
