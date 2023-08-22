@@ -48,7 +48,9 @@ public class PacmanBoard {
     public final static int MAZE_HEIGHT = BOARD.length;
     public final static int BLOCK_PIXELS = 32;
     public final static int OG_PIXELS = 8;
-    public final static float STROKE = (float) BLOCK_PIXELS / (float) OG_PIXELS;
+
+    // Note the 1.5x below is an alteration for spidertrap
+    public final static float STROKE = 1.5f * (float) BLOCK_PIXELS / (float) OG_PIXELS;
 
     public final static int BOARD_HEIGHT = MAZE_HEIGHT * BLOCK_PIXELS;
     public final static int BOARD_WIDTH = MAZE_WIDTH * BLOCK_PIXELS;

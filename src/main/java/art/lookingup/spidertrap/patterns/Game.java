@@ -17,7 +17,7 @@ import processing.core.PImage;
 public class Game extends PGPixelPerfect {
     // Speed determines the overall speed of the entire pattern.
     public final CompoundParameter speedKnob =
-        new CompoundParameter("Speed", 1.5, 0, 10).setDescription("Speed");
+        new CompoundParameter("Speed", 1, 0, 4).setDescription("Speed");
 
     public static final int BLOCK_PIXELS = PacmanBoard.BLOCK_PIXELS;
     public static final int BOARD_HEIGHT = PacmanBoard.BOARD_HEIGHT;
@@ -39,6 +39,9 @@ public class Game extends PGPixelPerfect {
     PacmanSprite pac;
     PImage gboard;
     //PImage ctexture;
+
+    float rotation;
+    float rotSpeed;
 
     // float rainbowLX;
     // float rainbowLY;
@@ -114,6 +117,10 @@ public class Game extends PGPixelPerfect {
         }
         pg.background(0);
 
+	pg.translate(256, 256);
+	pg.rotate(rotation);
+	pg.translate(-256, -256);
+	
         boolean pacIsRight = false;
 
         float aX = game.pacX();
@@ -144,9 +151,20 @@ public class Game extends PGPixelPerfect {
         float dY = aY - bY;
 
         float dAB = (float)Math.sqrt(dX * dX + dY * dY);
-        // float dRatio = rainbowLROffset / dAB;
 
-        setControlPoints(aX, aY, bX, bY, dAB);
+
+	float dRatio;
+	if (dAB < 24) {
+	    dRatio = 256f/24f;
+	} else if (dAB < 256) {
+	    dRatio = 256f/dAB;
+	} else {
+	    dRatio = 0.75F * PacmanBoard.MAX_DISTANCE / dAB;
+	}
+
+        //setControlPoints(aX, aY, bX, bY, dAB);
+
+	// Render 
 
 	pg.translate(128, 256);
         // pg.translate(rainbowLX, rainbowLY);
@@ -159,6 +177,16 @@ public class Game extends PGPixelPerfect {
             pg.translate(-xoffset, 0);
         }
 
+	if (pacIsRight) {
+	    rotSpeed += Math.PI/100000f;
+	    rotSpeed = Math.min(rotSpeed, (float)Math.PI/10000f);
+	} else {
+	    rotSpeed -= Math.PI/100000f;
+	    rotSpeed = Math.max(rotSpeed, -(float)Math.PI/10000f);
+	}
+
+	rotation += rotSpeed * (float)deltaMs;
+
         float rr;
         if (dX == 0) {
             rr = (float) Math.PI * 3 / 2;
@@ -168,7 +196,11 @@ public class Game extends PGPixelPerfect {
 
         pg.rotate((float)Math.PI * 2f - rr);
 
-        //pg.scale(dRatio, dRatio);
+        pg.scale(dRatio, dRatio);
+
+	// pg.translate(128, 0);
+
+	// pg.translate(-128, 0);
 
         pg.translate(-aX, -aY);
 
