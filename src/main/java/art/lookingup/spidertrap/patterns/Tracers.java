@@ -18,7 +18,7 @@ import static processing.core.PConstants.HSB;
 public class Tracers extends PGPixelPerfect {
   private static final Logger logger = Logger.getLogger(Tracers.class.getName());
 
-  public CompoundParameter numTracers = new CompoundParameter("num", 60.0, 0.0, 200.0);
+  public CompoundParameter numTracers = new CompoundParameter("num", 3.0, 0.0, 200.0);
   public CompoundParameter maxSize = new CompoundParameter("max", 15.0, 3.0, 45.0);
   public CompoundParameter minSize = new CompoundParameter("min", 3.0, 1.0, 30.0);
   public CompoundParameter minVelocity = new CompoundParameter("minv", 1.0, 0.0, 30.0);

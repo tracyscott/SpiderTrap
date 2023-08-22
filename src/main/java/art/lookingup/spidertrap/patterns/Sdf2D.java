@@ -89,11 +89,18 @@ public class Sdf2D extends LXPattern implements UIDeviceControls<Sdf2D> {
   static public void initializeGLContext() {
     logger.info("Calling initializeGLContext");
     if (glDrawable == null) {
-      GLProfile glp = GLProfile.get(GLProfile.GL3);
-      GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL3));
+      GLProfile glp = GLProfile.get(GLProfile.GL4);
+      GLCapabilities caps = new GLCapabilities(glp);
+      caps.setHardwareAccelerated(true);
+      caps.setDoubleBuffered(false);
+      // set bit count for all channels to get alpha to work correctly
+      caps.setAlphaBits(8);
+      caps.setRedBits(8);
+      caps.setBlueBits(8);
+      caps.setGreenBits(8);
       caps.setOnscreen(false);
       GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
-      glDrawable = factory.createOffscreenAutoDrawable(null, caps,null,512,512);
+      glDrawable = factory.createOffscreenAutoDrawable(factory.getDefaultDevice(), caps, new DefaultGLCapabilitiesChooser(),512,512);
       glDrawable.display();
     }
   }
