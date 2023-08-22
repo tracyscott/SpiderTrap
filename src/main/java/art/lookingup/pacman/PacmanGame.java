@@ -68,7 +68,7 @@ public class PacmanGame {
 	this.pac = pac;
 	this.dotsTaken = new BitSet(PacmanBoard.MAZE_HEIGHT * PacmanBoard.MAZE_WIDTH);
 	this.buffer = app.createGraphics(PacmanBoard.MAZE_WIDTH * PacmanBoard.BLOCK_PIXELS,
-					 PacmanBoard.MAZE_HEIGHT * PacmanBoard.BLOCK_PIXELS, P2D);
+					 PacmanBoard.MAZE_HEIGHT * PacmanBoard.BLOCK_PIXELS);
 	// this.font = app.createFont("Zig", READY_FONT_SIZE, false);
 	this.ghosts = new GhostSprite[4];
 	this.ghosts[0] = new GhostSprite.Blinky(board);

@@ -17,7 +17,7 @@ public class App extends PApplet {
     Heading    input;
 
     public void settings() {
-	size(PacmanBoard.BOARD_WIDTH, PacmanBoard.BOARD_HEIGHT, P2D);
+	size(PacmanBoard.BOARD_WIDTH, PacmanBoard.BOARD_HEIGHT);
     }
 
     public void setup() {

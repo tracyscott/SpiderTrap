@@ -38,7 +38,7 @@ public class Game extends PGPixelPerfect {
     PacmanGame game;
     PacmanSprite pac;
     PImage gboard;
-    PImage ctexture;
+    //PImage ctexture;
 
     // float rainbowLX;
     // float rainbowLY;
@@ -49,17 +49,17 @@ public class Game extends PGPixelPerfect {
     // float rainbowLROffset;
 
     public Game(LX lx) {
-        super(lx, P2D);
+        super(lx, "");
 
 	this.board = new PacmanBoard(SpiderTrapApp.pApplet);
 	this.telapsed = 0;
 	this.board = new PacmanBoard(SpiderTrapApp.pApplet);
 	this.pac = new PacmanSprite(SpiderTrapApp.pApplet);
 	this.game = new PacmanGame(SpiderTrapApp.pApplet, this.board, this.pac);
-	this.ctexture = SpiderTrapApp.pApplet.loadImage("images/xyz-square-lookup.png");
-	this.ctexture.loadPixels();
+	//this.ctexture = SpiderTrapApp.pApplet.loadImage("images/xyz-square-lookup.png");
+	//this.ctexture.loadPixels();
 
-	pg.textureWrap(CLAMP);
+	//pg.textureWrap(CLAMP);
 
         removeParameter(fpsKnob);
         addParameter(speedKnob);
@@ -172,13 +172,13 @@ public class Game extends PGPixelPerfect {
 
         pg.translate(-aX, -aY);
 
-        if (game.collision()) {
-            pg.scale(((float)gboard.width / (float)ctexture.width),
-                     ((float)gboard.height / (float)ctexture.height));
-            pg.image(ctexture, 0, 0);
-        } else {
+        // if (game.collision()) {
+        //     pg.scale(((float)gboard.width / (float)ctexture.width),
+        //              ((float)gboard.height / (float)ctexture.height));
+        //     pg.image(ctexture, 0, 0);
+        // } else {
             pg.image(gboard, 0, 0);
-        }
+        // }
     }
 
     // Pacman stays on screen w/ this draw()

@@ -37,7 +37,7 @@ public class PacmanSprite {
 	    float halftheta = MOUTH_HALFANGLE * (float)i / (float)NUM_FRAMES;
 	    float rise = (float)BLOCK_PIXELS * (float)Math.sin(halftheta);
 
-	    PGraphics pg = app.createGraphics(SPRITE_SIZE, SPRITE_SIZE, P2D);
+	    PGraphics pg = app.createGraphics(SPRITE_SIZE, SPRITE_SIZE);
 	    pg.beginDraw();
 	    pg.background(255, 255, 0);
 
@@ -51,7 +51,7 @@ public class PacmanSprite {
 	    
 	    pg.endDraw();
 
-	    PGraphics mask = app.createGraphics(SPRITE_SIZE, SPRITE_SIZE, P2D);
+	    PGraphics mask = app.createGraphics(SPRITE_SIZE, SPRITE_SIZE);
 
 	    mask.beginDraw();
 	    // Default mask all.

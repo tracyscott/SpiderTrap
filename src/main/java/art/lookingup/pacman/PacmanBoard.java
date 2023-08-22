@@ -169,7 +169,7 @@ public class PacmanBoard {
     int completeDots;
 
     public PacmanBoard(PApplet app) {
-	this.pg = app.createGraphics(MAZE_WIDTH * BLOCK_PIXELS, MAZE_HEIGHT * BLOCK_PIXELS, P2D);
+	this.pg = app.createGraphics(MAZE_WIDTH * BLOCK_PIXELS, MAZE_HEIGHT * BLOCK_PIXELS);
 	this.blocks = new Block[MAZE_HEIGHT][MAZE_WIDTH];
 	this.rand = new Random();
 
