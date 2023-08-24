@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tracs3000\Documents\GitHub\oscpack;C:\Users\tracs3000\opencv-4.7.0\opencv\build\include;C:\Program Files\Azure Kinect SDK v1.4.1\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\accou\Documents\GitHub\oscpack;C:\Users\accou\opencv-4.7.0\opencv\build\include;C:\Program Files\Azure Kinect SDK v1.4.1\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\tracs3000\Documents\GitHub\oscpack\build\Debug;C:\Users\tracs3000\opencv-4.7.0\opencv\build\x64\vc16\lib;C:\Program Files\Azure Kinect SDK v1.4.1\sdk\windows-desktop\amd64\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\accou\Documents\GitHub\oscpack\build\Debug;C:\Users\accou\opencv-4.7.0\opencv\build\x64\vc16\lib;C:\Program Files\Azure Kinect SDK v1.4.1\sdk\windows-desktop\amd64\release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>oscpack.lib;k4a.lib;k4arecord.lib;opencv_world470d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
