@@ -20,26 +20,35 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 
 @LXCategory(LXCategory.FORM)
-public class CVBlobTest extends LXPattern {
+public class CVBlobWaves extends LXPattern {
   private static final Logger logger = Logger.getLogger(CVBlobTest.class.getName());
-  CompoundParameter freq = new CompoundParameter("freq", 0, 50, 200);
-  CompoundParameter rscale = new CompoundParameter("rscale", 1, .1, 20);
+
+  CompoundParameter speed = new CompoundParameter("speed", 3.24f, 0f, 10f);
+  CompoundParameter freq = new CompoundParameter("freq", 34, 10, 30);
+  CompoundParameter rscale = new CompoundParameter("rscale", 0.5, .01, 20);
+  CompoundParameter palval = new CompoundParameter("palval", 0.1f, 0.1f, 9.5f);
+  CompoundParameter pw = new CompoundParameter("pw", 1.68, 0f, 5f);
   CompoundParameter alive = new CompoundParameter("alive", 100, 10, 1000);
   GLUtil.SpiderGLContext spGLCtx;
 
-  public CVBlobTest(LX lx) {
+  public CVBlobWaves(LX lx) {
 
     super(lx);
     addParameter("freq", freq);
     addParameter("rscale", rscale);
+    addParameter("palval", palval);
     addParameter("alive", alive);
+    addParameter("speed", speed);
+    addParameter("pw", pw);
 
     LinkedHashMap<String, Float> scriptParams = new LinkedHashMap<String, Float>();
     scriptParams.put("x1", 0f);
     scriptParams.put("y1", 0f);
     scriptParams.put("freq", freq.getValuef());
     scriptParams.put("rscale", rscale.getValuef());
-    spGLCtx = GLUtil.spiderGLInit(null, "Ripple", scriptParams);
+    scriptParams.put("palval", palval.getValuef());
+    scriptParams.put("pw", pw.getValuef());
+    spGLCtx = GLUtil.spiderGLInit(null, "Ripple2", scriptParams);
   }
 
   public void run(double deltaMs) {
@@ -54,7 +63,9 @@ public class CVBlobTest extends LXPattern {
         spGLCtx.scriptParams.put("y1", cvBlob.v - 0.5f);
         spGLCtx.scriptParams.put("freq", freq.getValuef());
         spGLCtx.scriptParams.put("rscale", rscale.getValuef());
-        GLUtil.glRun(spGLCtx, deltaMs, 1f);
+        spGLCtx.scriptParams.put("palval", palval.getValuef());
+        spGLCtx.scriptParams.put("pw", pw.getValuef());
+        GLUtil.glRun(spGLCtx, deltaMs, speed.getValuef());
         GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
       }
     }

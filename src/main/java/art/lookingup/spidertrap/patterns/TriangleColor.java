@@ -44,6 +44,10 @@ public class TriangleColor extends LXPattern {
               color = LXColor.BLUE;
             if (triangleNum == 3)
               color = LXColor.WHITE;
+            if (triangleNum == 4)
+              color = LXColor.rgb(255, 255, 0);
+            if (triangleNum == 5)
+              color = LXColor.rgb(0, 255, 255);
             colors[outputPoints.get(pixel).index] = color;
           }
         }

@@ -1,5 +1,6 @@
 package art.lookingup.spidertrap.ui;
 
+import art.lookingup.spidertrap.CVBlob;
 import art.lookingup.spidertrap.SpiderTrapApp;
 import art.lookingup.ui.UIConfig;
 import art.lookingup.util.ParameterFile;
@@ -29,6 +30,9 @@ public class ModelParams extends UIConfig {
   public static final String KV2_MAX_D = "kv2_max_d";
   public static final String KV2_FPS = "kv2_fps";
 
+  public static final String CVBLOB_D = "cvblob_d";
+  public static final String CVBLOB_ROT = "cvblob_rot";
+
 
   public static final String title = "Model Params";
   public static final String filename = "modelparams.json";
@@ -51,6 +55,8 @@ public class ModelParams extends UIConfig {
     registerStringParameter(KV2_MIN_D, "");
     registerStringParameter(KV2_MAX_D, "");
     registerStringParameter(KV2_FPS, "");
+    registerStringParameter(CVBLOB_D, "");
+    registerStringParameter(CVBLOB_ROT, "");
 
     registerStringParameter(RAD0_OFFSET, "");
     registerStringParameter(RAD1_OFFSET, "");
@@ -78,6 +84,8 @@ public class ModelParams extends UIConfig {
     modelParamFile.getStringParameter(KV2_MIN_D, "1.5");
     modelParamFile.getStringParameter(KV2_MAX_D, "2");
     modelParamFile.getStringParameter(KV2_FPS, "10");
+    modelParamFile.getStringParameter(CVBLOB_D, "0.5");
+    modelParamFile.getStringParameter(CVBLOB_ROT, "0");
 
     modelParamFile.getStringParameter(RAD0_OFFSET, "0.0");
     modelParamFile.getStringParameter(RAD1_OFFSET, "0.0");
@@ -161,6 +169,14 @@ public class ModelParams extends UIConfig {
     return modelParamFile.getStringParameterF(KV2_FPS, "10");
   }
 
+  static public float getCVBlobD() {
+    return modelParamFile.getStringParameterF(CVBLOB_D, "0.5");
+  }
+
+  static public float getCVBlobRotate() {
+    return modelParamFile.getStringParameterF(CVBLOB_ROT, "0");
+  }
+
   static public float getRadialOffset(int radial) {
     switch (radial) {
       case 0:
@@ -208,6 +224,8 @@ public class ModelParams extends UIConfig {
     if (parameterChanged) {
       if (SpiderTrapApp.kinect != null)
         SpiderTrapApp.kinect.updateDistanceParams();
+      CVBlob.cvBlobD = getCVBlobD();
+      CVBlob.cvBlobRotate = getCVBlobRotate();
     }
   }
 }

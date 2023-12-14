@@ -1,0 +1,157 @@
+{
+  "version": "0.4.2-SNAPSHOT",
+  "timestamp": 1693297550479,
+  "id": 29778,
+  "class": "art.lookingup.spidertrap.patterns.Sdf2D",
+  "internal": {
+    "modulationColor": 0,
+    "modulationControlsExpanded": true,
+    "expanded": true,
+    "expandedCue": true,
+    "expandedAux": true,
+    "modulationExpanded": true,
+    "presetFile": "hexagramspoints"
+  },
+  "parameters": {
+    "label": "Sdf2D",
+    "enabled": true,
+    "recall": false,
+    "compositeMode": 0,
+    "compositeLevel": 1.0,
+    "scriptName": "Hexagrams",
+    "speed": 0.6896551512181759,
+    "rspeed": 0.28620688691735285,
+    "layers": 10.0,
+    "brt": 0.10000000149011612,
+    "pal": 4.831896516028792,
+    "pald": 1.0344826709479094,
+    "s1": 0.0,
+    "s2": 0.05999999906867742,
+    "cspeed": 0.1,
+    "pw": 3.7155172545462847
+  },
+  "children": {
+    "modulation": {
+      "id": 29779,
+      "class": "heronarts.lx.modulation.LXModulationEngine",
+      "internal": {
+        "modulationColor": 0,
+        "modulationControlsExpanded": true
+      },
+      "parameters": {
+        "label": "Modulation"
+      },
+      "children": {},
+      "modulators": [
+        {
+          "id": 39216,
+          "class": "heronarts.lx.modulator.VariableLFO",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LFO",
+            "running": true,
+            "trigger": false,
+            "loop": true,
+            "tempoSync": false,
+            "tempoMultiplier": 5,
+            "tempoLock": true,
+            "clockMode": 0,
+            "periodFast": 1223.9522256773737,
+            "periodSlow": 10000.0,
+            "wave": 0,
+            "skew": 0.0,
+            "shape": 0.0,
+            "bias": 0.0,
+            "phase": 0.0,
+            "exp": 0.0
+          },
+          "children": {},
+          "basis": 0.6673069017020576
+        },
+        {
+          "id": 39218,
+          "class": "heronarts.lx.modulator.VariableLFO",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LFO 2",
+            "running": true,
+            "trigger": false,
+            "loop": true,
+            "tempoSync": false,
+            "tempoMultiplier": 5,
+            "tempoLock": true,
+            "clockMode": 0,
+            "periodFast": 4830.305982691681,
+            "periodSlow": 10000.0,
+            "wave": 0,
+            "skew": 0.07999999821186066,
+            "shape": -2.2351741790771484E-8,
+            "bias": 0.03999999910593033,
+            "phase": 0.0,
+            "exp": 1.0
+          },
+          "children": {},
+          "basis": 0.8944662379834946
+        }
+      ],
+      "modulations": [
+        {
+          "source": {
+            "id": 39216,
+            "path": "/modulation/modulator/1"
+          },
+          "target": {
+            "componentId": 29778,
+            "parameterPath": "s2",
+            "path": "/s2"
+          },
+          "id": 39217,
+          "class": "heronarts.lx.modulation.LXCompoundModulation",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LX",
+            "enabled": true,
+            "polarity": 0,
+            "range": 0.06
+          },
+          "children": {}
+        },
+        {
+          "source": {
+            "id": 39218,
+            "path": "/modulation/modulator/2"
+          },
+          "target": {
+            "componentId": 29778,
+            "parameterPath": "rspeed",
+            "path": "/rspeed"
+          },
+          "id": 39219,
+          "class": "heronarts.lx.modulation.LXCompoundModulation",
+          "internal": {
+            "modulationColor": 0,
+            "modulationControlsExpanded": true
+          },
+          "parameters": {
+            "label": "LX",
+            "enabled": true,
+            "polarity": 1,
+            "range": 0.005
+          },
+          "children": {}
+        }
+      ],
+      "triggers": []
+    }
+  },
+  "deviceVersion": -1
+}

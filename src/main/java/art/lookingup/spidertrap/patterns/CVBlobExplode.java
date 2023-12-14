@@ -26,8 +26,10 @@ public class CVBlobExplode extends LXPattern {
   CompoundParameter fall = new CompoundParameter("fall", 1.2, 1, 5);
   CompoundParameter parts = new CompoundParameter("parts", 100, 1, 200);
   CompoundParameter exps = new CompoundParameter("exps", 1, 1, 20);
-  CompoundParameter alive = new CompoundParameter("alive", 100, 10, 1000);
+  CompoundParameter alive = new CompoundParameter("alive", 100, 10, 5000);
   GLUtil.SpiderGLContext spGLCtx;
+
+  static public boolean alreadyLoggedException = false;
 
   public CVBlobExplode(LX lx) {
 
@@ -58,8 +60,16 @@ public class CVBlobExplode extends LXPattern {
       spGLCtx.scriptParams.put("fall", fall.getValuef());
       spGLCtx.scriptParams.put("parts", parts.getValuef());
       spGLCtx.scriptParams.put("exps", exps.getValuef());
-      GLUtil.glRun(spGLCtx, deltaMs, 1f);
-      GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
+      try {
+        GLUtil.glRun(spGLCtx, deltaMs, 1f);
+
+        GLUtil.copyTFBufferToPoints(colors, spGLCtx, LXColor.Blend.ADD);
+      } catch (com.jogamp.opengl.GLException glex) {
+        if (!alreadyLoggedException) {
+          logger.info("Caught GL Exception: " + glex.getMessage());
+          alreadyLoggedException = true;
+        }
+      }
     }
   }
 }
