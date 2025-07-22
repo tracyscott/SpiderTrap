@@ -332,7 +332,7 @@ public class SpiderTrapApp extends PApplet implements LXPlugin {
 
     previewComponents = (UIPreviewComponents) new UIPreviewComponents(ui).setExpanded(false).addToContainer(lx.ui.leftPane.global);
     logger.info("Configuring pixlite output");
-    Output.configurePixliteOutput(lx);
+    Output.configurePixliteOutputBabyWeb(lx);
 
     lx.ui.leftPane.audio.setExpanded(false);
     lx.ui.leftPane.snapshots.setExpanded(false);

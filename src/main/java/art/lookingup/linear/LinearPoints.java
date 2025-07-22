@@ -72,6 +72,66 @@ public class LinearPoints {
      this(lpNum, length, (int)((length - marginDist * 2f) * pointSpacing), edge, a, b, marginDist);
   }
 
+  public LinearPoints(int lpNum, float length, float pointSpacing, Edge edge, Point3D a, Point3D b, float startMargin, float endMargin) {
+    this.lpNum = lpNum;
+    this.length = length;
+    this.ledLength = length - (startMargin + endMargin);
+    this.edge = edge;
+    int numPoints = (int)Math.floor(ledLength * pointSpacing) + 1;
+    this.numPoints = numPoints;
+    // With fixed point spacing, we sometimes encounter a situation where we have some extra space at the end of
+    // the length from point a to point b.  We should split that extra space between the beginning margin and end
+    // margin.
+    float lengthActual = (numPoints-1)/pointSpacing;
+    float trailingSpace = ledLength - lengthActual;
+    startMargin += trailingSpace/2f;
+    endMargin += trailingSpace/2f;
+
+    float feetPerLed = 1f/pointSpacing;
+
+    int stretches = numPoints - 1;
+    float ux = b.x - a.x;
+    float uy = b.y - a.y;
+    float uz = b.z - a.z;
+    Point3D unitVector = Point3D.unitVectorTo(b, a);
+
+    float dx = feetPerLed * unitVector.x;
+    float dy = feetPerLed * unitVector.y;
+    float dz = feetPerLed * unitVector.z;
+
+    float startMx = startMargin * unitVector.x;
+    float startMy = startMargin * unitVector.y;
+    float startMz = startMargin * unitVector.z;
+
+    float pSpacing = (float)Math.sqrt(dx*dx + dy*dy + dz*dz);
+    /*
+    logger.info("startMargin=" + startMargin + " endMargin=" + endMargin);
+    if (startMargin == 0f && endMargin != 0f) {
+      logger.info("COMPUTED POINT SPACING: " + 1f/pSpacing);
+    } else {
+      logger.info("0 MARGIN COMPUTED SPACING: " + 1f/pSpacing);
+    }
+     */
+
+    points = new ArrayList<LPPoint>();
+    for (int i = 0; i < numPoints; i++) {
+      float lpt = (float)i/(float)(numPoints - 1);
+      float lptM = (lpt * ledLength + startMargin + endMargin) / length;
+      LPPoint p = new LPPoint(this,a.x + dx * i + startMx,
+          a.y + dy * i + startMy,
+          a.z + dz * i + startMz, lpt*length, lptM * length, lpt, lptM);
+      points.add(p);
+    }
+
+    pointSets.add(points);
+  }
+
+
+  public LinearPoints(int lpNum, float length, int numPoints, Edge edge, Point3D a, Point3D b,
+                      float marginDist) {
+    this(lpNum, length, numPoints, edge, a, b, marginDist/2f, marginDist/2f);
+  }
+
   /**
    * Create based on a given number of points.
    * @param lpNum  Inherited from associated Edge when created by the Edge.
@@ -80,13 +140,14 @@ public class LinearPoints {
    * @param edge
    * @param a
    * @param b
-   * @param marginDist Margin space on each end of the linear points.
+   * @param startMargin Margin space at beginning of the linear points.
+   * @param endMargin Margin space at the end of the linear points.
    */
   public LinearPoints(int lpNum, float length, int numPoints, Edge edge, Point3D a, Point3D b,
-                      float marginDist) {
+                      float startMargin, float endMargin) {
     this.lpNum = lpNum;
     this.length = length;
-    this.ledLength = length - 2f * marginDist;
+    this.ledLength = length - (startMargin + endMargin);
     this.edge = edge;
     this.numPoints = numPoints;
 
@@ -96,20 +157,42 @@ public class LinearPoints {
     float uz = b.z - a.z;
     Point3D unitVector = Point3D.unitVectorTo(b, a);
 
-    float mx = marginDist * unitVector.x;
-    float my = marginDist * unitVector.y;
-    float mz = marginDist * unitVector.z;
+    // Sum the margins and multiply times the unit vector to get margins
+    // vector.  We use these for computing our delta-x, delta-y, and delta-z
+    // increments as we move along the direction of points.
+    float mx = (startMargin + endMargin) * unitVector.x;
+    float my = (startMargin + endMargin) * unitVector.y;
+    float mz = (startMargin + endMargin) * unitVector.z;
 
-    float dx = ((b.x - a.x) - 2f * mx) / stretches;
-    float dy = ((b.y - a.y) - 2f * my) / stretches;
-    float dz = ((b.z - a.z) - 2f * mz) / stretches;
+
+    // Subtract off the margin vector components in order to compute the total
+    // distance traveled in each dimension so we can get per-dimensions step size
+    float dx = ((b.x - a.x) - mx) / stretches;
+    float dy = ((b.y - a.y) - my) / stretches;
+    float dz = ((b.z - a.z) - mz) / stretches;
+
+    float startMx = startMargin * unitVector.x;
+    float startMy = startMargin * unitVector.y;
+    float startMz = startMargin * unitVector.z;
+
+    float pSpacing = (float)Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+    /*
+    logger.info("startMargin=" + startMargin + " endMargin=" + endMargin);
+    if (startMargin == 0f && endMargin != 0f) {
+      logger.info("COMPUTED POINT SPACING: " + 1f/pSpacing);
+    } else {
+      logger.info("0 MARGIN COMPUTED SPACING: " + 1f/pSpacing);
+    }
+     */
+
     points = new ArrayList<LPPoint>();
     for (int i = 0; i < numPoints; i++) {
       float lpt = (float)i/(float)(numPoints - 1);
-      float lptM = (lpt * ledLength + marginDist) / length;
-      LPPoint p = new LPPoint(this,a.x + dx * i + mx,
-          a.y + dy * i + my,
-          a.z + dz * i + mz, lpt*length, lptM * length, lpt, lptM);
+      float lptM = (lpt * ledLength + startMargin + endMargin) / length;
+      LPPoint p = new LPPoint(this,a.x + dx * i + startMx,
+          a.y + dy * i + startMy,
+          a.z + dz * i + startMz, lpt*length, lptM * length, lpt, lptM);
       points.add(p);
     }
 

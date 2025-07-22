@@ -1,5 +1,6 @@
 package art.lookingup.linear;
 
+import art.lookingup.spidertrap.ui.ModelParams;
 import heronarts.lx.model.LXPoint;
 
 import java.util.ArrayList;
@@ -45,10 +46,10 @@ public class Edge {
   static public float margins = 0f;
 
   public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins) {
-    this(p1, p2, pointSpacing, margins, false);
+    this(p1, p2, pointSpacing, margins, false, true);
   }
 
-  public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins,  boolean virtual) {
+  public Edge(Point3D p1, Point3D p2, float pointSpacing, float margins,  boolean virtual, boolean inclusive) {
     this.p1 = new Point3D(p1);
     this.p2 = new Point3D(p2);
     deltaVector = Point3D.delta(p2, p1);
@@ -57,12 +58,22 @@ public class Edge {
     this.margins = margins;
     points = new ArrayList<LPPoint>();
 
+    float startMargin = margins/2f;
+    float endMargin = margins/2f;
+
+    // If inclusive is false, we should increase the end margin by the distance of 1 LED.  pointSpacing is in
+    // LEDs/feet.
+    if (!inclusive)
+      endMargin += 1f/pointSpacing;
+
     // Virtual edges are edges without actual points.
     if (!virtual) {
       this.id = edgeCounter;
       edgeCounter++;
       // The LinearPoints object's ID is inherited from the associated Edge.
-      linearPoints = new LinearPoints(this.id, deltaLength, pointSpacing, this, this.p1, this.p2, margins);
+      if (!inclusive)
+        logger.info("Creating radial egdge: deltaLength="+deltaLength + " startMargin=" + startMargin + " endMargin="+ endMargin);
+      linearPoints = new LinearPoints(this.id, deltaLength, pointSpacing, this, this.p1, this.p2, startMargin, endMargin);
       strip1 = linearPoints.points;
       points.addAll(strip1);
     } else {

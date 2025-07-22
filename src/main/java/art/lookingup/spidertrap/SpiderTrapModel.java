@@ -22,8 +22,26 @@ public class SpiderTrapModel extends LXModel {
   public static final int NUM_WEBS = 1;
   public static final int NUM_FLOODS = 11;
 
-  public static final float SEGMENT_MARGINS = 2.75f/12f;
+  public static final float WEB_HEIGHT = 3f;
+
+  public static final float STRIP_END_MARGIN = (9f/8f)/12f; // 9/8 inches for wiring to return to back
+  public static final float SEGMENT_MARGINS = STRIP_END_MARGIN; //0f/12f; //.5f/12f;
+
+  public static final float SEGMENT_MARGINS_BMAN = 2.75f/12f;
+
   public static final float RING_SEG_MARGIN[] =  {
+      0f,  // 16
+      0f,  // 37
+      0f,  // 58
+      0f,  // 80
+      0f, // 101
+      0f, // 122
+      0f, // 144
+      0f/12f,  // 165
+      0f/12f  // 189
+  };
+
+  public static final float RING_SEG_MARGIN_BMAN[] =  {
       0f,  // 16
       0f,  // 37
       0.02f,  // 58
@@ -52,7 +70,7 @@ public class SpiderTrapModel extends LXModel {
 
   static public final float DISTANCE_FROM_CENTER = 4f;
   static public final float METERS_TO_FEET = 3.28084f;
-  static public final float MIN_CUT_DISTANCE = 0.001f/12f; //9.84f/12f;
+  static public final float MIN_CUT_DISTANCE = 0.0001f/12f; //9.84f/12f;
 
   static public int allSegmentsCount = 0;
 
@@ -262,7 +280,11 @@ public class SpiderTrapModel extends LXModel {
         Point3D edgeEnd = new Point3D(unitVector.x * curRadialDist,
             prevEdgeEnd.y,
             unitVector.z * curRadialDist);
-        Edge edge = new Edge(prevEdgeEnd, edgeEnd, ModelParams.getLedsPerFoot(),0f);
+        // For all edges, but the last edge, don't include the last point.  Otherwise we will have overlapping
+        // points where the edges meet.
+        boolean includeLastPoint = radialDistIndex == radialDistances.size()-1;
+
+        Edge edge = new Edge(prevEdgeEnd, edgeEnd, ModelParams.getLedsPerFoot(),0f, false, includeLastPoint);
         edges.add(edge);
         edge.isRadial = true;
         allEdges.add(edge);
@@ -290,7 +312,7 @@ public class SpiderTrapModel extends LXModel {
       Point3D edgeB = new Point3D(x + polarX(outerRadius, angle),
                                   y,
                                      z + polarZ(outerRadius, angle));
-      return new Edge(edgeA, edgeB, ModelParams.getLedsPerFoot(), 0f, true);
+      return new Edge(edgeA, edgeB, ModelParams.getLedsPerFoot(), 0f, true, true);
     }
 
     List<LXPoint> getPointsWireOrder() {
@@ -299,8 +321,10 @@ public class SpiderTrapModel extends LXModel {
 
     public void addCCWSegments() {
       ccwSegments = new ArrayList<Segment>();
-      for (int i = 0; i < 9; i++) {
-        Segment segment = allSegments.get(i * 6 + id);
+      int numRings = ModelParams.getNumRings();
+      int numRadials = ModelParams.getRadials();
+      for (int i = 0; i < numRings; i++) {
+        Segment segment = allSegments.get(i * numRadials + id);
         ccwSegments.add(segment);
       }
     }
@@ -413,7 +437,7 @@ public class SpiderTrapModel extends LXModel {
 
     for (int webNum = 0; webNum < 1; webNum++) {
       float mx = (webNum == 0)?-DISTANCE_FROM_CENTER:DISTANCE_FROM_CENTER;
-      Web web = new Web(0, 10, 0, ModelParams.getRadials(), 0);
+      Web web = new Web(0, WEB_HEIGHT, 0, ModelParams.getRadials(), 0);
       allWebs.add(web);
     }
 

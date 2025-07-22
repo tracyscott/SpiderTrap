@@ -14,6 +14,7 @@ import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import heronarts.lx.LX;
 import heronarts.lx.LXCategory;
 import heronarts.lx.LXComponent;
@@ -33,9 +34,11 @@ import heronarts.p4lx.ui.component.UIButton;
 import heronarts.p4lx.ui.component.UILabel;
 import heronarts.p4lx.ui.component.UISlider;
 import processing.core.PConstants;
+import processing.core.PImage;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -60,6 +63,7 @@ public class Texture extends LXPattern implements UIDeviceControls<Texture> {
 
   StringParameter scriptName = new StringParameter("scriptName", "texture");
   CompoundParameter speed = new CompoundParameter("speed", 1f, 0f, 20f);
+  StringParameter texName = new StringParameter("tName", "fractal5");
 
   // These parameters are loaded from the ISF Json declaration at the top of the shader
   LinkedHashMap<String, CompoundParameter> scriptParams = new LinkedHashMap<String, CompoundParameter>();
@@ -68,20 +72,46 @@ public class Texture extends LXPattern implements UIDeviceControls<Texture> {
   Map<String, Integer> paramLocations = new HashMap<String, Integer>();
   public final MutableParameter onReload = new MutableParameter("Reload");
   public final StringParameter error = new StringParameter("Error", null);
+
   private UIButton openButton;
+
+  PImage texImage;
 
   public Texture(LX lx) {
     super(lx);
 
-    PGraphicsOpenGL pgOpenGL = (processing.opengl.PGraphicsOpenGL)(SpiderTrapApp.pApplet.getGraphics());
-    PJOGL pJogl = (PJOGL)(pgOpenGL.pgl);
-    GL jogl = pJogl.gl;
-    gl = jogl.getGL3();
-
     addParameter("scriptName", scriptName);
     addParameter("speed", speed);
+    addParameter("texName", texName);
+
+    texName.setValue("fractal5");
+    reloadTexture(texName.getString());
+
+    // Initialized the OpenGL context that is shared among all patterns.
+    Sdf2D.initializeGLContext();
+
     glInit();
   }
+
+  public void reloadTexture(String textureName) {
+    logger.info("Loading texture: " + textureName);
+    String filesDir = "target/classes/data/textures/";
+    texImage = SpiderTrapApp.pApplet.loadImage(filesDir + textureName + ".png");
+    logger.info("Native size: " + texImage.width + " x " + texImage.height);
+    texImage.resize(512, 512);
+    Sdf2D.glDrawable.getContext().makeCurrent();
+    glTexture = AWTTextureIO.newTexture(Sdf2D.glDrawable.getGLProfile(), (BufferedImage) texImage.getNative(), true);
+    if (glTexture != null && gl != null) {
+      // Set texture parameters for sampling
+      glTexture.bind(gl);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    }
+    Sdf2D.glDrawable.getContext().release();
+  }
+
 
   private interface Buffer {
     int VERTEX = 0;
